@@ -133,9 +133,9 @@
                 <div class="flex items-center gap-4">
                     <img src="https://j.top4top.io/p_3516qltr40.png" alt="شعار الوزارة" class="h-20">
                     <div class="flex flex-col gap-0 w-96">
-                        <input type="text" id="education-admin" placeholder="أدخل الإدارة التعليمية" class="header-input text-sm font-semibold">
-                        <input type="text" id="education-region" placeholder="أدخل المنطقة التعليمية" class="header-input text-sm font-semibold">
-                        <input type="text" id="school-name" placeholder="أدخل اسم المدرسة" class="header-input text-sm font-semibold">
+                        <input type="text" id="education-admin" placeholder="أدخل الإدارة التعليمية" class="header-input text-sm font-semibold" oninput="saveState()">
+                        <input type="text" id="education-region" placeholder="أدخل المنطقة التعليمية" class="header-input text-sm font-semibold" oninput="saveState()">
+                        <input type="text" id="school-name" placeholder="أدخل اسم المدرسة" class="header-input text-sm font-semibold" oninput="saveState()">
                     </div>
                 </div>
                 <div class="text-center">
@@ -226,6 +226,7 @@
                     <div class="mt-6 flex gap-4 justify-center">
                         <button onclick="clearAllFilters()" class="text-sm text-gray-500 hover:text-gray-700 underline">إلغاء جميع التصفيات</button>
                         <button onclick="printSchedule()" class="px-4 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700 transition-colors text-sm">🖨️ طباعة الجدول</button>
+                        <button onclick="resetPlan()" class="px-4 py-2 bg-red-600 text-white rounded-lg hover:bg-red-700 transition-colors text-sm">🔄 إعادة بناء الخطة</button>
                     </div>
                 </div>
             </div>
@@ -239,8 +240,8 @@
         <!-- Signature Inputs -->
         <div class="container mx-auto px-6 py-4 no-print">
             <div class="flex justify-between items-center gap-8">
-                <input type="text" id="activity-leader-name" placeholder="أدخل اسم رائد/ة النشاط" class="w-1/2 p-2 text-center bg-transparent border-b-2 border-gray-300 focus:border-teal-500 outline-none">
-                <input type="text" id="school-director-name" placeholder="أدخل اسم مدير/ة المدرسة" class="w-1/2 p-2 text-center bg-transparent border-b-2 border-gray-300 focus:border-teal-500 outline-none">
+                <input type="text" id="activity-leader-name" placeholder="أدخل اسم رائد/ة النشاط" class="w-1/2 p-2 text-center bg-transparent border-b-2 border-gray-300 focus:border-teal-500 outline-none" oninput="saveState()">
+                <input type="text" id="school-director-name" placeholder="أدخل اسم مدير/ة المدرسة" class="w-1/2 p-2 text-center bg-transparent border-b-2 border-gray-300 focus:border-teal-500 outline-none" oninput="saveState()">
             </div>
         </div>
 
@@ -466,6 +467,7 @@
                 btnWestern.className = 'px-4 py-2 rounded-full font-medium transition-all duration-300 bg-gray-200 text-gray-700';
             }
             generateSections();
+            saveState();
         }
 
         function toggleDropdown(dropdownId) {
@@ -499,6 +501,7 @@
             updateButtonStyles();
             filterStages();
             updateTitle();
+            saveState();
         }
 
         function updateButtonStyles() {
@@ -552,6 +555,7 @@
             updateButtonStyles();
             filterStages();
             updateTitle();
+            saveState();
         }
 
         function updateWeekDisplay(selectElement) {
@@ -581,10 +585,11 @@
                 daySelect.style.display = 'none';
                 daySelect.innerHTML = '<option value="">اختر اليوم</option>';
             }
+            saveState();
         }
 
         function updateDayDisplay(selectElement) {
-            // Future logic for day selection can go here
+            saveState();
         }
         
         function parseDate(dateString) {
@@ -839,21 +844,110 @@
             printWindow.document.close();
             setTimeout(() => { printWindow.print(); }, 500); // Add delay for rendering
         }
+        
+        function saveState() {
+            const programSelections = {};
+            document.querySelectorAll('main tr').forEach((row, index) => {
+                const programNameCell = row.cells[row.querySelector('.week-column') ? 2 : 1];
+                if (!programNameCell) return;
+                
+                const programName = programNameCell.textContent.trim();
+                const weekSelect = row.querySelector('.week-select');
+                const daySelect = row.querySelector('.day-select');
+
+                if (weekSelect && weekSelect.value) {
+                    programSelections[programName] = {
+                        week: weekSelect.value,
+                        day: daySelect ? daySelect.value : ''
+                    };
+                }
+            });
+
+            const state = {
+                educationAdmin: document.getElementById('education-admin').value,
+                educationRegion: document.getElementById('education-region').value,
+                schoolName: document.getElementById('school-name').value,
+                activityLeaderName: document.getElementById('activity-leader-name').value,
+                schoolDirectorName: document.getElementById('school-director-name').value,
+                currentRegion: currentRegion,
+                selectedStages: selectedStages,
+                programSelections: programSelections,
+            };
+            localStorage.setItem('activityPlanState', JSON.stringify(state));
+        }
+
+        function loadState() {
+            const savedState = localStorage.getItem('activityPlanState');
+            if (savedState) {
+                const state = JSON.parse(savedState);
+                
+                document.getElementById('education-admin').value = state.educationAdmin || '';
+                document.getElementById('education-region').value = state.educationRegion || '';
+                document.getElementById('school-name').value = state.schoolName || '';
+                document.getElementById('activity-leader-name').value = state.activityLeaderName || '';
+                document.getElementById('school-director-name').value = state.schoolDirectorName || '';
+
+                // Load region first to build correct tables
+                selectRegion(state.currentRegion || 'other');
+                
+                // Then load stages
+                selectedStages = state.selectedStages || ['all'];
+                updateButtonStyles();
+                filterStages();
+                updateTitle();
+
+                // Finally, apply program selections to the newly generated tables
+                if (state.programSelections) {
+                    document.querySelectorAll('main tr').forEach(row => {
+                        const programNameCell = row.cells[row.querySelector('.week-column') ? 2 : 1];
+                        if (!programNameCell) return;
+                        
+                        const programName = programNameCell.textContent.trim();
+                        const selection = state.programSelections[programName];
+                        
+                        if (selection) {
+                            const weekSelect = row.querySelector('.week-select');
+                            if (weekSelect) {
+                                weekSelect.value = selection.week;
+                                // Manually trigger update to populate day select
+                                updateWeekDisplay(weekSelect); 
+                                const daySelect = row.querySelector('.day-select');
+                                if (daySelect) {
+                                    daySelect.value = selection.day;
+                                }
+                            }
+                        }
+                    });
+                }
+            }
+        }
+
+        function resetPlan() {
+            localStorage.removeItem('activityPlanState');
+            location.reload();
+        }
 
         document.addEventListener('DOMContentLoaded', function() {
             const modal = document.getElementById('pledge-modal');
             const content = document.getElementById('pledge-content');
             const agreeBtn = document.getElementById('agree-btn');
             const mainContent = document.getElementById('main-content');
+            
+            const hasAgreed = localStorage.getItem('pledgeAgreed');
 
-            // Show modal with animation
-            setTimeout(() => {
-                modal.classList.remove('hidden');
-                content.classList.remove('scale-95', 'opacity-0');
-                content.classList.add('scale-100', 'opacity-100');
-            }, 100);
+            if (hasAgreed) {
+                modal.style.display = 'none';
+                mainContent.classList.remove('opacity-0');
+            } else {
+                 setTimeout(() => {
+                    modal.classList.remove('hidden');
+                    content.classList.remove('scale-95', 'opacity-0');
+                    content.classList.add('scale-100', 'opacity-100');
+                }, 100);
+            }
 
             agreeBtn.addEventListener('click', () => {
+                localStorage.setItem('pledgeAgreed', 'true');
                 content.classList.add('scale-95', 'opacity-0');
                 content.classList.remove('scale-100', 'opacity-100');
                 setTimeout(() => {
@@ -863,8 +957,7 @@
             });
             
             generateSections();
-            updateButtonStyles();
-            updateTitle();
+            loadState(); // Load state after initial generation
         });
     </script>
 </body>
