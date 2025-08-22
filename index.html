@@ -277,7 +277,7 @@
             'week15': { name: 'الأسبوع الخامس عشر', startDate: '16 / 6', endDate: '20 / 6', days: { 'الأحد': '16 / 6', 'الاثنين': '17 / 6', 'الثلاثاء': '18 / 6', 'الأربعاء': '19 / 6', 'الخميس': '20 / 6' }, specialDays: { '20 / 6': { name: 'إجازة إضافية', color: 'red' } } },
             'week16': { name: 'الأسبوع السادس عشر', startDate: '23 / 6', endDate: '27 / 6', days: { 'الأحد': '23 / 6', 'الاثنين': '24 / 6', 'الثلاثاء': '25 / 6', 'الأربعاء': '26 / 6', 'الخميس': '27 / 6' }, specialDays: { '23 / 6': { name: 'إجازة إضافية', color: 'red' } } },
             'week17': { name: 'الأسبوع السابع عشر', startDate: '1 / 7', endDate: '5 / 7', days: { 'الأحد': '1 / 7', 'الاثنين': '2 / 7', 'الثلاثاء': '3 / 7', 'الأربعاء': '4 / 7', 'الخميس': '5 / 7' } },
-            'week18': { name: 'الأسبوع الثامن عشر', startDate: '8 / 7', endDate: '12 / 7', days: { 'الأحد': '8 / 7', 'الاثنين': '9 / 7', 'الثلاثاء': '10 / 7', 'الأربعاء': '11 / 7', 'الخميس': '12 / 7' } }
+            'week18': { name: 'الأسبوع الثامن عشر', startDate: '8 / 7', endDate: '12 / 7', days: { 'الأحد': '8 / 7', 'الاثنين': '9 / 7', 'الثلاثاء': '10 / 7', 'الأربعاء': '11 / 7', 'الخميس': '12 / 7' } },
         };
 
         const weeksDataWestern = {
@@ -586,6 +586,15 @@
         function updateDayDisplay(selectElement) {
             // Future logic for day selection can go here
         }
+        
+        function parseDate(dateString) {
+            if (!dateString) return 9999; // Sort items without a date to the end
+            const parts = dateString.split('_')[1].split(' / ');
+            const day = parseInt(parts[0], 10);
+            const month = parseInt(parts[1], 10);
+            // Return a number like MMDD for easy comparison, e.g., 3 / 4 becomes 403
+            return month * 100 + day;
+        }
 
         function printSchedule() {
             const selectedData = [];
@@ -683,6 +692,15 @@
                     };
                 }
                 weeklyData[item.weekKey].programs.push(item);
+            });
+            
+            // Sort programs within each week by date
+            Object.keys(weeklyData).forEach(weekKey => {
+                weeklyData[weekKey].programs.sort((a, b) => {
+                    const dateA = parseDate(a.selectedDay);
+                    const dateB = parseDate(b.selectedDay);
+                    return dateA - dateB;
+                });
             });
 
             const printWindow = window.open('', '_blank');
