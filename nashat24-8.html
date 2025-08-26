@@ -102,16 +102,16 @@
         <header class="gradient-header text-white py-4 shadow-lg no-print">
             <div class="container mx-auto px-6 flex justify-between items-center">
                 <div class="flex items-center gap-4">
-                    <img src="https://j.top4top.io/p_3516qltr40.png" alt="شعار الوزارة" class="h-20">
-                    <div class="flex flex-col gap-0 w-96">
+                    <img src="https://j.top4top.io/p_3516qltr40.png" alt="شعار الوزارة" class="h-16 sm:h-20">
+                    <div class="flex flex-col gap-0 w-full max-w-xs sm:max-w-sm">
                         <input type="text" id="education-admin" placeholder="أدخل الإدارة التعليمية" class="header-input text-sm font-semibold" oninput="saveState()">
                         <input type="text" id="education-region" placeholder="أدخل المنطقة التعليمية" class="header-input text-sm font-semibold" oninput="saveState()">
                         <input type="text" id="school-name" placeholder="أدخل اسم المدرسة" class="header-input text-sm font-semibold" oninput="saveState()">
                     </div>
                 </div>
                 <div class="text-center">
-                    <h1 id="main-title" class="text-3xl font-bold">خطة النشاط الطلابي</h1>
-                    <p id="subtitle" class="text-lg opacity-90">الفصل الدراسي الأول للعام الدراسي 1447هـ</p>
+                    <h1 id="main-title" class="text-xl sm:text-3xl font-bold">خطة النشاط الطلابي</h1>
+                    <p id="subtitle" class="text-md sm:text-lg opacity-90">الفصل الدراسي الأول للعام الدراسي 1447هـ</p>
                 </div>
             </div>
         </header>
@@ -782,7 +782,13 @@
                     <title>طباعة خطة النشاط الطلابي</title>
                     <style>
                         @import url('https://fonts.googleapis.com/css2?family=Cairo:wght@300;400;600;700&display=swap');
-                        * { margin: 0; padding: 0; box-sizing: border-box; }
+                        * { 
+                            margin: 0; 
+                            padding: 0; 
+                            box-sizing: border-box; 
+                            -webkit-print-color-adjust: exact !important;
+                            print-color-adjust: exact !important;
+                        }
                         body { font-family: 'Cairo', 'Arial', sans-serif; margin: 10mm; line-height: 1.2; background-color: #fff; font-size: 9px; padding-bottom: 50px; }
                         .print-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px; padding-bottom: 10px; border-bottom: 2px solid #0093B5; }
                         .print-header .logo-container { display: flex; align-items: center; gap: 10px; }
@@ -922,4 +928,4 @@
         });
     </script>
 </body>
-</html>
+</ht
