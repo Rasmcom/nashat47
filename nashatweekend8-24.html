@@ -285,16 +285,16 @@
                 { name: 'أفقي الكشفي الواسع', sessions: { primary: 0, 'upper-primary': 0, middle: 0, high: 6 } },
             ]},
             { id: 'events', title: 'الأيام والمناسبات', color: '#583C71', icon: 'https://e.top4top.io/p_34729xucx5.gif', programs: [
-                { name: 'اليوم الوطني', sessions: { primary: 4, 'upper-primary': 4, middle: 4, high: 4 } },
-                { name: 'يوم التأسيس', sessions: { primary: 4, 'upper-primary': 4, middle: 4, high: 4 } },
-                { name: 'يوم السعودية الخضراء', sessions: { primary: 3, 'upper-primary': 3, middle: 2, high: 2 } },
-                { name: 'يوم العلم', sessions: { primary: 3, 'upper-primary': 3, middle: 2, high: 2 } },
-                { name: 'يوم الصحة العالمي', sessions: { primary: 2, 'upper-primary': 2, middle: 2, high: 2 } },
-                { name: 'اليوم العالمي للتعليم', sessions: { primary: 2, 'upper-primary': 2, middle: 2, high: 2 } },
-                { name: 'يوم اللغة العربية العالمي', sessions: { primary: 2, 'upper-primary': 2, middle: 1, high: 1 } },
-                { name: 'يوم التسامح العالمي', sessions: { primary: 2, 'upper-primary': 2, middle: 1, high: 1 } },
-                { name: 'اليوم العالمي للطفل', sessions: { primary: 2, 'upper-primary': 2, middle: 0, high: 0 } },
-                { name: 'اليوم العالمي لذوي الإعاقة', sessions: { primary: 2, 'upper-primary': 2, middle: 2, high: 2 } },
+                { name: 'اليوم الوطني', date: '١ / ٤ / ١٤٤٧ هـ', sessions: { primary: 4, 'upper-primary': 4, middle: 4, high: 4 } },
+                { name: 'يوم التسامح العالمي', date: '٢٥ / ٥ / ١٤٤٧ هـ', sessions: { primary: 2, 'upper-primary': 2, middle: 1, high: 1 } },
+                { name: 'اليوم العالمي للطفل', date: '٢٩ / ٥ / ١٤٤٧ هـ', sessions: { primary: 2, 'upper-primary': 2, middle: 0, high: 0 } },
+                { name: 'اليوم العالمي لذوي الإعاقة', date: '١٢ / ٦ / ١٤٤٧ هـ', sessions: { primary: 2, 'upper-primary': 2, middle: 2, high: 2 } },
+                { name: 'اليوم العالمي للغة العربية', date: '٢٧ / ٦ / ١٤٤٧ هـ', sessions: { primary: 2, 'upper-primary': 2, middle: 1, high: 1 } },
+                { name: 'اليوم العالمي للتعليم', date: '٧ / ٨ / ١٤٤٧ هـ', sessions: { primary: 2, 'upper-primary': 2, middle: 2, high: 2 } },
+                { name: 'يوم التأسيس', date: '٥ / ٩ / ١٤٤٧ هـ', sessions: { primary: 4, 'upper-primary': 4, middle: 4, high: 4 } },
+                { name: 'يوم العلم السعودي', date: '٢٢ / ٩ / ١٤٤٧ هـ', sessions: { primary: 3, 'upper-primary': 3, middle: 2, high: 2 } },
+                { name: 'يوم السعودية الخضراء', date: '٨ / ١٠ / ١٤٤٧ هـ', sessions: { primary: 3, 'upper-primary': 3, middle: 2, high: 2 } },
+                { name: 'يوم الصحة العالمي', date: '١٩ / ١٠ / ١٤٤٧ هـ', sessions: { primary: 2, 'upper-primary': 2, middle: 2, high: 2 } },
             ]},
         ];
 
@@ -316,6 +316,7 @@
                         <td class="border border-gray-300 px-2 py-3 font-semibold" style="background-color: ${section.color}; color: white;">${section.title}</td>
                         <td class="border border-gray-300 px-2 py-3">
                             <div>${prog.name}</div>
+                            ${prog.date ? `<div class="text-sm text-blue-600 font-semibold pt-1">${prog.date}</div>` : ''}
                             <div class="session-details text-xs text-gray-500 mt-1"></div>
                         </td>
                         <td class="border border-gray-300 px-2 py-3">
