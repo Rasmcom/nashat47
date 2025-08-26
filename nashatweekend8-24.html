@@ -100,17 +100,19 @@
         <header class="gradient-header text-white py-4 shadow-lg no-print">
             <div class="container mx-auto px-6 flex justify-between items-center">
                 <div class="flex items-center gap-4">
-                    <img src="https://j.top4top.io/p_3516qltr40.png" alt="شعار الوزارة" class="h-20">
-                    <div class="flex flex-col gap-0 w-96">
+                    <img src="https://j.top4top.io/p_3516qltr40.png" alt="شعار الوزارة" class="h-16 sm:h-20">
+                    <!-- START OF CHANGE: Replaced fixed width (w-96) with responsive classes -->
+                    <div class="flex flex-col gap-0 w-full max-w-xs sm:max-w-sm">
+                    <!-- END OF CHANGE -->
                         <input type="text" id="education-admin" placeholder="أدخل الإدارة التعليمية" class="header-input text-sm font-semibold" onblur="saveState()">
                         <input type="text" id="education-region" placeholder="أدخل المنطقة التعليمية" class="header-input text-sm font-semibold" onblur="saveState()">
                         <input type="text" id="school-name" placeholder="أدخل اسم المدرسة" class="header-input text-sm font-semibold" onblur="saveState()">
                     </div>
                 </div>
                 <div class="text-center">
-                    <h1 id="main-title" class="text-3xl font-bold">خطة النشاط الطلابي</h1>
-                    <p id="stage-title-header" class="text-2xl font-bold text-white h-8"></p>
-                    <p id="subtitle" class="text-lg opacity-90">الفصل الدراسي الأول للعام الدراسي 1447هـ</p>
+                    <h1 id="main-title" class="text-xl sm:text-3xl font-bold">خطة النشاط الطلابي</h1>
+                    <p id="stage-title-header" class="text-lg sm:text-2xl font-bold text-white h-8"></p>
+                    <p id="subtitle" class="text-md sm:text-lg opacity-90">الفصل الدراسي الأول للعام الدراسي 1447هـ</p>
                 </div>
             </div>
         </header>
@@ -765,6 +767,12 @@
                     <title>خطة النشاط الطلابي لـ ${schoolName}</title>
                     <style>
                         @import url('https://fonts.googleapis.com/css2?family=Cairo:wght@400;700&display=swap');
+                        /* START OF CHANGE: Added universal selector to force color printing */
+                        * {
+                            -webkit-print-color-adjust: exact !important;
+                            print-color-adjust: exact !important;
+                        }
+                        /* END OF CHANGE */
                         @page { 
                             size: A4 landscape; 
                             margin: 0; 
@@ -777,8 +785,6 @@
                         body { 
                             font-family: 'Cairo', sans-serif; 
                             font-size: 8px; 
-                            -webkit-print-color-adjust: exact !important; 
-                            print-color-adjust: exact !important;
                             display: flex;
                             flex-direction: column;
                         }
