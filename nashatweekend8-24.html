@@ -82,6 +82,29 @@
 </head>
 <body class="bg-gray-50 min-h-screen">
 
+    <!-- Message Modal -->
+    <div id="message-modal" class="fixed inset-0 z-50 items-center justify-center p-4 no-print bg-black bg-opacity-50 hidden">
+        <div class="bg-white rounded-lg shadow-xl p-6 max-w-sm w-full text-center">
+            <h3 id="message-title" class="text-xl font-bold mb-4 text-gray-800">تنبيه</h3>
+            <p id="message-text" class="mb-6 text-gray-600"></p>
+            <div class="mt-6 flex justify-center">
+                <button onclick="hideMessage()" class="px-6 py-2 bg-teal-600 text-white rounded-lg hover:bg-teal-700 focus:outline-none focus:ring-2 focus:ring-teal-500 focus:ring-opacity-50">موافق</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Confirmation Modal -->
+    <div id="confirmation-modal" class="fixed inset-0 z-50 items-center justify-center p-4 no-print bg-black bg-opacity-50 hidden">
+        <div class="bg-white rounded-lg shadow-xl p-6 max-w-sm w-full text-center">
+            <h3 id="confirmation-title" class="text-xl font-bold mb-4 text-gray-800">تأكيد الإجراء</h3>
+            <p id="confirmation-message" class="mb-6 text-gray-600"></p>
+            <div class="mt-6 flex justify-center gap-4">
+                <button id="confirm-cancel-btn" class="px-6 py-2 bg-gray-300 text-gray-800 rounded-lg hover:bg-gray-400 focus:outline-none focus:ring-2 focus:ring-gray-400 focus:ring-opacity-50">إلغاء</button>
+                <button id="confirm-ok-btn" class="px-6 py-2 bg-red-600 text-white rounded-lg hover:bg-red-700 focus:outline-none focus:ring-2 focus:ring-red-500 focus:ring-opacity-50">تأكيد</button>
+            </div>
+        </div>
+    </div>
+
     <!-- Date Picker Modal -->
     <div id="date-picker-modal" class="fixed inset-0 z-40 items-center justify-center p-4 no-print bg-black bg-opacity-50 hidden">
         <div class="bg-white rounded-lg shadow-xl p-6 max-w-4xl w-full">
@@ -101,9 +124,7 @@
             <div class="container mx-auto px-6 flex justify-between items-center">
                 <div class="flex items-center gap-4">
                     <img src="https://j.top4top.io/p_3516qltr40.png" alt="شعار الوزارة" class="h-16 sm:h-20">
-                    <!-- START OF CHANGE: Replaced fixed width (w-96) with responsive classes for better mobile view -->
                     <div class="flex flex-col gap-0 w-full max-w-xs sm:max-w-sm">
-                    <!-- END OF CHANGE -->
                         <input type="text" id="education-admin" placeholder="أدخل الإدارة التعليمية" class="header-input text-sm font-semibold" onblur="saveState()">
                         <input type="text" id="education-region" placeholder="أدخل المنطقة التعليمية" class="header-input text-sm font-semibold" onblur="saveState()">
                         <input type="text" id="school-name" placeholder="أدخل اسم المدرسة" class="header-input text-sm font-semibold" onblur="saveState()">
@@ -179,7 +200,9 @@
         let currentRegion = 'other';
         let activeRowIndex = null;
         let tempSelectedDates = [];
-        let isPrinting = false; // Flag to prevent multiple print dialogs
+        let isPrinting = false; 
+        let isInitializing = false;
+        let confirmCallback = null;
 
         const weeksDataDefault = {
             'week1': { name: 'الأسبوع الأول', startDate: '1 / 3', endDate: '5 / 3', days: { 'الأحد': '1 / 3', 'الاثنين': '2 / 3', 'الثلاثاء': '3 / 3', 'الأربعاء': '4 / 3', 'الخميس': '5 / 3' } },
@@ -300,6 +323,29 @@
             ]},
         ];
 
+        // Modal Functions
+        function showMessage(message, title = 'تنبيه') {
+            document.getElementById('message-title').textContent = title;
+            document.getElementById('message-text').textContent = message;
+            document.getElementById('message-modal').style.display = 'flex';
+        }
+
+        function hideMessage() {
+            document.getElementById('message-modal').style.display = 'none';
+        }
+
+        function showConfirmation(message, callback, title = 'تأكيد الإجراء') {
+            document.getElementById('confirmation-title').textContent = title;
+            document.getElementById('confirmation-message').textContent = message;
+            confirmCallback = callback;
+            document.getElementById('confirmation-modal').style.display = 'flex';
+        }
+
+        function hideConfirmation() {
+            document.getElementById('confirmation-modal').style.display = 'none';
+            confirmCallback = null;
+        }
+
         function generateSections() {
             const mainContainer = document.querySelector('main');
             mainContainer.innerHTML = ''; // Clear existing sections
@@ -325,7 +371,6 @@
                             <textarea placeholder="اسم المعلم/ة" class="teacher-input w-full p-1 border rounded text-sm" rows="2" onblur="saveState()"></textarea>
                         </td>
                         <td class="border border-gray-300 px-2 py-3">
-                            <!-- START OF CHANGE: Added options for 5 and 6 weeks -->
                             <select class="duration-select w-full p-1 border rounded text-sm" onchange="saveState()">
                                 <option value="1">أسبوع واحد</option>
                                 <option value="2">أسبوعين</option>
@@ -334,7 +379,6 @@
                                 <option value="5">٥ أسابيع</option>
                                 <option value="6">٦ أسابيع</option>
                             </select>
-                            <!-- END OF CHANGE -->
                         </td>
                         <td class="border border-gray-300 px-2 py-3 text-center">
                             <button class="date-select-btn bg-blue-500 text-white px-3 py-1 rounded-md text-sm hover:bg-blue-600" onclick="openDatePicker('${uniqueId}')">اختيار التواريخ</button>
@@ -397,7 +441,9 @@
                 btnOther.className = 'px-4 py-2 rounded-full font-medium transition-all duration-300 bg-blue-600 text-white shadow-lg';
                 btnWestern.className = 'px-4 py-2 rounded-full font-medium transition-all duration-300 bg-gray-200 text-gray-700';
             }
-            saveState();
+            if (!isInitializing) {
+                saveState();
+            }
         }
 
         function toggleDropdown(dropdownId) {
@@ -558,40 +604,20 @@
             document.getElementById('date-picker-modal').style.display = 'flex';
         }
 
+        // START OF CHANGE: Removed selection limits
         function toggleDateSelection(button, durationInWeeks) {
             const date = button.dataset.date;
-            const week = button.dataset.week;
             const isSelected = tempSelectedDates.includes(date);
-            const totalMaxDates = durationInWeeks * 3;
 
-            // If already selected, deselect it
             if (isSelected) {
                 tempSelectedDates = tempSelectedDates.filter(d => d !== date);
                 button.classList.remove('selected');
-                return;
+            } else {
+                tempSelectedDates.push(date);
+                button.classList.add('selected');
             }
-
-            // If not selected, check limits before selecting
-
-            // 1. Check total number of dates limit
-            if (tempSelectedDates.length >= totalMaxDates) {
-                alert(`لقد وصلت للحد الأقصى لعدد التواريخ لهذا البرنامج (${totalMaxDates} تواريخ).`);
-                return;
-            }
-
-            // 2. Check number of dates per week limit (max 3)
-            const weekButtons = Array.from(document.querySelectorAll(`#date-picker-modal .day[data-week="${week}"]`));
-            const selectedInThisWeekCount = weekButtons.filter(btn => tempSelectedDates.includes(btn.dataset.date)).length;
-
-            if (selectedInThisWeekCount >= 3) {
-                alert('لا يمكن اختيار أكثر من 3 أيام في نفس الأسبوع.');
-                return;
-            }
-
-            // All checks passed, so select the date
-            tempSelectedDates.push(date);
-            button.classList.add('selected');
         }
+        // END OF CHANGE
 
         function closeDatePicker() {
             document.getElementById('date-picker-modal').style.display = 'none';
@@ -609,14 +635,14 @@
         
         function printSchedule() {
             if (isPrinting) {
-                alert('عملية طباعة جارية بالفعل. يرجى الانتظار.');
+                showMessage('عملية طباعة جارية بالفعل. يرجى الانتظار.');
                 return;
             }
             isPrinting = true;
 
             const state = JSON.parse(localStorage.getItem('activityPlanState')) || {};
             if (!state) {
-                alert('لا توجد بيانات محفوظة للطباعة.');
+                showMessage('لا توجد بيانات محفوظة للطباعة.');
                 isPrinting = false;
                 return;
             }
@@ -658,14 +684,14 @@
                 }).filter(p => p.totalSessions > 0);
 
             if (plannedPrograms.length === 0) {
-                alert('يرجى اختيار المراحل وتحديد تواريخ لبرنامج واحد على الأقل قبل الطباعة.');
+                showMessage('يرجى اختيار المراحل وتحديد تواريخ لبرنامج واحد على الأقل قبل الطباعة.');
                 isPrinting = false;
                 return;
             }
 
             const printWindow = window.open('', '_blank');
             if (!printWindow) {
-                alert('فشل فتح نافذة الطباعة. يرجى السماح بالنوافذ المنبثقة لهذا الموقع.');
+                showMessage('فشل فتح نافذة الطباعة. يرجى السماح بالنوافذ المنبثقة لهذا الموقع.');
                 isPrinting = false;
                 return;
             }
@@ -771,12 +797,10 @@
                     <title>خطة النشاط الطلابي لـ ${schoolName}</title>
                     <style>
                         @import url('https://fonts.googleapis.com/css2?family=Cairo:wght@400;700&display=swap');
-                        /* START OF CHANGE: Added universal selector to force color printing */
                         * {
                             -webkit-print-color-adjust: exact !important;
                             print-color-adjust: exact !important;
                         }
-                        /* END OF CHANGE */
                         @page { 
                             size: A4 landscape; 
                             margin: 0; 
@@ -887,6 +911,7 @@
         }
         
         function saveState() {
+            if (isInitializing) return;
             const programSelections = {};
             document.querySelectorAll('main tr[data-program-id]').forEach(row => {
                 const id = row.dataset.programId;
@@ -914,6 +939,7 @@
         }
 
         function loadState() {
+            isInitializing = true;
             const savedState = localStorage.getItem('activityPlanState');
             if (savedState) {
                 const state = JSON.parse(savedState);
@@ -942,19 +968,31 @@
                     });
                 }
             }
+            isInitializing = false;
+            saveState();
         }
 
         function resetPlan() {
-            if (confirm('هل أنت متأكد من رغبتك في مسح جميع البيانات والبدء من جديد؟')) {
+            showConfirmation('هل أنت متأكد من رغبتك في مسح جميع البيانات والبدء من جديد؟', () => {
                 localStorage.removeItem('activityPlanState');
                 location.reload();
-            }
+            });
         }
 
         document.addEventListener('DOMContentLoaded', function() {
             generateSections();
             loadState();
+            
+            // Confirmation Modal Logic
+            document.getElementById('confirm-cancel-btn').onclick = hideConfirmation;
+            document.getElementById('confirm-ok-btn').onclick = () => {
+                if (confirmCallback) {
+                    confirmCallback();
+                }
+                hideConfirmation();
+            };
         });
     </script>
 </body>
 </html>
+

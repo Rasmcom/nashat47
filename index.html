@@ -44,6 +44,40 @@
         </div>
     </div>
 
+    <!-- Intro Modal -->
+    <div id="intro-modal" class="hidden fixed inset-0 bg-black bg-opacity-60 flex items-center justify-center p-4 z-50 transition-opacity duration-300 opacity-0">
+        <div class="bg-white rounded-2xl shadow-2xl p-8 max-w-2xl w-full text-center transform transition-all duration-300 scale-95">
+            <h2 class="text-2xl font-bold text-gray-800 mb-4">🎯 تبحث عن طريقة سهلة لتخطيط الأنشطة الطلابية؟</h2>
+            <p class="text-gray-600 mb-6">
+                قدّمنا لك أداة تحليل قدرة المدرسة على تنفيذ برامج الأنشطة الطلابية وفق دليل الإصدار الخامس.
+            </p>
+            <div class="text-right mb-6 space-y-3">
+                <p class="font-semibold text-lg" style="color: #0093B5;">🛠️ تساعدك الأداة في:</p>
+                <ul class="list-disc list-inside text-gray-700 space-y-1 pr-4">
+                    <li>التخطيط الفعّال</li>
+                    <li>اتخاذ القرار المناسب</li>
+                    <li>بناء خطة مبنية على معايير واضحة</li>
+                </ul>
+            </div>
+            <div class="text-right mb-6 space-y-3">
+                <p class="font-semibold text-lg" style="color: #00A383;">📌 فقط اتبع الخطوات التالية:</p>
+                <ol class="list-decimal list-inside text-gray-700 space-y-1 pr-4">
+                    <li>اختر المرحلة الدراسية</li>
+                    <li>أدخل عدد الفصول</li>
+                    <li>احصل على خطتك مباشرة!</li>
+                </ol>
+            </div>
+            <p class="text-sm text-gray-500 mb-8">
+                🖋️ الأداة من تطوير رسم للتصميم — لمساعدتك على تجاوز التحديات وبناء خطة ناجحة.
+            </p>
+            <div class="flex flex-col sm:flex-row justify-center items-center gap-4 mt-8">
+                <a href="nashattahlel47.html" onclick="visitTool(event)" class="w-full sm:w-auto bg-teal-500 text-white font-bold py-3 px-8 rounded-lg hover:bg-teal-600 transition-colors duration-300 shadow-lg">زيارة الأداة</a>
+                <button onclick="closeIntroModal()" class="w-full sm:w-auto bg-gray-200 text-gray-700 font-bold py-3 px-8 rounded-lg hover:bg-gray-300 transition-colors duration-300">موافق</button>
+            </div>
+        </div>
+    </div>
+
+
     <!-- Main Selection View -->
     <div id="main-view" class="flex flex-col min-h-screen opacity-0 transition-opacity duration-500">
         <main class="flex-grow flex items-center justify-center p-4">
@@ -74,6 +108,24 @@
                             </div>
                         </a>
                     </div>
+
+                    <!-- Analysis Tool Section -->
+                    <div class="mt-8 border-t-2 border-gray-200 pt-6">
+                        <a href="nashattahlel47.html" class="plan-link block p-6 bg-gray-50 rounded-lg border border-gray-200 hover:shadow-lg hover:border-teal-400 transition-all duration-300 transform hover:-translate-y-1 text-right">
+                            <div class="flex items-center">
+                                <div class="pl-4">
+                                     <svg class="w-16 h-16 text-teal-500" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor">
+                                       <path stroke-linecap="round" stroke-linejoin="round" d="M3 13.125C3 12.504 3.504 12 4.125 12h2.25c.621 0 1.125.504 1.125 1.125v6.75C7.5 20.496 6.996 21 6.375 21h-2.25A1.125 1.125 0 013 19.875v-6.75zM9.75 8.625c0-.621.504-1.125 1.125-1.125h2.25c.621 0 1.125.504 1.125 1.125v11.25c0 .621-.504 1.125-1.125 1.125h-2.25a1.125 1.125 0 01-1.125-1.125V8.625zM16.5 4.125c0-.621.504-1.125 1.125-1.125h2.25C20.496 3 21 3.504 21 4.125v15.75c0 .621-.504 1.125-1.125 1.125h-2.25a1.125 1.125 0 01-1.125-1.125V4.125z"></path>
+                                     </svg>
+                                </div>
+                                <div>
+                                    <h2 class="text-xl font-semibold mb-2 text-gray-700">أداة تحليل خطة النشاط</h2>
+                                    <p class="text-sm text-gray-600">لتحليل قدرة المدرسة على تنفيذ برامج الأنشطة الطلابية وفق الدليل المعتمد.</p>
+                                </div>
+                            </div>
+                        </a>
+                    </div>
+
                 </div>
             </div>
         </main>
@@ -87,7 +139,7 @@
                 </svg>
             </div>
             <div class="max-w-4xl mx-auto flex justify-center items-center px-4">
-                <a href="https://t.me/+SJnY9vPy7yo5YmI1" target="_blank" rel="noopener noreferrer" class="ml-4">
+                 <a href="https://t.me/+SJnY9vPy7yo5YmI1" target="_blank" rel="noopener noreferrer" class="ml-4">
                     <img src="https://h.top4top.io/p_352355x7b1.png" alt="شعار رسم" class="h-16 w-auto">
                 </a>
                 <p class="text-base">جميع الحقوق محفوظة لقناة رسم للتصميم والخدمات التعليمية 2025</p>
@@ -107,8 +159,59 @@
     </button>
 
     <script>
+        // Function to show the intro modal with animation
+        function openIntroModal() {
+            const introModal = document.getElementById('intro-modal');
+            const introContent = introModal.querySelector('div');
+            introModal.classList.remove('hidden');
+            setTimeout(() => {
+                introModal.classList.remove('opacity-0');
+                introContent.classList.remove('scale-95');
+                introContent.classList.add('scale-100');
+            }, 50);
+        }
+
+        // Function to close the intro modal and show the main content
+        function closeIntroModal() {
+            const introModal = document.getElementById('intro-modal');
+            const mainView = document.getElementById('main-view');
+
+            localStorage.setItem('introModalClosedTimestamp', new Date().getTime());
+
+            introModal.classList.add('opacity-0', 'scale-95');
+            introModal.classList.remove('opacity-100', 'scale-100');
+            
+            setTimeout(() => {
+                introModal.classList.add('hidden');
+                mainView.classList.remove('opacity-0');
+            }, 300);
+        }
+
+        // Function to handle the "Visit Tool" button click
+        function visitTool(event) {
+            event.preventDefault(); 
+            const introModal = document.getElementById('intro-modal');
+            const mainView = document.getElementById('main-view');
+            const planView = document.getElementById('plan-view');
+            const planIframe = document.getElementById('plan-iframe');
+            const backButton = document.getElementById('back-to-main-btn');
+            const planUrl = event.currentTarget.getAttribute('href');
+
+            localStorage.setItem('introModalClosedTimestamp', new Date().getTime());
+
+            introModal.classList.add('opacity-0');
+            setTimeout(() => {
+                introModal.classList.add('hidden');
+            }, 300);
+
+            planIframe.src = planUrl;
+            mainView.classList.add('hidden');
+            planView.classList.remove('hidden');
+            backButton.classList.remove('hidden');
+        }
+
         document.addEventListener('DOMContentLoaded', () => {
-            // Pledge Modal elements
+            // Modal elements
             const pledgeModal = document.getElementById('pledge-modal');
             const pledgeContent = document.getElementById('pledge-content');
             const agreeBtn = document.getElementById('agree-btn');
@@ -118,28 +221,34 @@
             const planView = document.getElementById('plan-view');
             const planIframe = document.getElementById('plan-iframe');
             const backButton = document.getElementById('back-to-main-btn');
-            const planLinks = document.querySelectorAll('.plan-link');
+            // Select all plan links, INCLUDING the one for the tool
+            const planLinks = document.querySelectorAll('a.plan-link');
 
-            // --- PLEDGE LOGIC ---
-            const PLEDGE_EXPIRATION_TIME = 60 * 60 * 1000; // 1 hour in milliseconds
+            // --- STARTUP LOGIC ---
+            const PLEDGE_EXPIRATION_TIME = 60 * 60 * 1000; // 1 hour
+            const INTRO_MODAL_EXPIRATION_TIME = 60 * 60 * 1000; // 1 hour
+
             const lastAgreedTimestamp = localStorage.getItem('pledgeAgreedTimestamp');
+            const lastIntroClosedTimestamp = localStorage.getItem('introModalClosedTimestamp');
             const now = new Date().getTime();
 
-            // Show pledge if it's the first time or if an hour has passed
-            if (!lastAgreedTimestamp || (now - lastAgreedTimestamp > PLEDGE_EXPIRATION_TIME)) {
+            const needsPledge = !lastAgreedTimestamp || (now - lastAgreedTimestamp > PLEDGE_EXPIRATION_TIME);
+            const needsIntro = !lastIntroClosedTimestamp || (now - lastIntroClosedTimestamp > INTRO_MODAL_EXPIRATION_TIME);
+
+            if (needsPledge) {
                 pledgeModal.classList.remove('hidden');
                 setTimeout(() => {
                     pledgeContent.classList.remove('scale-95', 'opacity-0');
                     pledgeContent.classList.add('scale-100', 'opacity-100');
                 }, 100);
+            } else if (needsIntro) {
+                openIntroModal();
             } else {
-                // If pledge is not needed, show main content immediately
                 mainView.classList.remove('opacity-0');
             }
 
-            // Agree button event listener
+            // --- EVENT LISTENERS ---
             agreeBtn.addEventListener('click', () => {
-                // Set the timestamp for the next check
                 localStorage.setItem('pledgeAgreedTimestamp', new Date().getTime());
                 
                 pledgeContent.classList.add('scale-95', 'opacity-0');
@@ -148,11 +257,10 @@
 
                 setTimeout(() => {
                     pledgeModal.classList.add('hidden');
-                    mainView.classList.remove('opacity-0');
+                    openIntroModal();
                 }, 300);
             });
 
-            // --- APP LOGIC ---
             planLinks.forEach(link => {
                 link.addEventListener('click', (event) => {
                     event.preventDefault();
@@ -167,8 +275,7 @@
             });
 
             backButton.addEventListener('click', () => {
-                planIframe.src = 'about:blank'; // Unload the iframe content
-                
+                planIframe.src = 'about:blank';
                 mainView.classList.remove('hidden');
                 planView.classList.add('hidden');
                 backButton.classList.add('hidden');
@@ -178,3 +285,4 @@
 
 </body>
 </html>
+
