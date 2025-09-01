@@ -82,27 +82,8 @@
 </head>
 <body class="bg-gray-50 min-h-screen">
 
-    <!-- Message Modal -->
-    <div id="message-modal" class="fixed inset-0 z-50 items-center justify-center p-4 no-print bg-black bg-opacity-50 hidden">
-        <div class="bg-white rounded-lg shadow-xl p-6 max-w-sm w-full text-center">
-            <h3 id="message-title" class="text-xl font-bold mb-4 text-gray-800">تنبيه</h3>
-            <p id="message-text" class="mb-6 text-gray-600"></p>
-            <div class="mt-6 flex justify-center">
-                <button onclick="hideMessage()" class="px-6 py-2 bg-teal-600 text-white rounded-lg hover:bg-teal-700 focus:outline-none focus:ring-2 focus:ring-teal-500 focus:ring-opacity-50">موافق</button>
-            </div>
-        </div>
-    </div>
-
-    <!-- Confirmation Modal -->
-    <div id="confirmation-modal" class="fixed inset-0 z-50 items-center justify-center p-4 no-print bg-black bg-opacity-50 hidden">
-        <div class="bg-white rounded-lg shadow-xl p-6 max-w-sm w-full text-center">
-            <h3 id="confirmation-title" class="text-xl font-bold mb-4 text-gray-800">تأكيد الإجراء</h3>
-            <p id="confirmation-message" class="mb-6 text-gray-600"></p>
-            <div class="mt-6 flex justify-center gap-4">
-                <button id="confirm-cancel-btn" class="px-6 py-2 bg-gray-300 text-gray-800 rounded-lg hover:bg-gray-400 focus:outline-none focus:ring-2 focus:ring-gray-400 focus:ring-opacity-50">إلغاء</button>
-                <button id="confirm-ok-btn" class="px-6 py-2 bg-red-600 text-white rounded-lg hover:bg-red-700 focus:outline-none focus:ring-2 focus:ring-red-500 focus:ring-opacity-50">تأكيد</button>
-            </div>
-        </div>
+    <div class="bg-red-600 text-white text-center py-2 no-print font-semibold">
+        تم التحديث بتاريخ ٩ / ٣ / ١٤٤٧ هـ
     </div>
 
     <!-- Date Picker Modal -->
@@ -141,8 +122,8 @@
         <!-- Controls Section -->
         <section class="py-8 bg-gray-50 no-print">
             <div class="container mx-auto px-6">
-                <div class="mb-8 text-center p-6 bg-white rounded-lg shadow-md">
-                    <div class="grid grid-cols-1 md:grid-cols-2 gap-6 items-center">
+                <div class="mb-8 p-6 bg-white rounded-lg shadow-md">
+                    <div class="grid grid-cols-1 md:grid-cols-3 gap-6 items-center text-center">
                         <div>
                             <h3 class="text-xl font-semibold text-gray-700 mb-4">اختر المنطقة:</h3>
                             <div class="flex justify-center gap-3">
@@ -151,7 +132,7 @@
                             </div>
                         </div>
                         <div>
-                            <h3 class="text-xl font-semibold text-gray-700 mb-4">اختر المراحل التعليمية للخطة:</h3>
+                            <h3 class="text-xl font-semibold text-gray-700 mb-4">اختر المراحل التعليمية:</h3>
                             <div class="flex flex-wrap justify-center gap-3">
                                 <button onclick="toggleStageFilter('all')" id="btn-all" class="flex items-center gap-2 px-4 py-2 rounded-full font-medium transition-all duration-300 bg-blue-600 text-white shadow-lg">🏫 الكل</button>
                                 <button onclick="toggleStageFilter('primary')" id="btn-primary" class="flex items-center gap-2 px-4 py-2 rounded-full font-medium transition-all duration-300 bg-gray-200 text-gray-700">🌱 الأولية</button>
@@ -159,6 +140,15 @@
                                 <button onclick="toggleStageFilter('middle')" id="btn-middle" class="flex items-center gap-2 px-4 py-2 rounded-full font-medium transition-all duration-300 bg-gray-200 text-gray-700">🌳 المتوسطة</button>
                                 <button onclick="toggleStageFilter('high')" id="btn-high" class="flex items-center gap-2 px-4 py-2 rounded-full font-medium transition-all duration-300 bg-gray-200 text-gray-700">🎓 الثانوية</button>
                             </div>
+                        </div>
+                        <div>
+                            <h3 class="text-xl font-semibold text-gray-700 mb-4">حجم الخط للطباعة:</h3>
+                            <select id="print-font-size" class="p-2 border rounded-md" onchange="saveState()">
+                                <option value="7px">صغير جداً</option>
+                                <option value="8px" selected>صغير (افتراضي)</option>
+                                <option value="10px">متوسط</option>
+                                <option value="12px">كبير</option>
+                            </select>
                         </div>
                     </div>
                     <div class="mt-6 flex gap-4 justify-center">
@@ -200,9 +190,7 @@
         let currentRegion = 'other';
         let activeRowIndex = null;
         let tempSelectedDates = [];
-        let isPrinting = false; 
-        let isInitializing = false;
-        let confirmCallback = null;
+        let isPrinting = false; // Flag to prevent multiple print dialogs
 
         const weeksDataDefault = {
             'week1': { name: 'الأسبوع الأول', startDate: '1 / 3', endDate: '5 / 3', days: { 'الأحد': '1 / 3', 'الاثنين': '2 / 3', 'الثلاثاء': '3 / 3', 'الأربعاء': '4 / 3', 'الخميس': '5 / 3' } },
@@ -323,29 +311,6 @@
             ]},
         ];
 
-        // Modal Functions
-        function showMessage(message, title = 'تنبيه') {
-            document.getElementById('message-title').textContent = title;
-            document.getElementById('message-text').textContent = message;
-            document.getElementById('message-modal').style.display = 'flex';
-        }
-
-        function hideMessage() {
-            document.getElementById('message-modal').style.display = 'none';
-        }
-
-        function showConfirmation(message, callback, title = 'تأكيد الإجراء') {
-            document.getElementById('confirmation-title').textContent = title;
-            document.getElementById('confirmation-message').textContent = message;
-            confirmCallback = callback;
-            document.getElementById('confirmation-modal').style.display = 'flex';
-        }
-
-        function hideConfirmation() {
-            document.getElementById('confirmation-modal').style.display = 'none';
-            confirmCallback = null;
-        }
-
         function generateSections() {
             const mainContainer = document.querySelector('main');
             mainContainer.innerHTML = ''; // Clear existing sections
@@ -381,7 +346,10 @@
                             </select>
                         </td>
                         <td class="border border-gray-300 px-2 py-3 text-center">
-                            <button class="date-select-btn bg-blue-500 text-white px-3 py-1 rounded-md text-sm hover:bg-blue-600" onclick="openDatePicker('${uniqueId}')">اختيار التواريخ</button>
+                            <div class="flex justify-center items-center gap-2">
+                                <button class="date-select-btn bg-blue-500 text-white px-3 py-1 rounded-md text-sm hover:bg-blue-600" onclick="openDatePicker('${uniqueId}')">اختيار</button>
+                                <button class="clear-date-btn bg-red-500 text-white px-3 py-1 rounded-md text-sm hover:bg-red-600" onclick="clearProgramDates('${uniqueId}')">مسح</button>
+                            </div>
                             <div class="dates-display text-xs mt-1 text-gray-600"></div>
                         </td>
                     </tr>
@@ -441,9 +409,7 @@
                 btnOther.className = 'px-4 py-2 rounded-full font-medium transition-all duration-300 bg-blue-600 text-white shadow-lg';
                 btnWestern.className = 'px-4 py-2 rounded-full font-medium transition-all duration-300 bg-gray-200 text-gray-700';
             }
-            if (!isInitializing) {
-                saveState();
-            }
+            saveState();
         }
 
         function toggleDropdown(dropdownId) {
@@ -552,6 +518,17 @@
             saveState();
         }
 
+        function clearProgramDates(programId) {
+            const row = document.querySelector(`tr[data-program-id="${programId}"]`);
+            if (row) {
+                const datesDisplay = row.querySelector('.dates-display');
+                if (datesDisplay) {
+                    datesDisplay.textContent = '';
+                }
+                saveState();
+            }
+        }
+
         function openDatePicker(programId) {
             activeRowIndex = programId;
             const row = document.querySelector(`tr[data-program-id="${programId}"]`);
@@ -562,7 +539,7 @@
             
             const state = JSON.parse(localStorage.getItem('activityPlanState')) || {};
             const savedProgram = state.programSelections ? state.programSelections[programId] : null;
-            tempSelectedDates = savedProgram ? [...savedProgram.dates] : [];
+            tempSelectedDates = savedProgram && savedProgram.dates ? [...savedProgram.dates] : [];
 
             const container = document.getElementById('modal-weeks-container');
             container.innerHTML = '';
@@ -604,20 +581,34 @@
             document.getElementById('date-picker-modal').style.display = 'flex';
         }
 
-        // START OF CHANGE: Removed selection limits
         function toggleDateSelection(button, durationInWeeks) {
             const date = button.dataset.date;
+            const week = button.dataset.week;
             const isSelected = tempSelectedDates.includes(date);
+            const totalMaxDates = durationInWeeks * 3;
 
             if (isSelected) {
                 tempSelectedDates = tempSelectedDates.filter(d => d !== date);
                 button.classList.remove('selected');
-            } else {
-                tempSelectedDates.push(date);
-                button.classList.add('selected');
+                return;
             }
+
+            if (tempSelectedDates.length >= totalMaxDates) {
+                alert(`لقد وصلت للحد الأقصى لعدد التواريخ لهذا البرنامج (${totalMaxDates} تواريخ).`);
+                return;
+            }
+
+            const weekButtons = Array.from(document.querySelectorAll(`#date-picker-modal .day[data-week="${week}"]`));
+            const selectedInThisWeekCount = weekButtons.filter(btn => tempSelectedDates.includes(btn.dataset.date)).length;
+
+            if (selectedInThisWeekCount >= 3) {
+                alert('لا يمكن اختيار أكثر من 3 أيام في نفس الأسبوع.');
+                return;
+            }
+
+            tempSelectedDates.push(date);
+            button.classList.add('selected');
         }
-        // END OF CHANGE
 
         function closeDatePicker() {
             document.getElementById('date-picker-modal').style.display = 'none';
@@ -635,14 +626,14 @@
         
         function printSchedule() {
             if (isPrinting) {
-                showMessage('عملية طباعة جارية بالفعل. يرجى الانتظار.');
+                alert('عملية طباعة جارية بالفعل. يرجى الانتظار.');
                 return;
             }
             isPrinting = true;
 
             const state = JSON.parse(localStorage.getItem('activityPlanState')) || {};
             if (!state) {
-                showMessage('لا توجد بيانات محفوظة للطباعة.');
+                alert('لا توجد بيانات محفوظة للطباعة.');
                 isPrinting = false;
                 return;
             }
@@ -684,14 +675,14 @@
                 }).filter(p => p.totalSessions > 0);
 
             if (plannedPrograms.length === 0) {
-                showMessage('يرجى اختيار المراحل وتحديد تواريخ لبرنامج واحد على الأقل قبل الطباعة.');
+                alert('يرجى اختيار المراحل وتحديد تواريخ لبرنامج واحد على الأقل قبل الطباعة.');
                 isPrinting = false;
                 return;
             }
 
             const printWindow = window.open('', '_blank');
             if (!printWindow) {
-                showMessage('فشل فتح نافذة الطباعة. يرجى السماح بالنوافذ المنبثقة لهذا الموقع.');
+                alert('فشل فتح نافذة الطباعة. يرجى السماح بالنوافذ المنبثقة لهذا الموقع.');
                 isPrinting = false;
                 return;
             }
@@ -703,6 +694,7 @@
             const schoolName = state.schoolName || '';
             const leaderName = state.activityLeaderName || '';
             const directorName = state.schoolDirectorName || '';
+            const printFontSize = state.printFontSize || '8px';
             
             const programsByField = {};
             plannedPrograms.forEach(p => {
@@ -712,82 +704,71 @@
                 programsByField[p.field].push(p);
             });
 
-            const printLayoutOrder = [
-                ['المواطنة والحياة', 'الثقافة والفنون'],
-                ['الرياضة والصحة', 'العلوم والتقنية'],
-                ['النشاط الكشفي', 'الأيام والمناسبات']
-            ];
+            const activeFields = activitiesData
+                .map(field => field.title)
+                .filter(title => programsByField[title]);
 
+            const parseDate = (dateStr) => {
+                const parts = dateStr.split(' ');
+                const dateParts = parts[1].split('/');
+                const day = parseInt(dateParts[0], 10);
+                const month = parseInt(dateParts[1], 10);
+                return month * 100 + day;
+            };
+
+            // START OF CHANGE: Simplified grid generation logic
             let printContent = '<div class="print-grid">';
-            printLayoutOrder.forEach(row => {
-                printContent += '<div class="print-row">';
-                row.forEach(fieldName => {
-                    printContent += '<div class="print-column">';
-                    if (programsByField[fieldName]) {
-                        const fieldData = activitiesData.find(f => f.title === fieldName);
-                        printContent += `<h3 style="background-color:${fieldData.color}; color:white; padding: 5px; border-radius: 5px 5px 0 0;">${fieldName}</h3>`;
-                        
-                        let tableRows = programsByField[fieldName].map(p => {
-                            const parseDate = (dateStr) => {
-                                const parts = dateStr.split(' '); 
-                                const day = parseInt(parts[1], 10);
-                                const month = parseInt(parts[3], 10);
-                                return month * 100 + day; 
-                            };
 
-                            const datesByWeek = {};
-
-                            p.dates.forEach(dateStr => {
-                                const dateOnly = dateStr.split(' ').slice(1).join(' '); 
-                                const weekKey = Object.keys(weeksData).find(wk => Object.values(weeksData[wk].days).includes(dateOnly));
-                                
-                                if (weekKey) {
-                                    if (!datesByWeek[weekKey]) datesByWeek[weekKey] = [];
-                                    datesByWeek[weekKey].push(dateStr);
-                                }
-                            });
-
-                            const formattedDatesArray = Object.keys(datesByWeek).map(weekKey => {
-                                const weekName = weeksData[weekKey].name;
-                                const sortedDates = datesByWeek[weekKey].sort((a, b) => parseDate(a) - parseDate(b));
-                                const dateParts = sortedDates.join(' - ');
-                                return `${weekName} : ${dateParts}`;
-                            });
-
-                            const formattedDatesString = formattedDatesArray.join('<br>');
-
-                            return `
-                            <tr>
-                                <td>${p.program}<br><small style="color: #555; font-weight: normal;">(${p.sessionDetails})</small></td>
-                                <td>${p.teacher.replace(/\n/g, '<br>')}</td>
-                                <td>${formattedDatesString}</td>
-                                <td></td>
-                                <td></td>
-                                <td></td>
-                            </tr>
-                        `}).join('');
-
-                        printContent += `
-                            <table>
-                                <thead>
-                                    <tr>
-                                        <th>البرنامج</th>
-                                        <th>المعلم/ة</th>
-                                        <th>تاريخ التنفيذ</th>
-                                        <th>نفذ</th>
-                                        <th>لم ينفذ</th>
-                                        <th>التوقيع</th>
-                                    </tr>
-                                </thead>
-                                <tbody>${tableRows}</tbody>
-                            </table>
-                        `;
+            activeFields.forEach(fieldName => {
+                printContent += '<div class="print-column">';
+                const fieldData = activitiesData.find(f => f.title === fieldName);
+                printContent += `<h3 style="background-color:${fieldData.color}; color:white; padding: 5px; border-radius: 5px 5px 0 0;">${fieldName}</h3>`;
+                let tableRows = programsByField[fieldName].map(p => {
+                    let formattedDatesString = '';
+                    if (p.dates && p.dates.length > 0) {
+                        const sortedDates = [...p.dates].sort((a, b) => parseDate(a) - parseDate(b));
+                        const firstDateStr = sortedDates[0];
+                        const lastDateStr = sortedDates[sortedDates.length - 1];
+                        const firstDateOnly = firstDateStr.split(' ').slice(1).join(' ');
+                        const lastDateOnly = lastDateStr.split(' ').slice(1).join(' ');
+                        const firstWeekKey = Object.keys(weeksData).find(wk => Object.values(weeksData[wk].days).includes(firstDateOnly));
+                        const lastWeekKey = Object.keys(weeksData).find(wk => Object.values(weeksData[wk].days).includes(lastDateOnly));
+                        const firstWeekName = firstWeekKey ? weeksData[firstWeekKey].name : '';
+                        const lastWeekName = lastWeekKey ? weeksData[lastWeekKey].name : '';
+                        if (firstDateStr === lastDateStr) {
+                            formattedDatesString = `${firstWeekName} (${firstDateOnly})`;
+                        } else {
+                            formattedDatesString = `من ${firstWeekName} (${firstDateOnly}) إلى ${lastWeekName} (${lastDateOnly})`;
+                        }
                     }
-                    printContent += '</div>';
-                });
+                    return `
+                    <tr>
+                        <td>${p.program}<br><small style="color: #555; font-weight: normal;">(${p.sessionDetails})</small></td>
+                        <td>${p.teacher.replace(/\n/g, '<br>')}</td>
+                        <td>${formattedDatesString}</td>
+                        <td></td>
+                        <td></td>
+                        <td></td>
+                    </tr>`;
+                }).join('');
+                printContent += `
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>البرنامج</th>
+                                <th>المعلم/ة</th>
+                                <th>تاريخ التنفيذ</th>
+                                <th>نفذ</th>
+                                <th>لم ينفذ</th>
+                                <th>التوقيع</th>
+                            </tr>
+                        </thead>
+                        <tbody>${tableRows}</tbody>
+                    </table>`;
                 printContent += '</div>';
             });
             printContent += '</div>';
+            // END OF CHANGE
 
             printWindow.document.write(`
                 <!DOCTYPE html>
@@ -812,7 +793,7 @@
                         }
                         body { 
                             font-family: 'Cairo', sans-serif; 
-                            font-size: 8px; 
+                            font-size: ${printFontSize}; 
                             display: flex;
                             flex-direction: column;
                         }
@@ -835,17 +816,29 @@
                         .print-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px; flex-shrink: 0; }
                         .print-header .right-side { display: flex; align-items: center; gap: 8px; }
                         .print-header img { height: 40px; }
-                        .print-header .header-text { font-size: 7px; line-height: 1.2; }
+                        .print-header .header-text { font-size: 0.9em; line-height: 1.2; }
                         .print-header .header-text p { margin: 0; }
                         .print-header .title-container { text-align: center; }
-                        .print-header h1 { color: #00A383; margin: 0; font-size: 15px; }
-                        .print-header h2 { font-size: 13px; font-weight: bold; color: #0093B5; margin: 1px 0; }
-                        .print-header p { color: #555; margin-top: 2px; font-size: 9px; }
-                        .print-grid { display: grid; grid-template-rows: auto auto auto; gap: 8px; flex-grow: 1; }
-                        .print-row { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; page-break-inside: avoid; }
-                        .print-column { page-break-inside: avoid; }
-                        .print-column h3 { font-size: 10px; padding: 3px; border-radius: 4px 4px 0 0; margin: 0; }
-                        table { width: 100%; border-collapse: collapse; font-size: 7px; }
+                        .print-header h1 { color: #00A383; margin: 0; font-size: 1.8em; }
+                        .print-header h2 { font-size: 1.6em; font-weight: bold; color: #0093B5; margin: 1px 0; }
+                        .print-header p { color: #555; margin-top: 2px; font-size: 1.1em; }
+                        
+                        /* START OF CHANGE: Updated print grid CSS */
+                        .print-grid { 
+                            display: grid; 
+                            grid-template-columns: 1fr 1fr;
+                            gap: 8px; 
+                            flex-grow: 1; 
+                            align-content: start; /* Pack items to the top */
+                        }
+                        .print-column { 
+                            page-break-inside: avoid; 
+                            break-inside: avoid; /* For better compatibility */
+                        }
+                        /* END OF CHANGE */
+
+                        .print-column h3 { font-size: 1.2em; padding: 3px; border-radius: 4px 4px 0 0; margin: 0; }
+                        table { width: 100%; border-collapse: collapse; font-size: 1em; }
                         th, td { border: 1px solid #ccc; padding: 2px; text-align: right; vertical-align: middle; word-wrap: break-word; font-weight: normal; }
                         th { background-color: #f2f2f2; font-weight: bold; }
                         table th:nth-child(1), table td:nth-child(1) { width: 24%; }
@@ -854,7 +847,7 @@
                         table th:nth-child(4), table td:nth-child(4) { width: 6%; }
                         table th:nth-child(5), table td:nth-child(5) { width: 6%; }
                         table th:nth-child(6), table td:nth-child(6) { width: 6%; }
-                        .print-signatures { display: flex; justify-content: space-around; margin-top: auto; padding-top: 10px; font-size: 9px; font-weight: bold; page-break-inside: avoid; flex-shrink: 0; }
+                        .print-signatures { display: flex; justify-content: space-around; margin-top: auto; padding-top: 10px; font-size: 1.1em; font-weight: bold; page-break-inside: avoid; flex-shrink: 0; }
                         .signature-box { text-align: center; }
                     </style>
                 </head>
@@ -911,7 +904,6 @@
         }
         
         function saveState() {
-            if (isInitializing) return;
             const programSelections = {};
             document.querySelectorAll('main tr[data-program-id]').forEach(row => {
                 const id = row.dataset.programId;
@@ -934,12 +926,12 @@
                 currentRegion: currentRegion,
                 selectedStages: selectedStages,
                 programSelections: programSelections,
+                printFontSize: document.getElementById('print-font-size').value, // Save font size
             };
             localStorage.setItem('activityPlanState', JSON.stringify(state));
         }
 
         function loadState() {
-            isInitializing = true;
             const savedState = localStorage.getItem('activityPlanState');
             if (savedState) {
                 const state = JSON.parse(savedState);
@@ -949,6 +941,7 @@
                 document.getElementById('school-name').value = state.schoolName || '';
                 document.getElementById('activity-leader-name').value = state.activityLeaderName || '';
                 document.getElementById('school-director-name').value = state.schoolDirectorName || '';
+                document.getElementById('print-font-size').value = state.printFontSize || '8px'; // Load font size
 
                 selectRegion(state.currentRegion || 'other');
                 
@@ -968,29 +961,18 @@
                     });
                 }
             }
-            isInitializing = false;
-            saveState();
         }
 
         function resetPlan() {
-            showConfirmation('هل أنت متأكد من رغبتك في مسح جميع البيانات والبدء من جديد؟', () => {
+            if (confirm('هل أنت متأكد من رغبتك في مسح جميع البيانات والبدء من جديد؟')) {
                 localStorage.removeItem('activityPlanState');
                 location.reload();
-            });
+            }
         }
 
         document.addEventListener('DOMContentLoaded', function() {
             generateSections();
             loadState();
-            
-            // Confirmation Modal Logic
-            document.getElementById('confirm-cancel-btn').onclick = hideConfirmation;
-            document.getElementById('confirm-ok-btn').onclick = () => {
-                if (confirmCallback) {
-                    confirmCallback();
-                }
-                hideConfirmation();
-            };
         });
     </script>
 </body>
