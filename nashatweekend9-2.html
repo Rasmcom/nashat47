@@ -185,7 +185,7 @@
     </div>
 
     <script>
-        let selectedGrades = ['all'];
+        let selectedGrades = [];
         let currentRegion = 'other';
         let activeSelection = null;
         let tempSelectedDates = [];
@@ -326,32 +326,62 @@
                 { name: 'يوم الصحة العالمي', sessions: { p1:2,p2:2,p3:2, p4:2,p5:2,p6:2, m1: 1, m2: 1, h2: 1 } },
             ]},
         ];
-
-        function calculateTotalSessions(sessions, selectedGrades) {
-            if (!selectedGrades || selectedGrades.length === 0) {
-                return 0;
-            }
-
-            const gradesToCalculate = selectedGrades.includes('all') ? allGradeKeys : selectedGrades;
-            
-            // Logic for Primary stage (take the max)
-            const primaryGrades = gradesToCalculate.filter(g => g.startsWith('p'));
-            let primarySessions = 0;
-            if (primaryGrades.length > 0) {
-                primarySessions = Math.max(0, ...primaryGrades.map(g => sessions[g] || 0));
-            }
-
-            // Logic for Middle stage (sum the sessions)
-            const middleGrades = gradesToCalculate.filter(g => g.startsWith('m'));
-            const middleSessions = middleGrades.reduce((sum, g) => sum + (sessions[g] || 0), 0);
-            
-            // Logic for High stage (sum the sessions)
-            const highGrades = gradesToCalculate.filter(g => g.startsWith('h'));
-            const highSessions = highGrades.reduce((sum, g) => sum + (sessions[g] || 0), 0);
-                    
-            return primarySessions + middleSessions + highSessions;
-        }
         
+        // Helper functions for date formatting
+        function parseDateForSort(dateStr) {
+            // Example dateStr: "الأحد 1 / 3" or "الخميس 12 / 7"
+            const parts = dateStr.split(' '); // ["الأحد", "1", "/", "3"]
+            const datePart = parts.slice(1).join(''); // "1/3"
+            const dateParts = datePart.split('/');
+            if (dateParts.length < 2) return 9999;
+            const day = parseInt(dateParts[0], 10);
+            const month = parseInt(dateParts[1], 10);
+            return month * 100 + day;
+        }
+
+        function formatDatesForDisplay(datesArray) {
+            if (!datesArray || datesArray.length === 0) {
+                return { text: '', json: '[]' };
+            }
+
+            const getWeekInfoForDate = (fullDateStr) => {
+                const datePartWithSpaces = fullDateStr.split(' ').slice(1).join(' '); 
+                for (const weekKey in weeksData) {
+                    const week = weeksData[weekKey];
+                    if (Object.values(week.days).includes(datePartWithSpaces)) {
+                        return week;
+                    }
+                }
+                return null;
+            };
+            
+            const sortedDates = [...datesArray].sort((a, b) => parseDateForSort(a) - parseDateForSort(b));
+            const firstDateStr = sortedDates[0];
+            const lastDateStr = sortedDates[sortedDates.length - 1];
+            
+            const firstWeekInfo = getWeekInfoForDate(firstDateStr);
+            const lastWeekInfo = getWeekInfoForDate(lastDateStr);
+
+            let textContent = '';
+
+            if (firstWeekInfo && lastWeekInfo && firstWeekInfo.name === lastWeekInfo.name) {
+                // All dates fall within the same week
+                textContent = `${firstWeekInfo.name} من ${firstWeekInfo.startDate} إلى ${firstWeekInfo.endDate}`;
+            } else if (sortedDates.length > 1 && firstWeekInfo && lastWeekInfo) {
+                // Dates span multiple weeks
+                textContent = `من ${firstWeekInfo.name} (${firstDateStr}) إلى ${lastWeekInfo.name} (${lastDateStr})`;
+            } else {
+                // Fallback (e.g., single date)
+                textContent = sortedDates.join(' | ');
+            }
+
+            return {
+                text: textContent,
+                json: JSON.stringify(sortedDates)
+            };
+        }
+
+
         function createGradeSelectionUI() {
             const container = document.getElementById('grade-selection-container');
             container.innerHTML = `
@@ -402,28 +432,6 @@
             activitiesData.forEach(section => {
                 const programRows = section.programs.map((prog, index) => {
                     const uniqueId = `${section.id}-${index}`;
-                    const gradeSelectors = allGradeKeys.map(gradeKey => {
-                        const sessionCount = prog.sessions[gradeKey];
-                        if (sessionCount > 0) {
-                            return `
-                            <div class="grade-date-selector p-2 border-t first:border-t-0" data-grade-key="${gradeKey}">
-                                <div class="flex justify-between items-center text-sm mb-1">
-                                    <span class="font-semibold">${gradeNames[gradeKey]}</span>
-                                    <span class="text-gray-500">${sessionCount} حصص</span>
-                                </div>
-                                <div class="flex items-center gap-1">
-                                    <div class="dates-display text-xs text-gray-600 flex-grow text-right p-1 bg-gray-50 rounded min-h-[26px]"></div>
-                                    <div class="flex-shrink-0 flex gap-1">
-                                        <button class="date-select-btn bg-blue-500 text-white px-2 py-1 rounded text-xs hover:bg-blue-600" onclick="openDatePicker('${uniqueId}', '${gradeKey}')">اختيار</button>
-                                        <button class="clear-date-btn bg-red-500 text-white px-2 py-1 rounded text-xs hover:bg-red-600" onclick="clearGradeDates('${uniqueId}', '${gradeKey}')">مسح</button>
-                                    </div>
-                                </div>
-                            </div>
-                            `;
-                        }
-                        return '';
-                    }).join('');
-
                     return `
                     <tr 
                         data-program-id="${uniqueId}" 
@@ -441,7 +449,7 @@
                             <textarea placeholder="اسم المعلم/ة" class="teacher-input w-full p-1 border rounded text-sm" rows="2" onblur="saveState()"></textarea>
                         </td>
                         <td class="border border-gray-300 px-2 py-3 align-top">
-                            <div class="space-y-1">${gradeSelectors}</div>
+                            <div class="space-y-1" id="selectors-container-${uniqueId}"></div>
                         </td>
                     </tr>
                 `}).join('');
@@ -482,8 +490,179 @@
                 `;
                 mainContainer.innerHTML += sectionHTML;
             });
-             updateGradeSelectorsVisibility();
         }
+        
+        function updateAllDateSelectors() {
+            document.querySelectorAll('tr[data-program-id]').forEach(row => {
+                updateDateSelectorsForRow(row);
+            });
+        }
+
+        function updateDateSelectorsForRow(row) {
+            const uniqueId = row.dataset.programId;
+            const sessions = JSON.parse(row.dataset.sessions);
+            const container = document.getElementById(`selectors-container-${uniqueId}`);
+            if (!container) return;
+            container.innerHTML = '';
+
+            const itemsToDisplay = selectedGrades.includes('all') 
+                ? ['primary_all', 'middle_all', 'high_all'] 
+                : selectedGrades;
+
+            let newHTML = '';
+            itemsToDisplay.forEach(key => {
+                const individualGradeKeys = gradeGroups[key] || [key];
+                let sessionCount = 0;
+                let label = gradeNames[key];
+
+                if (key.startsWith('primary')) {
+                    sessionCount = Math.max(0, ...individualGradeKeys.map(g => sessions[g] || 0));
+                } else {
+                    sessionCount = individualGradeKeys.reduce((sum, g) => sum + (sessions[g] || 0), 0);
+                }
+
+                if (key === 'primary_all') label = 'المرحلة الابتدائية';
+                else if (key === 'primary_lower') label = 'الصفوف الأولية';
+                else if (key === 'primary_upper') label = 'الصفوف العليا';
+                else if (key === 'middle_all') label = 'المرحلة المتوسطة';
+                else if (key === 'high_all') label = 'المرحلة الثانوية';
+
+                if (sessionCount > 0) {
+                    newHTML += `
+                    <div class="grade-date-selector p-2 border-t first:border-t-0" data-grade-key="${key}">
+                        <div class="flex justify-between items-center text-sm mb-1">
+                            <span class="font-semibold">${label}</span>
+                            <span class="text-gray-500">${sessionCount} حصص</span>
+                        </div>
+                        <div class="flex items-center gap-1">
+                            <div class="dates-display text-xs text-gray-600 flex-grow text-right p-1 bg-gray-50 rounded min-h-[26px]" data-dates="[]"></div>
+                            <div class="flex-shrink-0 flex gap-1">
+                                <button class="date-select-btn bg-blue-500 text-white px-2 py-1 rounded text-xs hover:bg-blue-600" onclick="openDatePicker('${uniqueId}', '${key}')">اختيار</button>
+                                <button class="clear-date-btn bg-red-500 text-white px-2 py-1 rounded text-xs hover:bg-red-600" onclick="clearGradeDates('${uniqueId}', '${key}')">مسح</button>
+                            </div>
+                        </div>
+                    </div>`;
+                }
+            });
+
+            container.innerHTML = newHTML;
+            
+            const state = JSON.parse(localStorage.getItem('activityPlanState')) || {};
+            const programData = state.programSelections ? state.programSelections[uniqueId] : null;
+
+            if (programData && programData.datesByGrade) {
+                container.querySelectorAll('.grade-date-selector').forEach(selector => {
+                    const key = selector.dataset.gradeKey;
+                    const individualKeys = gradeGroups[key] || [key];
+                    let datesToShow = [];
+                    // Find the first individual key that has dates saved
+                    for (const indKey of individualKeys) {
+                        if (programData.datesByGrade[indKey] && programData.datesByGrade[indKey].length > 0) {
+                            datesToShow = programData.datesByGrade[indKey];
+                            break;
+                        }
+                    }
+                    
+                    const displayDiv = selector.querySelector('.dates-display');
+                    const formatted = formatDatesForDisplay(datesToShow);
+                    displayDiv.textContent = formatted.text;
+                    displayDiv.dataset.dates = formatted.json;
+                });
+            }
+        }
+
+        function getEffectiveIndividualGrades() {
+            if (selectedGrades.includes('all')) {
+                return [...allGradeKeys];
+            }
+            let individuals = [];
+            selectedGrades.forEach(item => {
+                individuals.push(...(gradeGroups[item] || [item]));
+            });
+            return [...new Set(individuals)];
+        }
+
+        function handleGradeSelection(key) {
+            if (key === 'all') {
+                selectedGrades = ['all'];
+            } else {
+                let newSelection = selectedGrades.includes('all') ? [] : [...selectedGrades];
+                
+                const isAdding = !newSelection.includes(key);
+
+                if (isAdding) {
+                    let conflicts = [];
+                    // If the added key is a group, its members are conflicts.
+                    if (gradeGroups[key]) {
+                        conflicts.push(...gradeGroups[key]);
+                    }
+                    // Any group that contains the added key is a conflict.
+                    for (const groupKey in gradeGroups) {
+                        if (gradeGroups[groupKey].includes(key)) {
+                            conflicts.push(groupKey);
+                        }
+                    }
+                    // Remove all conflicts from the current selection
+                    newSelection = newSelection.filter(item => !conflicts.includes(item));
+                    newSelection.push(key);
+                } else {
+                    // Just remove the key if it's being deselected
+                    newSelection = newSelection.filter(item => item !== key);
+                }
+                
+                selectedGrades = newSelection;
+            }
+
+            updateButtonStyles();
+            updateTitle();
+            updateAllDateSelectors();
+            saveState();
+        }
+
+
+        function updateButtonStyles() {
+            const effectiveSelection = getEffectiveIndividualGrades();
+            
+            allGradeKeys.forEach(key => {
+                const btn = document.getElementById(`btn-${key}`);
+                if(btn) {
+                    if (effectiveSelection.includes(key)) {
+                        btn.classList.add('bg-blue-600', 'text-white', 'shadow-lg');
+                        btn.classList.remove('bg-gray-200', 'text-gray-700');
+                    } else {
+                        btn.classList.remove('bg-blue-600', 'text-white', 'shadow-lg');
+                        btn.classList.add('bg-gray-200', 'text-gray-700');
+                    }
+                }
+            });
+
+            Object.keys(gradeGroups).forEach(key => {
+                const btn = document.getElementById(`btn-${key}`);
+                if(btn) {
+                    const groupMembers = gradeGroups[key];
+                    if (groupMembers.length > 0) { // Ensure not an empty group
+                        const isGroupSelected = groupMembers.every(g => effectiveSelection.includes(g));
+                        if (isGroupSelected) {
+                            btn.classList.add('bg-blue-600', 'text-white', 'shadow-lg');
+                            btn.classList.remove('bg-gray-200', 'text-gray-700');
+                        } else {
+                            btn.classList.remove('bg-blue-600', 'text-white', 'shadow-lg');
+                            btn.classList.add('bg-gray-200', 'text-gray-700');
+                        }
+                    }
+                }
+            });
+
+            const btnAll = document.getElementById('btn-all');
+            if (selectedGrades.includes('all')) {
+                btnAll.classList.add('bg-blue-600', 'text-white', 'shadow-lg');
+                btnAll.classList.remove('bg-gray-200', 'text-gray-700');
+            } else {
+                btnAll.classList.remove('bg-blue-600', 'text-white', 'shadow-lg');
+                btnAll.classList.add('bg-gray-200', 'text-gray-700');
+            }
+        }
+
 
         function selectRegion(region) {
             currentRegion = region;
@@ -518,174 +697,102 @@
             arrow.classList.toggle('rotate-arrow');
         }
 
-        function handleGradeSelection(key) {
-             if (key === 'all') {
-                selectedGrades = ['all'];
-            } else if (gradeGroups[key]) { // It's a group key
-                if (selectedGrades.includes('all')) selectedGrades = [];
-                const groupGrades = gradeGroups[key];
-                const allInGroupSelected = groupGrades.every(g => selectedGrades.includes(g));
-
-                if (allInGroupSelected) {
-                    selectedGrades = selectedGrades.filter(g => !groupGrades.includes(g));
-                } else {
-                    groupGrades.forEach(g => {
-                        if (!selectedGrades.includes(g)) selectedGrades.push(g);
-                    });
-                }
-            } else { // It's an individual grade key
-                if (selectedGrades.includes('all')) selectedGrades = [];
-                if (selectedGrades.includes(key)) {
-                    selectedGrades = selectedGrades.filter(g => g !== key);
-                } else {
-                    selectedGrades.push(key);
-                }
-            }
-             if (selectedGrades.length === 0) selectedGrades = ['all'];
-
-            updateButtonStyles();
-            updateTitle();
-            updateGradeSelectorsVisibility();
-            saveState();
-        }
-
-        function updateButtonStyles() {
-            // Reset all individual buttons
-            allGradeKeys.forEach(key => {
-                const btn = document.getElementById(`btn-${key}`);
-                if(btn) {
-                    btn.classList.remove('bg-blue-600', 'text-white', 'shadow-lg');
-                    btn.classList.add('bg-gray-200', 'text-gray-700');
-                }
-            });
-
-            // Reset all group buttons
-             Object.keys(gradeGroups).forEach(key => {
-                 const btn = document.getElementById(`btn-${key}`);
-                 if(btn) {
-                    btn.classList.remove('bg-blue-600', 'text-white', 'shadow-lg');
-                    btn.classList.add('bg-gray-200', 'text-gray-700');
-                 }
-             });
-
-            // Handle "All" button
-            const btnAll = document.getElementById('btn-all');
-            if (selectedGrades.includes('all')) {
-                btnAll.classList.add('bg-blue-600', 'text-white', 'shadow-lg');
-                btnAll.classList.remove('bg-gray-200', 'text-gray-700');
-            } else {
-                btnAll.classList.remove('bg-blue-600', 'text-white', 'shadow-lg');
-                btnAll.classList.add('bg-gray-200', 'text-gray-700');
-                
-                // Set styles for selected individual grades
-                selectedGrades.forEach(key => {
-                    const btn = document.getElementById(`btn-${key}`);
-                    if (btn) {
-                        btn.classList.add('bg-blue-600', 'text-white', 'shadow-lg');
-                        btn.classList.remove('bg-gray-200', 'text-gray-700');
-                    }
-                });
-
-                // Set styles for selected group buttons
-                Object.keys(gradeGroups).forEach(key => {
-                    const groupGrades = gradeGroups[key];
-                    if (groupGrades.every(g => selectedGrades.includes(g))) {
-                        const btn = document.getElementById(`btn-${key}`);
-                        if(btn) {
-                            btn.classList.add('bg-blue-600', 'text-white', 'shadow-lg');
-                            btn.classList.remove('bg-gray-200', 'text-gray-700');
-                        }
-                    }
-                });
-            }
-        }
-
         function updateTitle() {
             const stageTitleHeader = document.getElementById('stage-title-header');
             if (selectedGrades.includes('all') || selectedGrades.length === 0) {
                 stageTitleHeader.textContent = '';
                 return;
             }
-
-            const titles = [];
-            const hasPrimaryLower = gradeGroups.primary_lower.every(g => selectedGrades.includes(g));
-            const hasPrimaryUpper = gradeGroups.primary_upper.every(g => selectedGrades.includes(g));
-            const hasMiddle = gradeGroups.middle_all.every(g => selectedGrades.includes(g));
-            const hasHigh = gradeGroups.high_all.every(g => selectedGrades.includes(g));
             
-            const individualPrimary = selectedGrades.filter(g => g.startsWith('p') && !hasPrimaryLower && !hasPrimaryUpper);
-            const individualMiddle = selectedGrades.filter(g => g.startsWith('m') && !hasMiddle);
-            const individualHigh = selectedGrades.filter(g => g.startsWith('h') && !hasHigh);
-
-
-            if (hasPrimaryLower && hasPrimaryUpper) {
-                titles.push('للمرحلة الابتدائية');
-            } else if (hasPrimaryLower) {
-                titles.push('للصفوف الأولية');
-            } else if (hasPrimaryUpper) {
-                titles.push('للصفوف العليا');
-            }
-            if(individualPrimary.length > 0) {
-                 titles.push(`لـ ${individualPrimary.map(g => gradeNames[g]).join(' و')}`);
+            const titles = [];
+            
+            let primTitleDone = false;
+            if (selectedGrades.includes('primary_all')) { titles.push('للمرحلة الابتدائية'); primTitleDone = true; }
+            else if (selectedGrades.includes('primary_lower') && selectedGrades.includes('primary_upper')) { titles.push('للمرحلة الابتدائية'); primTitleDone = true; }
+            
+            if (!primTitleDone) {
+                 if (selectedGrades.includes('primary_lower')) titles.push('للصفوف الأولية');
+                 if (selectedGrades.includes('primary_upper')) titles.push('للصفوف العليا');
             }
 
-            if (hasMiddle) {
+            const individualInSelection = selectedGrades.filter(g => !gradeGroups[g]);
+            const primIndividuals = individualInSelection.filter(g => g.startsWith('p'));
+
+            if(primIndividuals.length > 0) {
+                 const primText = `لـ ${primIndividuals.map(g => gradeNames[g]).join(' و')}`;
+                 if (!titles.some(t => t.includes('للمرحلة الابتدائية') || t.includes('للصفوف'))) {
+                     titles.push(primText);
+                 }
+            }
+
+            if (selectedGrades.includes('middle_all')) {
                 titles.push('للمرحلة المتوسطة');
-            } else if (individualMiddle.length > 0) {
-                titles.push(`لـ ${individualMiddle.map(g => gradeNames[g]).join(' و')}`);
+            } else {
+                const midIndividuals = individualInSelection.filter(g => g.startsWith('m'));
+                if (midIndividuals.length > 0) {
+                    titles.push(`لـ ${midIndividuals.map(g => gradeNames[g]).join(' و')}`);
+                }
             }
 
-            if (hasHigh) {
+            if (selectedGrades.includes('high_all')) {
                  titles.push('للمرحلة الثانوية');
-            } else if (individualHigh.length > 0) {
-                titles.push(`لـ ${individualHigh.map(g => gradeNames[g]).join(' و')}`);
+            } else {
+                const highIndividuals = individualInSelection.filter(g => g.startsWith('h'));
+                 if (highIndividuals.length > 0) {
+                    titles.push(`لـ ${highIndividuals.map(g => gradeNames[g]).join(' و')}`);
+                }
             }
             
             stageTitleHeader.textContent = titles.join(' - ');
         }
         
-        function updateGradeSelectorsVisibility() {
-            document.querySelectorAll('tr[data-program-id]').forEach(row => {
-                row.querySelectorAll('.grade-date-selector').forEach(selector => {
-                    const gradeKey = selector.dataset.gradeKey;
-                    const isVisible = selectedGrades.includes('all') || selectedGrades.includes(gradeKey);
-                    selector.style.display = isVisible ? 'block' : 'none';
-                });
-            });
-        }
-
         function clearAllFilters() {
-            selectedGrades = ['all'];
+            selectedGrades = [];
             updateButtonStyles();
             updateTitle();
-            updateGradeSelectorsVisibility();
+            updateAllDateSelectors();
             saveState();
         }
 
-        function clearGradeDates(programId, gradeKey) {
+        function clearGradeDates(programId, key) {
             const row = document.querySelector(`tr[data-program-id="${programId}"]`);
             if (row) {
-                const display = row.querySelector(`.grade-date-selector[data-grade-key="${gradeKey}"] .dates-display`);
+                const display = row.querySelector(`.grade-date-selector[data-grade-key="${key}"] .dates-display`);
                 if (display) {
                     display.textContent = '';
+                    display.dataset.dates = '[]';
                 }
                 saveState();
             }
         }
 
-        function openDatePicker(programId, gradeKey) {
-            activeSelection = { programId, gradeKey };
+        function openDatePicker(programId, key) {
+            activeSelection = { programId, key };
             const row = document.querySelector(`tr[data-program-id="${programId}"]`);
             const programName = row.dataset.programName;
-            
             const sessions = JSON.parse(row.dataset.sessions);
-            const totalRequiredSessions = sessions[gradeKey] || 0;
-
-            document.getElementById('modal-title').textContent = `${programName} - ${gradeNames[gradeKey]}`;
             
-            const state = JSON.parse(localStorage.getItem('activityPlanState')) || {};
-            const savedProgram = state.programSelections ? state.programSelections[programId] : null;
-            tempSelectedDates = savedProgram?.datesByGrade?.[gradeKey] ? [...savedProgram.datesByGrade[gradeKey]] : [];
+            const individualGradeKeys = gradeGroups[key] || [key];
+            
+            let totalRequiredSessions = 0;
+            let label = gradeNames[key];
+            
+            if (key.startsWith('primary')) {
+                totalRequiredSessions = Math.max(0, ...individualGradeKeys.map(g => sessions[g] || 0));
+            } else {
+                totalRequiredSessions = individualGradeKeys.reduce((sum, g) => sum + (sessions[g] || 0), 0);
+            }
+            
+            if (key === 'primary_all') label = 'المرحلة الابتدائية';
+            else if (key === 'primary_lower') label = 'الصفوف الأولية';
+            else if (key === 'primary_upper') label = 'الصفوف العليا';
+            else if (key === 'middle_all') label = 'المرحلة المتوسطة';
+            else if (key === 'high_all') label = 'المرحلة الثانوية';
+
+            document.getElementById('modal-title').textContent = `${programName} - ${label}`;
+            
+            const displayDiv = row.querySelector(`.grade-date-selector[data-grade-key="${key}"] .dates-display`);
+            tempSelectedDates = displayDiv.dataset.dates ? JSON.parse(displayDiv.dataset.dates) : [];
 
             updateDatePickerCounter(totalRequiredSessions);
 
@@ -702,8 +809,9 @@
                 
                 Object.entries(weekData.days).forEach(([dayName, dayDate]) => {
                     const dayButton = document.createElement('button');
+                    const fullDate = `${dayName} ${dayDate}`;
                     dayButton.className = 'day p-2 border rounded-md text-sm';
-                    dayButton.dataset.date = `${dayName} ${dayDate}`;
+                    dayButton.dataset.date = fullDate;
                     
                     let buttonText = `${dayName}<br>${dayDate}`;
                     if (weekData.specialDays && weekData.specialDays[dayDate]) {
@@ -714,7 +822,7 @@
                         dayButton.onclick = () => toggleDateSelection(dayButton, totalRequiredSessions);
                     }
                     
-                    if (tempSelectedDates.includes(dayButton.dataset.date)) {
+                    if (tempSelectedDates.includes(fullDate)) {
                         dayButton.classList.add('selected');
                     }
                     
@@ -760,11 +868,14 @@
         }
 
         function saveDates() {
-            const { programId, gradeKey } = activeSelection;
+            if (!activeSelection) return;
+            const { programId, key } = activeSelection;
             const row = document.querySelector(`tr[data-program-id="${programId}"]`);
-            const datesDisplay = row.querySelector(`.grade-date-selector[data-grade-key="${gradeKey}"] .dates-display`);
+            const datesDisplay = row.querySelector(`.grade-date-selector[data-grade-key="${key}"] .dates-display`);
             if (datesDisplay) {
-                datesDisplay.textContent = tempSelectedDates.join(' | ');
+                const formatted = formatDatesForDisplay(tempSelectedDates);
+                datesDisplay.textContent = formatted.text;
+                datesDisplay.dataset.dates = formatted.json;
             }
             saveState();
             closeDatePicker();
@@ -785,22 +896,23 @@
             }
 
             const programSelections = state.programSelections || {};
-            const gradesForPrint = state.selectedGrades || ['all'];
             
+            const effectiveGradesForPrint = getEffectiveIndividualGrades();
+            if (effectiveGradesForPrint.length === 0) {
+                 alert('يرجى اختيار الفصول الدراسية أولاً قبل الطباعة.');
+                 isPrinting = false;
+                 return;
+            }
+
             const plannedPrograms = Object.entries(programSelections)
                 .map(([id, data]) => {
                     const row = document.querySelector(`tr[data-program-id="${id}"]`);
+                    if (!row) return null;
                     const sessionsData = JSON.parse(row.dataset.sessions);
                     
-                    const totalSessions = calculateTotalSessions(sessionsData, gradesForPrint);
-                    
-                    let sessionDetails = '';
-                    const gradesToShowDetails = gradesForPrint.includes('all') ? allGradeKeys : gradesForPrint;
+                    const hasRelevantDates = Object.keys(data.datesByGrade || {}).some(gradeKey => effectiveGradesForPrint.includes(gradeKey) && data.datesByGrade[gradeKey].length > 0);
 
-                    sessionDetails = gradesToShowDetails.map(grade => {
-                        const count = sessionsData[grade] || 0;
-                        return count > 0 ? `${gradeNames[grade]}: ${count}` : '';
-                    }).filter(Boolean).join('، ');
+                    if (!hasRelevantDates) return null;
                     
                     return {
                         field: row.dataset.fieldName,
@@ -808,13 +920,12 @@
                         teacher: data.teacher || 'غير محدد',
                         datesByGrade: data.datesByGrade || {},
                         color: row.dataset.fieldColor,
-                        totalSessions: totalSessions,
-                        sessionDetails: sessionDetails,
+                        sessionsData: sessionsData,
                     };
-                }).filter(p => p.totalSessions > 0 && Object.keys(p.datesByGrade).some(key => (gradesForPrint.includes('all') || gradesForPrint.includes(key)) && p.datesByGrade[key].length > 0) );
+                }).filter(p => p);
 
             if (plannedPrograms.length === 0) {
-                alert('يرجى اختيار الفصول وتحديد تواريخ لبرنامج واحد على الأقل قبل الطباعة.');
+                alert('يرجى تحديد تواريخ لبرنامج واحد على الأقل قبل الطباعة.');
                 isPrinting = false;
                 return;
             }
@@ -847,14 +958,6 @@
                 .map(field => field.title)
                 .filter(title => programsByField[title]);
 
-            const parseDate = (dateStr) => {
-                const parts = dateStr.split(' ');
-                const dateParts = parts[1].split('/');
-                const day = parseInt(dateParts[0], 10);
-                const month = parseInt(dateParts[1], 10);
-                return month * 100 + day;
-            };
-
             let printContent = '<div class="print-grid">';
             activeFields.forEach(fieldName => {
                 printContent += '<div class="print-column">';
@@ -862,22 +965,51 @@
                 printContent += `<h3 style="background-color:${fieldData.color}; color:white; padding: 5px; border-radius: 5px 5px 0 0;">${fieldName}</h3>`;
                 let tableRows = programsByField[fieldName].map(p => {
                     const dateEntries = [];
-                    const gradesToShow = gradesForPrint.includes('all') ? allGradeKeys : gradesForPrint;
+                    const sessionDetailsParts = [];
                     
-                    gradesToShow.forEach(gradeKey => {
-                        const dates = p.datesByGrade[gradeKey];
-                        if (dates && dates.length > 0) {
-                             const sortedDates = [...dates].sort((a, b) => parseDate(a) - parseDate(b));
-                            const dateRangeString = sortedDates.join(' | ');
-                            dateEntries.push(`<strong style="color:#333;">${gradeNames[gradeKey]}:</strong> ${dateRangeString}`);
+                    const displayItems = selectedGrades.includes('all') ? ['primary_all', 'middle_all', 'high_all'] : selectedGrades;
+
+                    displayItems.forEach(key => {
+                        const individualKeys = gradeGroups[key] || [key];
+                        const relevantIndividualKeys = individualKeys.filter(ik => effectiveGradesForPrint.includes(ik));
+                        if(relevantIndividualKeys.length === 0) return;
+
+                        let sessionCount = 0;
+                        let label = gradeNames[key];
+                        
+                        if (key.startsWith('primary')) {
+                             sessionCount = Math.max(0, ...relevantIndividualKeys.map(g => p.sessionsData[g] || 0));
+                        } else {
+                             sessionCount = relevantIndividualKeys.reduce((sum, g) => sum + (p.sessionsData[g] || 0), 0);
+                        }
+                        
+                        if(sessionCount === 0) return;
+                        
+                        if (key === 'primary_all') label = 'المرحلة الابتدائية';
+                        else if (key === 'primary_lower') label = 'الصفوف الأولية';
+                        else if (key === 'primary_upper') label = 'الصفوف العليا';
+                        else if (key === 'middle_all') label = 'المرحلة المتوسطة';
+                        else if (key === 'high_all') label = 'المرحلة الثانوية';
+
+                        sessionDetailsParts.push(`${label}: ${sessionCount}`);
+                        
+                        const allDates = relevantIndividualKeys.flatMap(g => p.datesByGrade[g] || []);
+                        const uniqueDates = [...new Set(allDates)];
+
+                        if (uniqueDates.length > 0) {
+                             const formattedDatesString = formatDatesForDisplay(uniqueDates).text;
+                            dateEntries.push(`<strong style="color:#333;">${label}:</strong> ${formattedDatesString}`);
                         }
                     });
 
+                    const sessionDetails = sessionDetailsParts.join('، ');
                     const formattedDatesString = dateEntries.join('<br>');
                     
+                     if (!formattedDatesString) return ''; // Skip row if no dates for selected grades
+
                     return `
                     <tr>
-                        <td>${p.program}<br><small style="color: #555; font-weight: normal;">(${p.sessionDetails})</small></td>
+                        <td>${p.program}<br><small style="color: #555; font-weight: normal;">(${sessionDetails})</small></td>
                         <td>${p.teacher.replace(/\n/g, '<br>')}</td>
                         <td>${formattedDatesString}</td>
                         <td></td>
@@ -885,6 +1017,9 @@
                         <td></td>
                     </tr>`;
                 }).join('');
+                
+                if (tableRows.trim() === '') return; // Skip field if no programs have dates for selected grades
+
                 printContent += `
                     <table>
                         <thead>
@@ -911,41 +1046,13 @@
                     <title>خطة النشاط الطلابي لـ ${schoolName}</title>
                     <style>
                         @import url('https://fonts.googleapis.com/css2?family=Cairo:wght@400;700&display=swap');
-                        * {
-                            -webkit-print-color-adjust: exact !important;
-                            print-color-adjust: exact !important;
-                        }
-                        @page { 
-                            size: A4 landscape; 
-                            margin: 0; 
-                        }
-                        html, body {
-                            height: 100%;
-                            margin: 0;
-                            padding: 0;
-                        }
-                        body { 
-                            font-family: 'Cairo', sans-serif; 
-                            font-size: ${printFontSize}; 
-                            display: flex;
-                            flex-direction: column;
-                        }
-                        .print-gradient-top {
-                            height: 30px;
-                            background: linear-gradient(to left, #00A383, #0093B5);
-                            flex-shrink: 0;
-                        }
-                        .print-gradient-bottom {
-                            height: 15px;
-                            background: linear-gradient(to left, #00A383, #0093B5);
-                            flex-shrink: 0;
-                        }
-                        .print-content-wrapper {
-                            padding: 5mm;
-                            flex-grow: 1;
-                            display: flex;
-                            flex-direction: column;
-                        }
+                        * { -webkit-print-color-adjust: exact !important; print-color-adjust: exact !important; }
+                        @page { size: A4 landscape; margin: 0; }
+                        html, body { height: 100%; margin: 0; padding: 0; }
+                        body { font-family: 'Cairo', sans-serif; font-size: ${printFontSize}; display: flex; flex-direction: column; }
+                        .print-gradient-top { height: 30px; background: linear-gradient(to left, #00A383, #0093B5); flex-shrink: 0; }
+                        .print-gradient-bottom { height: 15px; background: linear-gradient(to left, #00A383, #0093B5); flex-shrink: 0; }
+                        .print-content-wrapper { padding: 5mm; flex-grow: 1; display: flex; flex-direction: column; }
                         .print-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px; flex-shrink: 0; }
                         .print-header .right-side { display: flex; align-items: center; gap: 8px; }
                         .print-header img { height: 40px; }
@@ -955,19 +1062,8 @@
                         .print-header h1 { color: #00A383; margin: 0; font-size: 1.8em; }
                         .print-header h2 { font-size: 1.6em; font-weight: bold; color: #0093B5; margin: 1px 0; }
                         .print-header p { color: #555; margin-top: 2px; font-size: 1.1em; }
-                        
-                        .print-grid { 
-                            display: grid; 
-                            grid-template-columns: 1fr 1fr;
-                            gap: 8px; 
-                            flex-grow: 1; 
-                            align-content: start;
-                        }
-                        .print-column { 
-                            page-break-inside: avoid; 
-                            break-inside: avoid;
-                        }
-
+                        .print-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; flex-grow: 1; align-content: start; }
+                        .print-column { page-break-inside: avoid; break-inside: avoid; }
                         .print-column h3 { font-size: 1.2em; padding: 3px; border-radius: 4px 4px 0 0; margin: 0; }
                         table { width: 100%; border-collapse: collapse; font-size: 1em; }
                         th, td { border: 1px solid #ccc; padding: 2px; text-align: right; vertical-align: middle; word-wrap: break-word; font-weight: normal; }
@@ -1043,19 +1139,24 @@
                 let hasData = false;
 
                 row.querySelectorAll('.grade-date-selector').forEach(selector => {
-                    const gradeKey = selector.dataset.gradeKey;
-                    const datesText = selector.querySelector('.dates-display').textContent;
-                    if (datesText) {
-                        const dates = datesText.split(' | ');
-                        if (dates.length > 0 && dates[0] !== '') {
-                            datesByGrade[gradeKey] = dates;
+                    const key = selector.dataset.gradeKey;
+                    const displayDiv = selector.querySelector('.dates-display');
+                    const datesJson = displayDiv.dataset.dates;
+                    
+                    if (datesJson) {
+                        const dates = JSON.parse(datesJson);
+                        if (dates.length > 0) {
+                            const individualKeys = gradeGroups[key] || [key];
+                            individualKeys.forEach(indKey => {
+                                datesByGrade[indKey] = dates;
+                            });
                             hasData = true;
                         }
                     }
                 });
 
                 if (teacher || hasData) {
-                    programSelections[id] = { teacher, datesByGrade };
+                   programSelections[id] = { teacher, datesByGrade };
                 }
             });
 
@@ -1087,27 +1188,9 @@
 
                 selectRegion(state.currentRegion || 'other');
                 
-                selectedGrades = state.selectedGrades || ['all'];
-                updateButtonStyles();
-                updateTitle();
-                updateGradeSelectorsVisibility();
+                selectedGrades = state.selectedGrades || [];
                 
-                if (state.programSelections) {
-                    Object.entries(state.programSelections).forEach(([id, data]) => {
-                        const row = document.querySelector(`tr[data-program-id="${id}"]`);
-                        if (row) {
-                            row.querySelector('.teacher-input').value = data.teacher || '';
-                            if (data.datesByGrade) {
-                                Object.entries(data.datesByGrade).forEach(([gradeKey, dates]) => {
-                                    const display = row.querySelector(`.grade-date-selector[data-grade-key="${gradeKey}"] .dates-display`);
-                                    if (display) {
-                                        display.textContent = (dates || []).join(' | ');
-                                    }
-                                });
-                            }
-                        }
-                    });
-                }
+                // No need to load program selections here, updateAllDateSelectors will do it
             }
         }
 
@@ -1122,6 +1205,9 @@
             createGradeSelectionUI();
             generateSections();
             loadState();
+            updateButtonStyles();
+            updateTitle();
+            updateAllDateSelectors();
         });
     </script>
 </body>
