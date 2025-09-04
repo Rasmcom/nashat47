@@ -65,6 +65,14 @@
             cursor: not-allowed;
         }
 
+        #update-modal-box {
+            transition: transform 0.3s ease-out, opacity 0.3s ease-out;
+        }
+        #update-modal-box.active {
+            transform: scale(1);
+            opacity: 1;
+        }
+
         @media print {
             .no-print { display: none !important; }
             @page { 
@@ -83,7 +91,28 @@
 <body class="bg-gray-50 min-h-screen">
 
     <div class="bg-red-600 text-white text-center py-2 no-print font-semibold">
-        تم التحديث بتاريخ ١٠ / ٣ / ١٤٤٧ هـ
+        تم التحديث بتاريخ ١٣ / ٣ / ١٤٤٧ هـ
+    </div>
+
+    <!-- Update Modal -->
+    <div id="update-modal" class="fixed inset-0 z-50 items-center justify-center p-4 no-print bg-black bg-opacity-50 hidden">
+        <div class="bg-white rounded-lg shadow-xl p-6 max-w-lg w-full text-center transform transition-all scale-95 opacity-0" id="update-modal-box">
+            <h3 class="text-2xl font-bold mb-4 text-gray-800 flex items-center justify-center gap-2">
+                <span class="text-3xl">🔔</span>
+                <span>تنبيه</span>
+            </h3>
+            <div class="text-right space-y-3 text-gray-600">
+                <p class="font-semibold text-lg">✨ يسعدنا إبلاغك بأننا أضفنا مميزات جديدة:</p>
+                <ul class="list-disc list-inside space-y-2 pr-4">
+                    <li><strong class="text-teal-600">اختيار تفصيلي:</strong> الآن يمكنك اختيار كل فصل على حدة عند تحديد البرامج للمراحل.</li>
+                    <li><strong class="text-teal-600">النسخ الاحتياطي:</strong> أضفنا ميزة حفظ واستعادة البيانات لضمان عدم فقدان معلوماتك.</li>
+                </ul>
+                <p class="font-bold text-center pt-4">✅ استمتع بالتجربة الجديدة الآن!</p>
+            </div>
+            <div class="mt-6">
+                <button onclick="closeUpdateModal()" class="px-6 py-2 bg-teal-600 text-white rounded-lg hover:bg-teal-700 transition-colors font-semibold">موافق</button>
+            </div>
+        </div>
     </div>
 
     <!-- Date Picker Modal -->
@@ -151,9 +180,12 @@
                             </div>
                         </div>
                     </div>
-                    <div class="mt-8 flex gap-4 justify-center">
+                    <div class="mt-8 flex gap-4 justify-center flex-wrap">
                         <button onclick="clearAllFilters()" class="text-sm text-gray-500 hover:text-gray-700 underline">إلغاء اختيار الفصول</button>
                         <button onclick="printSchedule()" class="px-4 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700 transition-colors text-sm">🖨️ طباعة الجدول</button>
+                        <button onclick="saveBackup()" class="px-4 py-2 bg-sky-600 text-white rounded-lg hover:bg-sky-700 transition-colors text-sm">💾 حفظ نسخة احتياطية</button>
+                        <button onclick="document.getElementById('backup-input').click()" class="px-4 py-2 bg-orange-500 text-white rounded-lg hover:bg-orange-600 transition-colors text-sm">📂 استعادة نسخة</button>
+                        <input type="file" id="backup-input" class="hidden" accept=".json" onchange="handleFileUpload(event)">
                         <button onclick="resetPlan()" class="px-4 py-2 bg-red-600 text-white rounded-lg hover:bg-red-700 transition-colors text-sm">🔄 إعادة بناء الخطة</button>
                     </div>
                 </div>
@@ -185,6 +217,7 @@
     </div>
 
     <script>
+        const UPDATE_VERSION_KEY = 'updateModalSeen_v1'; // Increment this version to show the modal again for everyone
         let selectedGrades = [];
         let currentRegion = 'other';
         let activeSelection = null;
@@ -252,78 +285,78 @@
         let weeksData = weeksDataDefault;
 
         const activitiesData = [
-             { id: 'citizenship', title: 'المواطنة والحياة', color: '#981E47', icon: 'https://k.top4top.io/p_3472ccl2l0.gif', programs: [
-                { name: 'التطوع الطلابي', sessions: { p1:4, p2:4, p3:4, p4:6, p5:6, p6:6, m1: 2, m2: 2, m3: 1, h2: 3, h3: 2 } },
-                { name: 'مهارات طموحة', sessions: { p1:6, p2:6, p3:6, p4:4, p5:4, p6:4, m1: 1, m2: 1, m3: 1, h2: 1, h3: 0 } },
-                { name: 'قيمنا حياة', sessions: { p4:12, p5:12, p6:12, m1: 4, m2: 4, m3: 4, h2: 4, h3: 4 } },
+            { id: 'citizenship', title: 'المواطنة والحياة', color: '#981E47', icon: 'https://k.top4top.io/p_3472ccl2l0.gif', programs: [
+                { name: 'التطوع الطلابي', sessions: { p1:4, p2:4, p3:4, p4:6, p5:6, p6:6, m1:5, m2:5, m3:5, h2:5, h3:5 } },
+                { name: 'مهارات طموحة', sessions: { p1:6, p2:6, p3:6, p4:4, p5:4, p6:4, m1:3, m2:3, m3:3, h2:2, h3:2 } },
+                { name: 'قيمنا حياة', sessions: { p4:12, p5:12, p6:12, m1:12, m2:12, m3:12, h2:12, h3:12 } },
             ]},
             { id: 'culture', title: 'الثقافة والفنون', color: '#FF7145', icon: 'https://a.top4top.io/p_3472miame2.gif', programs: [
-                 { name: 'الفن السابع (السينما)', sessions: { p1:8,p2:8,p3:8, p4:8,p5:8,p6:8, m1: 3, m2: 3, m3: 2, h2: 3, h3: 2 } },
-                 { name: 'حدائق الفن', sessions: { p1:6,p2:6,p3:6, p4:6,p5:6,p6:6, m1: 2, m2: 2, m3: 2, h2: 2, h3: 2 } },
-                 { name: 'الأزياء السعودية', sessions: { p1:4,p2:4,p3:4, p4:4,p5:4,p6:4, m1: 2, m2: 2, m3: 2, h2: 2, h3: 2 } },
-                 { name: 'الثقافة الإعلامية', sessions: { p1:4,p2:4,p3:4, p4:4,p5:4,p6:4, m1: 2, m2: 2, m3: 2, h2: 3, h3: 2 } },
-                 { name: 'تصاميم تراثية معاصرة', sessions: { p1:5,p2:5,p3:5, p4:5,p5:5,p6:5, m1: 2, m2: 2, m3: 1, h2: 2, h3: 1 } },
-                 { name: 'الفنون المسرحية', sessions: { p1:8,p2:8,p3:8, p4:8,p5:8,p6:8, m1: 3, m2: 3, m3: 2, h2: 3, h3: 2 } },
-                 { name: 'البرنامج الموسيقي (الأناشيد الوطنية)', sessions: { p1:8,p2:8,p3:8, p4:8,p5:8,p6:8, m1: 3, m2: 3, m3: 2, h2: 3, h3: 2 } },
-                 { name: 'حكايات مرئية', sessions: { p1:6,p2:6,p3:6, p4:6,p5:6,p6:6, m1: 4, m2: 4, m3: 3, h2: 4, h3: 3 } },
+                 { name: 'الفن السابع (السينما)', sessions: { p1:8, p2:8, p3:8, p4:8, p5:8, p6:8, m1:8, m2:8, m3:8, h2:8, h3:8 } },
+                 { name: 'حدائق الفن', sessions: { p1:6, p2:6, p3:6, p4:6, p5:6, p6:6, m1:6, m2:6, m3:6, h2:6, h3:6 } },
+                 { name: 'الأزياء السعودية', sessions: { p1:4, p2:4, p3:4, p4:4, p5:4, p6:4, m1:6, m2:6, m3:6, h2:6, h3:6 } },
+                 { name: 'الثقافة الإعلامية', sessions: { p1:4, p2:4, p3:4, p4:4, p5:4, p6:4, m1:6, m2:6, m3:6, h2:8, h3:8 } },
+                 { name: 'تصاميم تراثية معاصرة', sessions: { p1:5, p2:5, p3:5, p4:5, p5:5, p6:5, m1:5, m2:5, m3:5, h2:5, h3:5 } },
+                 { name: 'الفنون المسرحية', sessions: { p1:8, p2:8, p3:8, p4:8, p5:8, p6:8, m1:8, m2:8, m3:8, h2:8, h3:8 } },
+                 { name: 'البرنامج الموسيقي (الأناشيد الوطنية)', sessions: { p1:8, p2:8, p3:8, p4:8, p5:8, p6:8, m1:8, m2:8, m3:8, h2:8, h3:8 } },
+                 { name: 'حكايات مرئية', sessions: { p1:6, p2:6, p3:6, p4:6, p5:6, p6:6, m1:11, m2:11, m3:11, h2:11, h3:11 } },
             ]},
             { id: 'sports', title: 'الرياضة والصحة', color: '#2FB7BD', icon: 'https://c.top4top.io/p_3472urwbn4.gif', programs: [
-                { name: 'مهارات الرياضات الجماعية', sessions: { p1:6,p2:6,p3:6, p4:8,p5:8,p6:8, m1: 3, m2: 3, m3: 2, h2: 3, h3: 2 } },
-                { name: 'مهارات الرياضات الفردية', sessions: { p1:8,p2:8,p3:8, p4:8,p5:8,p6:8, m1: 3, m2: 3, m3: 2, h2: 2, h3: 2 } },
-                { name: 'مهارات رياضات الدفاع عن النفس', sessions: { p1:8,p2:8,p3:8, p4:8,p5:8,p6:8, m1: 3, m2: 3, m3: 2, h2: 2, h3: 2 } },
-                { name: 'مهارات الرياضات الإلكترونية والترفيه', sessions: { p1:8,p2:8,p3:8, p4:8,p5:8,p6:8, m1: 2, m2: 2, m3: 2, h2: 3, h3: 2 } },
-                { name: 'مهارات الرياضات الذهنية', sessions: { p1:6,p2:6,p3:6, p4:8,p5:8,p6:8, m1: 3, m2: 3, m3: 2, h2: 3, h3: 2 } },
-                { name: 'مهارات الأولمبياد الرياضي', sessions: { p1:6,p2:6,p3:6, p4:8,p5:8,p6:8, m1: 3, m2: 3, m3: 2, h2: 3, h3: 2 } },
+                { name: 'مهارات الرياضات الجماعية', sessions: { p1:6, p2:6, p3:6, p4:8, p5:8, p6:8, m1:8, m2:8, m3:8, h2:8, h3:8 } },
+                { name: 'مهارات الرياضات الفردية', sessions: { p1:8, p2:8, p3:8, p4:8, p5:8, p6:8, m1:8, m2:8, m3:8, h2:6, h3:6 } },
+                { name: 'مهارات رياضات الدفاع عن النفس', sessions: { p1:8, p2:8, p3:8, p4:8, p5:8, p6:8, m1:8, m2:8, m3:8, h2:6, h3:6 } },
+                { name: 'مهارات الرياضات الإلكترونية والترفيه', sessions: { p1:8, p2:8, p3:8, p4:8, p5:8, p6:8, m1:6, m2:6, m3:6, h2:8, h3:8 } },
+                { name: 'مهارات الرياضات الذهنية', sessions: { p1:6, p2:6, p3:6, p4:8, p5:8, p6:8, m1:8, m2:8, m3:8, h2:8, h3:8 } },
+                { name: 'مهارات الأولمبياد الرياضي', sessions: { p1:6, p2:6, p3:6, p4:8, p5:8, p6:8, m1:8, m2:8, m3:8, h2:8, h3:8 } },
             ]},
             { id: 'science', title: 'العلوم والتقنية', color: '#24344D', icon: 'https://l.top4top.io/p_3472daolv1.gif', programs: [
-                { name: 'برنامج تطبيقات STEM', sessions: { p1:3,p2:3,p3:3, p4:5,p5:5,p6:5, m1: 3, m2: 2, m3: 2, h2: 2, h3: 2 } },
-                { name: 'برنامج التصاميم العلمية التقنية', sessions: { p1:2,p2:2,p3:2, p4:5,p5:5,p6:5, m1: 3, m2: 2, m3: 2, h2: 2, h3: 2 } },
-                { name: 'برنامج رواد فضاء المستقبل', sessions: { p1:3,p2:3,p3:3, p4:5,p5:5,p6:5, m1: 3, m2: 2, m3: 2, h2: 3, h3: 3 } },
-                { name: 'برنامج مدن المستقبل', sessions: { p1:3,p2:3,p3:3, p4:4,p5:4,p6:4, m1: 3, m2: 2, m3: 2, h2: 3, h3: 3 } },
-                { name: 'برنامج الذكاء الاصطناعي', sessions: { p1:10,p2:10,p3:10, p4:10,p5:10,p6:10, m1: 4, m2: 3, m3: 3, h2: 3, h3: 3 } },
-                { name: 'برنامج تحدي إنترنت الأشياء', sessions: { p1:3,p2:3,p3:3, p4:4,p5:4,p6:4, m1: 3, m2: 2, m3: 2, h2: 3, h3: 3 } },
+                { name: 'برنامج تطبيقات STEM', sessions: { p1:3, p2:3, p3:3, p4:5, p5:5, p6:5, m1:7, m2:7, m3:7, h2:7, h3:7 } },
+                { name: 'برنامج التصاميم العلمية التقنية', sessions: { p1:2, p2:2, p3:2, p4:5, p5:5, p6:5, m1:7, m2:7, m3:7, h2:7, h3:7 } },
+                { name: 'برنامج رواد فضاء المستقبل', sessions: { p1:3, p2:3, p3:3, p4:5, p5:5, p6:5, m1:7, m2:7, m3:7, h2:9, h3:9 } },
+                { name: 'برنامج مدن المستقبل', sessions: { p1:3, p2:3, p3:3, p4:4, p5:4, p6:4, m1:7, m2:7, m3:7, h2:9, h3:9 } },
+                { name: 'برنامج الذكاء الاصطناعي', sessions: { p1:10, p2:10, p3:10, p4:10, p5:10, p6:10, m1:10, m2:10, m3:10, h2:10, h3:10 } },
+                { name: 'برنامج تحدي إنترنت الأشياء', sessions: { p1:3, p2:3, p3:3, p4:4, p5:4, p6:4, m1:7, m2:7, m3:7, h2:9, h3:9 } },
             ]},
             { id: 'scouting', title: 'النشاط الكشفي', color: '#018083', icon: 'https://b.top4top.io/p_3472h0ngk3.gif', programs: [
-                { name: 'خيمتي الجميلة', sessions: { p1:3,p2:3,p3:3 } },
-                { name: 'خشبة وحبل', sessions: { p4:12,p5:12,p6:12 } },
-                { name: 'الملاحة على اليابس', sessions: { m1: 1, m2: 1, m3: 1 } },
-                { name: 'أغامر وأكتشف', sessions: { h2: 2, h3: 1 } },
-                { name: 'براعم البيئة والمجتمع', sessions: { p1:2,p2:2,p3:2 } },
-                { name: 'أشارك مجتمعي وأزرع شجرة', sessions: { p4:3,p5:3,p6:3 } },
-                { name: 'مجتمعي وبيئتي مسؤوليتي', sessions: { m1: 2, m2: 2, m3: 2 } },
-                { name: 'سفير البيئة والمجتمع', sessions: { h2: 2, h3: 1 } },
-                { name: 'بصمتي الكشفية', sessions: { p1:3,p2:3,p3:3 } },
-                { name: 'وطني في قلبي', sessions: { p4:3,p5:3,p6:3 } },
-                { name: 'صناع التغيير', sessions: { m1: 1, m2: 1, m3: 1 } },
-                { name: 'سواعد الكشفية', sessions: { h2: 2, h3: 2 } },
-                { name: 'براعم النور', sessions: { p1:2,p2:2,p3:2 } },
-                { name: 'كنوز الصغار', sessions: { p4:2,p5:2,p6:2 } },
-                { name: 'من هدي القرآن والسنة', sessions: { m1: 1, m2: 1, m3: 1 } },
-                { name: 'درب الإحسان', sessions: { h2: 1, h3: 1 } },
-                { name: 'بوصلة الاكتشاف', sessions: { p1:3,p2:3,p3:3 } },
-                { name: 'خيمة التجارب المسلية', sessions: { p4:6,p5:6,p6:6 } },
-                { name: 'مخيمي التقني', sessions: { m1: 4, m2: 3, m3: 3 } },
-                { name: 'واحة الإبداع الكشفي', sessions: { h2: 1, h3: 1 } },
-                { name: 'عاداتي الصحية الكشفية', sessions: { p1:3,p2:3,p3:3 } },
-                { name: 'طبقي الكشفي', sessions: { p4:3,p5:3,p6:3 } },
-                { name: 'خطواتي الكشفية الصحية', sessions: { m1: 1, m2: 1, m3: 1 } },
-                { name: 'مهرجان الأفلام الكشفية الصحية', sessions: { h2: 2, h3: 1 } },
-                { name: 'مهاراتي وكشفيتي', sessions: { p1:2,p2:2,p3:2 } },
-                { name: 'صافرة واصطفاف', sessions: { p4:2,p5:2,p6:2 } },
-                { name: 'مهاراتي الكشفية من الاستعداد إلى الإنجاز', sessions: { m1: 2, m2: 1, m3: 1 } },
-                { name: 'أفقي الكشفي الواسع', sessions: { h2: 2, h3: 2 } },
+                { name: 'خيمتي الجميلة', sessions: { p1:3, p2:3, p3:3 } },
+                { name: 'خشبة وحبل', sessions: { p4:12, p5:12, p6:12 } },
+                { name: 'الملاحة على اليابس', sessions: { m1:3, m2:3, m3:3 } },
+                { name: 'أغامر وأكتشف', sessions: { h2:5, h3:5 } },
+                { name: 'براعم البيئة والمجتمع', sessions: { p1:2, p2:2, p3:2 } },
+                { name: 'أشارك مجتمعي وأزرع شجرة', sessions: { p4:3, p5:3, p6:3 } },
+                { name: 'مجتمعي وبيئتي مسؤوليتي', sessions: { m1:6, m2:6, m3:6 } },
+                { name: 'سفير البيئة والمجتمع', sessions: { h2:5, h3:5 } },
+                { name: 'بصمتي الكشفية', sessions: { p1:3, p2:3, p3:3 } },
+                { name: 'وطني في قلبي', sessions: { p4:3, p5:3, p6:3 } },
+                { name: 'صناع التغيير', sessions: { m1:3, m2:3, m3:3 } },
+                { name: 'سواعد الكشفية', sessions: { h2:6, h3:6 } },
+                { name: 'براعم النور', sessions: { p1:2, p2:2, p3:2 } },
+                { name: 'كنوز الصغار', sessions: { p4:2, p5:2, p6:2 } },
+                { name: 'من هدي القرآن والسنة', sessions: { m1:3, m2:3, m3:3 } },
+                { name: 'درب الإحسان', sessions: { h2:3, h3:3 } },
+                { name: 'بوصلة الاكتشاف', sessions: { p1:3, p2:3, p3:3 } },
+                { name: 'خيمة التجارب المسلية', sessions: { p4:6, p5:6, p6:6 } },
+                { name: 'مخيمي التقني', sessions: { m1:10, m2:10, m3:10 } },
+                { name: 'واحة الإبداع الكشفي', sessions: { h2:4, h3:4 } },
+                { name: 'عاداتي الصحية الكشفية', sessions: { p1:3, p2:3, p3:3 } },
+                { name: 'طبقي الكشفي', sessions: { p4:3, p5:3, p6:3 } },
+                { name: 'خطواتي الكشفية الصحية', sessions: { m1:3, m2:3, m3:3 } },
+                { name: 'مهرجان الأفلام الكشفية الصحية', sessions: { h2:5, h3:5 } },
+                { name: 'مهاراتي وكشفيتي', sessions: { p1:2, p2:2, p3:2 } },
+                { name: 'صافرة واصطفاف', sessions: { p4:2, p5:2, p6:2 } },
+                { name: 'مهاراتي الكشفية من الاستعداد إلى الإنجاز', sessions: { m1:4, m2:4, m3:4 } },
+                { name: 'أفقي الكشفي الواسع', sessions: { h2:6, h3:6 } },
             ]},
             { id: 'events', title: 'الأيام والمناسبات', color: '#583C71', icon: 'https://e.top4top.io/p_34729xucx5.gif', programs: [
-                { name: 'اليوم الوطني', date: 'يوافق ١ / ٤ / ١٤٤٧ هـ', sessions: { p1:4,p2:4,p3:4, p4:4,p5:4,p6:4, m1: 2, m2: 1, m3: 1, h2: 1, h3: 1 } },
-                { name: 'يوم التسامح العالمي', date: 'يوافق ٢٥ / ٥ / ١٤٤٧ هـ', sessions: { p1:2,p2:2,p3:2, p4:2,p5:2,p6:2, m1: 1 } },
-                { name: 'اليوم العالمي للطفل', date: 'يوافق ٢٩ / ٥ / ١٤٤٧ هـ', sessions: { p1:2,p2:2,p3:2, p4:2,p5:2,p6:2, } },
-                { name: 'اليوم العالمي لذوي الإعاقة', date: 'يوافق ١٢ / ٦ / ١٤٤٧ هـ', sessions: { p1:2,p2:2,p3:2, p4:2,p5:2,p6:2, m1: 1, m2: 1, h2: 1 } },
-                { name: 'اليوم العالمي للغة العربية', date: 'يوافق ٢٧ / ٦ / ١٤٤٧ هـ', sessions: { p1:2,p2:2,p3:2, p4:2,p5:2,p6:2, m1: 1 } },
-                { name: 'اليوم العالمي للتعليم', date: 'يوافق ٧ / ٨ / ١٤٤٧ هـ', sessions: { p1:2,p2:2,p3:2, p4:2,p5:2,p6:2, m1: 1, m2: 1, h2: 1 } },
-                { name: 'يوم التأسيس', date: 'يوافق ٥ / ٩ / ١٤٤٧ هـ', sessions: { p1:4,p2:4,p3:4, p4:4,p5:4,p6:4, m1: 2, m2: 1, m3: 1, h2: 1, h3: 1 } },
-                { name: 'يوم العلم السعودي', date: 'يوافق ٢٢ / ٩ / ١٤٤٧ هـ', sessions: { p1:3,p2:3,p3:3, p4:3,p5:3,p6:3, m1: 1, m2: 1, h2: 1 } },
-                { name: 'يوم السعودية الخضراء', date: 'يوافق ٨ / ١٠ / ١٤٤٧ هـ', sessions: { p1:3,p2:3,p3:3, p4:3,p5:3,p6:3, m1: 1, m2: 1, h2: 1 } },
-                { name: 'يوم الصحة العالمي', date: 'يوافق ١٩ / ١٠ / ١٤٤٧ هـ', sessions: { p1:2,p2:2,p3:2, p4:2,p5:2,p6:2, m1: 1, m2: 1, h2: 1 } },
+                { name: 'اليوم الوطني', date: 'يوافق ١ / ٤ / ١٤٤٧ هـ', sessions: { p1:4, p2:4, p3:4, p4:4, p5:4, p6:4, m1:4, m2:4, m3:4, h2:4, h3:4 } },
+                { name: 'يوم التسامح العالمي', date: 'يوافق ٢٥ / ٥ / ١٤٤٧ هـ', sessions: { p1:2, p2:2, p3:2, p4:2, p5:2, p6:2, m1:1, m2:1, m3:1, h2:1, h3:1 } },
+                { name: 'اليوم العالمي للطفل', date: 'يوافق ٢٩ / ٥ / ١٤٤٧ هـ', sessions: { p1:2, p2:2, p3:2, p4:2, p5:2, p6:2 } },
+                { name: 'اليوم العالمي لذوي الإعاقة', date: 'يوافق ١٢ / ٦ / ١٤٤٧ هـ', sessions: { p1:2, p2:2, p3:2, p4:2, p5:2, p6:2, m1:2, m2:2, m3:2, h2:2, h3:2 } },
+                { name: 'اليوم العالمي للغة العربية', date: 'يوافق ٢٧ / ٦ / ١٤٤٧ هـ', sessions: { p1:2, p2:2, p3:2, p4:2, p5:2, p6:2, m1:1, m2:1, m3:1, h2:1, h3:1 } },
+                { name: 'اليوم العالمي للتعليم', date: 'يوافق ٧ / ٨ / ١٤٤٧ هـ', sessions: { p1:2, p2:2, p3:2, p4:2, p5:2, p6:2, m1:2, m2:2, m3:2, h2:2, h3:2 } },
+                { name: 'يوم التأسيس', date: 'يوافق ٥ / ٩ / ١٤٤٧ هـ', sessions: { p1:4, p2:4, p3:4, p4:4, p5:4, p6:4, m1:4, m2:4, m3:4, h2:4, h3:4 } },
+                { name: 'يوم العلم السعودي', date: 'يوافق ٢٢ / ٩ / ١٤٤٧ هـ', sessions: { p1:3, p2:3, p3:3, p4:3, p5:3, p6:3, m1:2, m2:2, m3:2, h2:2, h3:2 } },
+                { name: 'يوم السعودية الخضراء', date: 'يوافق ٨ / ١٠ / ١٤٤٧ هـ', sessions: { p1:3, p2:3, p3:3, p4:3, p5:3, p6:3, m1:2, m2:2, m3:2, h2:2, h3:2 } },
+                { name: 'يوم الصحة العالمي', date: 'يوافق ١٩ / ١٠ / ١٤٤٧ هـ', sessions: { p1:2, p2:2, p3:2, p4:2, p5:2, p6:2, m1:2, m2:2, m3:2, h2:2, h3:2 } },
             ]},
         ];
         
@@ -515,11 +548,7 @@
                 let sessionCount = 0;
                 let label = gradeNames[key];
 
-                if (key.startsWith('primary')) {
-                    sessionCount = Math.max(0, ...individualGradeKeys.map(g => sessions[g] || 0));
-                } else {
-                    sessionCount = individualGradeKeys.reduce((sum, g) => sum + (sessions[g] || 0), 0);
-                }
+                sessionCount = Math.max(0, ...individualGradeKeys.map(g => sessions[g] || 0));
 
                 if (key === 'primary_all') label = 'المرحلة الابتدائية';
                 else if (key === 'primary_lower') label = 'الصفوف الأولية';
@@ -546,29 +575,6 @@
             });
 
             container.innerHTML = newHTML;
-            
-            const state = JSON.parse(localStorage.getItem('activityPlanState')) || {};
-            const programData = state.programSelections ? state.programSelections[uniqueId] : null;
-
-            if (programData && programData.datesByGrade) {
-                container.querySelectorAll('.grade-date-selector').forEach(selector => {
-                    const key = selector.dataset.gradeKey;
-                    const individualKeys = gradeGroups[key] || [key];
-                    let datesToShow = [];
-                    // Find the first individual key that has dates saved
-                    for (const indKey of individualKeys) {
-                        if (programData.datesByGrade[indKey] && programData.datesByGrade[indKey].length > 0) {
-                            datesToShow = programData.datesByGrade[indKey];
-                            break;
-                        }
-                    }
-                    
-                    const displayDiv = selector.querySelector('.dates-display');
-                    const formatted = formatDatesForDisplay(datesToShow);
-                    displayDiv.textContent = formatted.text;
-                    displayDiv.dataset.dates = formatted.json;
-                });
-            }
         }
 
         function getEffectiveIndividualGrades() {
@@ -777,11 +783,7 @@
             let totalRequiredSessions = 0;
             let label = gradeNames[key];
             
-            if (key.startsWith('primary')) {
-                totalRequiredSessions = Math.max(0, ...individualGradeKeys.map(g => sessions[g] || 0));
-            } else {
-                totalRequiredSessions = individualGradeKeys.reduce((sum, g) => sum + (sessions[g] || 0), 0);
-            }
+            totalRequiredSessions = Math.max(0, ...individualGradeKeys.map(g => sessions[g] || 0));
             
             if (key === 'primary_all') label = 'المرحلة الابتدائية';
             else if (key === 'primary_lower') label = 'الصفوف الأولية';
@@ -881,18 +883,11 @@
             closeDatePicker();
         }
         
-        function printSchedule() {
-            if (isPrinting) {
-                alert('عملية طباعة جارية بالفعل. يرجى الانتظار.');
-                return;
-            }
-            isPrinting = true;
-
-            const state = JSON.parse(localStorage.getItem('activityPlanState')) || {};
+        function getPrintableHtml(){
+             const state = JSON.parse(localStorage.getItem('activityPlanState')) || {};
             if (!state) {
                 alert('لا توجد بيانات محفوظة للطباعة.');
-                isPrinting = false;
-                return;
+                return null;
             }
 
             const programSelections = state.programSelections || {};
@@ -900,8 +895,7 @@
             const effectiveGradesForPrint = getEffectiveIndividualGrades();
             if (effectiveGradesForPrint.length === 0) {
                  alert('يرجى اختيار الفصول الدراسية أولاً قبل الطباعة.');
-                 isPrinting = false;
-                 return;
+                 return null;
             }
 
             const plannedPrograms = Object.entries(programSelections)
@@ -926,16 +920,9 @@
 
             if (plannedPrograms.length === 0) {
                 alert('يرجى تحديد تواريخ لبرنامج واحد على الأقل قبل الطباعة.');
-                isPrinting = false;
-                return;
+                return null;
             }
 
-            const printWindow = window.open('', '_blank');
-            if (!printWindow) {
-                alert('فشل فتح نافذة الطباعة. يرجى السماح بالنوافذ المنبثقة لهذا الموقع.');
-                isPrinting = false;
-                return;
-            }
 
             let printStageTitle = document.getElementById('stage-title-header').textContent || 'لجميع المراحل الدراسية';
             const printSemesterSubtitle = 'الفصل الدراسي الأول للعام الدراسي ١٤٤٧ هـ';
@@ -944,7 +931,6 @@
             const schoolName = state.schoolName || '';
             const leaderName = state.activityLeaderName || '';
             const directorName = state.schoolDirectorName || '';
-            const printFontSize = state.printFontSize || '8px';
             
             const programsByField = {};
             plannedPrograms.forEach(p => {
@@ -958,12 +944,24 @@
                 .map(field => field.title)
                 .filter(title => programsByField[title]);
 
-            let printContent = '<div class="print-grid">';
+            let printContent = '<table style="width:100%; border-collapse: collapse; direction: rtl;">';
+            
             activeFields.forEach(fieldName => {
-                printContent += '<div class="print-column">';
                 const fieldData = activitiesData.find(f => f.title === fieldName);
-                printContent += `<h3 style="background-color:${fieldData.color}; color:white; padding: 5px; border-radius: 5px 5px 0 0;">${fieldName}</h3>`;
-                let tableRows = programsByField[fieldName].map(p => {
+                printContent += `<tr><td colspan="6" style="background-color:${fieldData.color}; color:white; padding: 5px; text-align:center; font-weight: bold;">${fieldName}</td></tr>`;
+                
+                printContent += `
+                    <tr style="background-color: #f2f2f2;">
+                        <th style="border: 1px solid #ccc; padding: 4px; width: 25%;">البرنامج</th>
+                        <th style="border: 1px solid #ccc; padding: 4px; width: 15%;">المعلم/ة</th>
+                        <th style="border: 1px solid #ccc; padding: 4px; width: 40%;">تاريخ التنفيذ</th>
+                        <th style="border: 1px solid #ccc; padding: 4px; width: 5%;">نفذ</th>
+                        <th style="border: 1px solid #ccc; padding: 4px; width: 5%;">لم ينفذ</th>
+                        <th style="border: 1px solid #ccc; padding: 4px; width: 10%;">التوقيع</th>
+                    </tr>
+                `;
+
+                programsByField[fieldName].forEach(p => {
                     const dateEntries = [];
                     const sessionDetailsParts = [];
                     
@@ -977,11 +975,7 @@
                         let sessionCount = 0;
                         let label = gradeNames[key];
                         
-                        if (key.startsWith('primary')) {
-                             sessionCount = Math.max(0, ...relevantIndividualKeys.map(g => p.sessionsData[g] || 0));
-                        } else {
-                             sessionCount = relevantIndividualKeys.reduce((sum, g) => sum + (p.sessionsData[g] || 0), 0);
-                        }
+                        sessionCount = Math.max(0, ...relevantIndividualKeys.map(g => p.sessionsData[g] || 0));
                         
                         if(sessionCount === 0) return;
                         
@@ -1005,129 +999,161 @@
                     const sessionDetails = sessionDetailsParts.join('، ');
                     const formattedDatesString = dateEntries.join('<br>');
                     
-                     if (!formattedDatesString) return ''; // Skip row if no dates for selected grades
-
-                    return `
-                    <tr>
-                        <td>${p.program}<br><small style="color: #555; font-weight: normal;">(${sessionDetails})</small></td>
-                        <td>${p.teacher.replace(/\n/g, '<br>')}</td>
-                        <td>${formattedDatesString}</td>
-                        <td></td>
-                        <td></td>
-                        <td></td>
-                    </tr>`;
-                }).join('');
-                
-                if (tableRows.trim() === '') return; // Skip field if no programs have dates for selected grades
-
-                printContent += `
-                    <table>
-                        <thead>
+                     if (formattedDatesString) {
+                         printContent += `
                             <tr>
-                                <th>البرنامج</th>
-                                <th>المعلم/ة</th>
-                                <th>تاريخ التنفيذ</th>
-                                <th>نفذ</th>
-                                <th>لم ينفذ</th>
-                                <th>التوقيع</th>
-                            </tr>
-                        </thead>
-                        <tbody>${tableRows}</tbody>
-                    </table>`;
-                printContent += '</div>';
+                                <td style="border: 1px solid #ccc; padding: 4px;">${p.program}<br><small style="color: #555; font-weight: normal;">(${sessionDetails})</small></td>
+                                <td style="border: 1px solid #ccc; padding: 4px;">${p.teacher.replace(/\n/g, '<br>')}</td>
+                                <td style="border: 1px solid #ccc; padding: 4px;">${formattedDatesString}</td>
+                                <td style="border: 1px solid #ccc; padding: 4px;"></td>
+                                <td style="border: 1px solid #ccc; padding: 4px;"></td>
+                                <td style="border: 1px solid #ccc; padding: 4px;"></td>
+                            </tr>`;
+                     }
+                });
             });
-            printContent += '</div>';
+            printContent += '</table>';
 
-            printWindow.document.write(`
+            return `
                 <!DOCTYPE html>
                 <html lang="ar" dir="rtl">
                 <head>
                     <meta charset="UTF-8">
                     <title>خطة النشاط الطلابي لـ ${schoolName}</title>
                     <style>
-                        @import url('https://fonts.googleapis.com/css2?family=Cairo:wght@400;700&display=swap');
-                        * { -webkit-print-color-adjust: exact !important; print-color-adjust: exact !important; }
-                        @page { size: A4 landscape; margin: 0; }
-                        html, body { height: 100%; margin: 0; padding: 0; }
-                        body { font-family: 'Cairo', sans-serif; font-size: ${printFontSize}; display: flex; flex-direction: column; }
-                        .print-gradient-top { height: 30px; background: linear-gradient(to left, #00A383, #0093B5); flex-shrink: 0; }
-                        .print-gradient-bottom { height: 15px; background: linear-gradient(to left, #00A383, #0093B5); flex-shrink: 0; }
-                        .print-content-wrapper { padding: 5mm; flex-grow: 1; display: flex; flex-direction: column; }
-                        .print-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px; flex-shrink: 0; }
-                        .print-header .right-side { display: flex; align-items: center; gap: 8px; }
-                        .print-header img { height: 40px; }
-                        .print-header .header-text { font-size: 0.9em; line-height: 1.2; }
-                        .print-header .header-text p { margin: 0; }
-                        .print-header .title-container { text-align: center; }
-                        .print-header h1 { color: #00A383; margin: 0; font-size: 1.8em; }
-                        .print-header h2 { font-size: 1.6em; font-weight: bold; color: #0093B5; margin: 1px 0; }
-                        .print-header p { color: #555; margin-top: 2px; font-size: 1.1em; }
-                        .print-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; flex-grow: 1; align-content: start; }
-                        .print-column { page-break-inside: avoid; break-inside: avoid; }
-                        .print-column h3 { font-size: 1.2em; padding: 3px; border-radius: 4px 4px 0 0; margin: 0; }
-                        table { width: 100%; border-collapse: collapse; font-size: 1em; }
-                        th, td { border: 1px solid #ccc; padding: 2px; text-align: right; vertical-align: middle; word-wrap: break-word; font-weight: normal; }
-                        th { background-color: #f2f2f2; font-weight: bold; }
-                        table th:nth-child(1), table td:nth-child(1) { width: 24%; }
-                        table th:nth-child(2), table td:nth-child(2) { width: 16%; }
-                        table th:nth-child(3), table td:nth-child(3) { width: 42%; }
-                        table th:nth-child(4), table td:nth-child(4) { width: 6%; }
-                        table th:nth-child(5), table td:nth-child(5) { width: 6%; }
-                        table th:nth-child(6), table td:nth-child(6) { width: 6%; }
-                        .print-signatures { display: flex; justify-content: space-around; margin-top: auto; padding-top: 10px; font-size: 1.1em; font-weight: bold; page-break-inside: avoid; flex-shrink: 0; }
-                        .signature-box { text-align: center; }
+                        body { font-family: 'Arial', sans-serif; direction: rtl; }
+                        table { width: 100%; border-collapse: collapse; }
+                        th, td { border: 1px solid black; padding: 8px; text-align: right; }
+                        th { background-color: #f2f2f2; }
                     </style>
                 </head>
                 <body>
-                    <div class="print-gradient-top"></div>
-                    <div class="print-content-wrapper">
-                        <div class="print-header">
-                            <div class="right-side">
-                                <img src="https://salogos.org/wp-content/uploads/2021/11/UntiTtled-1-1300x988.png" alt="شعار الوزارة">
-                                <div class="header-text">
-                                    <p>${eduAdmin}</p>
-                                    <p>${eduRegion}</p>
-                                    <p>${schoolName}</p>
-                                </div>
+                    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px;">
+                         <div style="display: flex; align-items: center; gap: 10px;">
+                            <img src="https://j.top4top.io/p_3516qltr40.png" alt="شعار الوزارة" style="height: 50px;">
+                             <div>
+                                <p>${eduAdmin}</p>
+                                <p>${eduRegion}</p>
+                                <p>${schoolName}</p>
                             </div>
-                            <div class="title-container">
-                                <h1>خطة النشاط الطلابي</h1>
-                                <h2>${printStageTitle}</h2>
-                                <p>${printSemesterSubtitle}</p>
-                            </div>
-                            <div></div> 
                         </div>
-                        ${printContent}
-                        <div class="print-signatures">
-                            <div class="signature-box">
-                                <p>${leaderName}</p>
-                            </div>
-                            <div class="signature-box">
-                                <p>${directorName}</p>
-                            </div>
+                        <div style="text-align: center;">
+                            <h1>خطة النشاط الطلابي</h1>
+                            <h2>${printStageTitle}</h2>
+                            <p>${printSemesterSubtitle}</p>
+                        </div>
+                        <div></div> 
+                    </div>
+                    ${printContent}
+                    <div style="display: flex; justify-content: space-around; margin-top: 40px; font-weight: bold;">
+                        <div>
+                            <p>رائد/ة النشاط</p>
+                            <p>${leaderName}</p>
+                        </div>
+                        <div>
+                            <p>مدير/ة المدرسة</p>
+                            <p>${directorName}</p>
                         </div>
                     </div>
-                    <div class="print-gradient-bottom"></div>
                 </body>
                 </html>
-            `);
-            
+            `;
+        }
+
+        function printSchedule() {
+            const printFontSize = document.getElementById('print-font-size').value;
+            const htmlContent = getPrintableHtml();
+            if (!htmlContent) return;
+
+            const printWindow = window.open('', '_blank');
+            const style = `
+                <style>
+                    @import url('https://fonts.googleapis.com/css2?family=Cairo:wght@400;700&display=swap');
+                    * { 
+                        -webkit-print-color-adjust: exact !important;
+                        print-color-adjust: exact !important;
+                    }
+                    @page { 
+                        size: A4 landscape; 
+                        margin: 10mm;
+                    }
+                    body { 
+                        font-family: 'Cairo', sans-serif; 
+                        font-size: ${printFontSize};
+                        direction: rtl;
+                    }
+                    table { 
+                        width: 100%; 
+                        border-collapse: collapse; 
+                        font-size: 1em;
+                    }
+                    th, td { 
+                        border: 1px solid #333; 
+                        padding: 4px; 
+                        text-align: right; 
+                        vertical-align: middle;
+                        word-wrap: break-word;
+                    }
+                    th { 
+                        background-color: #f2f2f2 !important; 
+                        font-weight: bold; 
+                    }
+                    h1, h2, p { margin: 0; padding: 0; }
+                </style>
+            `;
+            printWindow.document.write(htmlContent.replace('</head>', `${style}</head>`));
             printWindow.document.close();
             
-            printWindow.onafterprint = function() {
-                printWindow.close();
-                isPrinting = false; 
+            printWindow.onload = function() {
+                printWindow.print();
+                printWindow.onafterprint = () => printWindow.close();
             };
+        }
 
-            setTimeout(() => {
+        function saveBackup() {
+            saveState(); // Ensure current state is saved before backup
+            const stateToSave = localStorage.getItem('activityPlanState');
+            if (!stateToSave || stateToSave === "{}") {
+                alert('لا توجد بيانات محفوظة لحفظها.');
+                return;
+            }
+            const blob = new Blob([stateToSave], { type: 'application/json;charset=utf-8' });
+            const url = URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            const schoolName = JSON.parse(stateToSave).schoolName || 'خطة-النشاط';
+            a.href = url;
+            a.download = `backup-${schoolName}.json`;
+            document.body.appendChild(a);
+            a.click();
+            document.body.removeChild(a);
+            URL.revokeObjectURL(url);
+        }
+
+        function handleFileUpload(event) {
+            const file = event.target.files[0];
+            if (!file) {
+                return;
+            }
+
+            const reader = new FileReader();
+            reader.onload = function(e) {
                 try {
-                    printWindow.print();
-                } catch (e) {
-                    console.error("Print failed:", e);
-                    isPrinting = false; 
-                    printWindow.close();
+                    const loadedState = e.target.result;
+                    // Basic validation to ensure it's a JSON and our state object
+                    const parsedState = JSON.parse(loadedState);
+                    if (parsedState && typeof parsedState === 'object' && 'programSelections' in parsedState) {
+                        localStorage.setItem('activityPlanState', loadedState);
+                        alert('تم استعادة النسخة الاحتياطية بنجاح! سيتم إعادة تحميل الصفحة لتطبيق التغييرات.');
+                        location.reload();
+                    } else {
+                        throw new Error('Invalid file structure.');
+                    }
+                } catch (error) {
+                    alert('ملف غير صالح أو تالف. يرجى اختيار ملف نسخة احتياطية صحيح تم إنشاؤه من هذه الصفحة.');
                 }
-            }, 500);
+            };
+            reader.readAsText(file);
+            event.target.value = ''; // Reset file input
         }
         
         function saveState() {
@@ -1176,21 +1202,51 @@
 
         function loadState() {
             const savedState = localStorage.getItem('activityPlanState');
-            if (savedState) {
-                const state = JSON.parse(savedState);
-                
-                document.getElementById('education-admin').value = state.educationAdmin || '';
-                document.getElementById('education-region').value = state.educationRegion || '';
-                document.getElementById('school-name').value = state.schoolName || '';
-                document.getElementById('activity-leader-name').value = state.activityLeaderName || '';
-                document.getElementById('school-director-name').value = state.schoolDirectorName || '';
-                document.getElementById('print-font-size').value = state.printFontSize || '8px';
+            if (!savedState) return;
+            
+            const state = JSON.parse(savedState);
+            
+            document.getElementById('education-admin').value = state.educationAdmin || '';
+            document.getElementById('education-region').value = state.educationRegion || '';
+            document.getElementById('school-name').value = state.schoolName || '';
+            document.getElementById('activity-leader-name').value = state.activityLeaderName || '';
+            document.getElementById('school-director-name').value = state.schoolDirectorName || '';
+            document.getElementById('print-font-size').value = state.printFontSize || '8px';
 
-                selectRegion(state.currentRegion || 'other');
-                
-                selectedGrades = state.selectedGrades || [];
-                
-                // No need to load program selections here, updateAllDateSelectors will do it
+            selectRegion(state.currentRegion || 'other');
+            
+            selectedGrades = state.selectedGrades || [];
+            
+            updateButtonStyles();
+            updateTitle();
+            updateAllDateSelectors();
+
+             if (state.programSelections) {
+                Object.entries(state.programSelections).forEach(([id, data]) => {
+                    const row = document.querySelector(`tr[data-program-id="${id}"]`);
+                    if (row) {
+                        if (data.teacher) {
+                            row.querySelector('.teacher-input').value = data.teacher;
+                        }
+                        if (data.datesByGrade) {
+                            row.querySelectorAll('.grade-date-selector').forEach(selector => {
+                                const key = selector.dataset.gradeKey;
+                                const individualKeys = gradeGroups[key] || [key];
+                                let datesToShow = [];
+                                for (const indKey of individualKeys) {
+                                    if (data.datesByGrade[indKey] && data.datesByGrade[indKey].length > 0) {
+                                        datesToShow = data.datesByGrade[indKey];
+                                        break;
+                                    }
+                                }
+                                const displayDiv = selector.querySelector('.dates-display');
+                                const formatted = formatDatesForDisplay(datesToShow);
+                                displayDiv.textContent = formatted.text;
+                                displayDiv.dataset.dates = formatted.json;
+                            });
+                        }
+                    }
+                });
             }
         }
 
@@ -1201,13 +1257,33 @@
             }
         }
 
+        // New functions for the modal
+        function showUpdateModal() {
+            const modal = document.getElementById('update-modal');
+            const modalBox = document.getElementById('update-modal-box');
+            modal.style.display = 'flex';
+            setTimeout(() => {
+                modalBox.classList.add('active');
+            }, 50); // Small delay to allow CSS transition
+        }
+
+        function closeUpdateModal() {
+            const modal = document.getElementById('update-modal');
+            const modalBox = document.getElementById('update-modal-box');
+            modalBox.classList.remove('active');
+            setTimeout(() => {
+                modal.style.display = 'none';
+            }, 300); // Match transition duration
+            localStorage.setItem(UPDATE_VERSION_KEY, 'true');
+        }
+
         document.addEventListener('DOMContentLoaded', function() {
             createGradeSelectionUI();
             generateSections();
             loadState();
-            updateButtonStyles();
-            updateTitle();
-            updateAllDateSelectors();
+            if (!localStorage.getItem(UPDATE_VERSION_KEY)) {
+                showUpdateModal();
+            }
         });
     </script>
 </body>
