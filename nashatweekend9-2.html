@@ -223,6 +223,7 @@
         let activeSelection = null;
         let tempSelectedDates = [];
         let isPrinting = false;
+        let isLoading = false; // Flag to prevent saving while loading state
 
         const gradeNames = {
             'p1': 'أول ابتدائي', 'p2': 'ثاني ابتدائي', 'p3': 'ثالث ابتدائي',
@@ -1157,6 +1158,9 @@
         }
         
         function saveState() {
+            // BUG FIX: Prevent saving state while the page is still loading the previous state
+            if (isLoading) return;
+
             const programSelections = {};
             document.querySelectorAll('main tr[data-program-id]').forEach(row => {
                 const id = row.dataset.programId;
@@ -1201,8 +1205,12 @@
         }
 
         function loadState() {
+            isLoading = true; // BUG FIX: Set loading flag
             const savedState = localStorage.getItem('activityPlanState');
-            if (!savedState) return;
+            if (!savedState) {
+                isLoading = false; // BUG FIX: Unset loading flag
+                return;
+            }
             
             const state = JSON.parse(savedState);
             
@@ -1248,6 +1256,7 @@
                     }
                 });
             }
+            isLoading = false; // BUG FIX: Unset loading flag
         }
 
         function resetPlan() {
@@ -1288,4 +1297,3 @@
     </script>
 </body>
 </html>
-
