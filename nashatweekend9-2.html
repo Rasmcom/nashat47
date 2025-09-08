@@ -94,7 +94,6 @@
         تم التحديث بتاريخ ١٣ / ٣ / ١٤٤٧ هـ
     </div>
 
-    <!-- Update Modal -->
     <div id="update-modal" class="fixed inset-0 z-50 items-center justify-center p-4 no-print bg-black bg-opacity-50 hidden">
         <div class="bg-white rounded-lg shadow-xl p-6 max-w-lg w-full text-center transform transition-all scale-95 opacity-0" id="update-modal-box">
             <h3 class="text-2xl font-bold mb-4 text-gray-800 flex items-center justify-center gap-2">
@@ -115,7 +114,6 @@
         </div>
     </div>
 
-    <!-- Date Picker Modal -->
     <div id="date-picker-modal" class="fixed inset-0 z-40 items-center justify-center p-4 no-print bg-black bg-opacity-50 hidden">
         <div class="bg-white rounded-lg shadow-xl p-6 max-w-4xl w-full">
             <h3 id="modal-title" class="text-xl font-bold mb-4">اختر تواريخ التنفيذ</h3>
@@ -128,9 +126,7 @@
         </div>
     </div>
 
-    <!-- Main Content Container -->
     <div id="main-content" class="transition-opacity duration-500">
-        <!-- Header Section -->
         <header class="gradient-header text-white py-4 shadow-lg no-print">
             <div class="container mx-auto px-6 flex justify-between items-center">
                 <div class="flex items-center gap-4">
@@ -149,7 +145,6 @@
             </div>
         </header>
 
-        <!-- Controls Section -->
         <section class="py-8 bg-gray-50 no-print">
             <div class="container mx-auto px-6">
                 <div class="mb-8 p-6 bg-white rounded-lg shadow-md">
@@ -176,8 +171,7 @@
                         <div>
                             <h3 class="text-xl font-semibold text-gray-700 mb-4">اختر الفصول الدراسية:</h3>
                             <div id="grade-selection-container" class="flex flex-col items-center gap-4">
-                                <!-- Grade selectors will be injected here by JS -->
-                            </div>
+                                </div>
                         </div>
                     </div>
                     <div class="mt-8 flex gap-4 justify-center flex-wrap">
@@ -192,12 +186,9 @@
             </div>
         </section>
 
-        <!-- Main Content: Activity Tables -->
         <main class="container mx-auto px-6 py-8">
-            <!-- Sections will be dynamically generated here by JS -->
-        </main>
+            </main>
 
-        <!-- Signature Inputs -->
         <div class="container mx-auto px-6 py-4 no-print">
             <div class="flex justify-between items-center gap-8">
                 <input type="text" id="activity-leader-name" placeholder="أدخل اسم رائد/ة النشاط" class="w-1/2 p-2 text-center bg-transparent border-b-2 border-gray-300 focus:border-teal-500 outline-none" onblur="saveState()">
@@ -205,7 +196,6 @@
             </div>
         </div>
 
-        <!-- Footer -->
         <footer class="bg-gray-800 text-white py-4 text-center no-print">
             <div class="container mx-auto flex justify-center items-center">
                 <a href="https://t.me/+SJnY9vPy7yo5YmI1" target="_blank" class="ml-4">
@@ -884,11 +874,19 @@
             closeDatePicker();
         }
         
-        function getPrintableHtml(){
-             const state = JSON.parse(localStorage.getItem('activityPlanState')) || {};
+        // ===== START: CORRECTED PRINT FUNCTION =====
+        function printSchedule() {
+            if (isPrinting) {
+                alert('عملية طباعة جارية بالفعل. يرجى الانتظار.');
+                return;
+            }
+            isPrinting = true;
+
+            const state = JSON.parse(localStorage.getItem('activityPlanState')) || {};
             if (!state) {
                 alert('لا توجد بيانات محفوظة للطباعة.');
-                return null;
+                isPrinting = false;
+                return;
             }
 
             const programSelections = state.programSelections || {};
@@ -896,7 +894,8 @@
             const effectiveGradesForPrint = getEffectiveIndividualGrades();
             if (effectiveGradesForPrint.length === 0) {
                  alert('يرجى اختيار الفصول الدراسية أولاً قبل الطباعة.');
-                 return null;
+                 isPrinting = false;
+                 return;
             }
 
             const plannedPrograms = Object.entries(programSelections)
@@ -921,9 +920,16 @@
 
             if (plannedPrograms.length === 0) {
                 alert('يرجى تحديد تواريخ لبرنامج واحد على الأقل قبل الطباعة.');
-                return null;
+                isPrinting = false;
+                return;
             }
 
+            const printWindow = window.open('', '_blank');
+            if (!printWindow) {
+                alert('فشل فتح نافذة الطباعة. يرجى السماح بالنوافذ المنبثقة لهذا الموقع.');
+                isPrinting = false;
+                return;
+            }
 
             let printStageTitle = document.getElementById('stage-title-header').textContent || 'لجميع المراحل الدراسية';
             const printSemesterSubtitle = 'الفصل الدراسي الأول للعام الدراسي ١٤٤٧ هـ';
@@ -932,6 +938,7 @@
             const schoolName = state.schoolName || '';
             const leaderName = state.activityLeaderName || '';
             const directorName = state.schoolDirectorName || '';
+            const printFontSize = document.getElementById('print-font-size').value;
             
             const programsByField = {};
             plannedPrograms.forEach(p => {
@@ -945,24 +952,12 @@
                 .map(field => field.title)
                 .filter(title => programsByField[title]);
 
-            let printContent = '<table style="width:100%; border-collapse: collapse; direction: rtl;">';
-            
+            let printContent = '<div class="print-grid">';
             activeFields.forEach(fieldName => {
+                printContent += '<div class="print-column">';
                 const fieldData = activitiesData.find(f => f.title === fieldName);
-                printContent += `<tr><td colspan="6" style="background-color:${fieldData.color}; color:white; padding: 5px; text-align:center; font-weight: bold;">${fieldName}</td></tr>`;
-                
-                printContent += `
-                    <tr style="background-color: #f2f2f2;">
-                        <th style="border: 1px solid #ccc; padding: 4px; width: 25%;">البرنامج</th>
-                        <th style="border: 1px solid #ccc; padding: 4px; width: 15%;">المعلم/ة</th>
-                        <th style="border: 1px solid #ccc; padding: 4px; width: 40%;">تاريخ التنفيذ</th>
-                        <th style="border: 1px solid #ccc; padding: 4px; width: 5%;">نفذ</th>
-                        <th style="border: 1px solid #ccc; padding: 4px; width: 5%;">لم ينفذ</th>
-                        <th style="border: 1px solid #ccc; padding: 4px; width: 10%;">التوقيع</th>
-                    </tr>
-                `;
-
-                programsByField[fieldName].forEach(p => {
+                printContent += `<h3 style="background-color:${fieldData.color}; color:white; padding: 5px; border-radius: 5px 5px 0 0;">${fieldName}</h3>`;
+                let tableRows = programsByField[fieldName].map(p => {
                     const dateEntries = [];
                     const sessionDetailsParts = [];
                     
@@ -1000,116 +995,137 @@
                     const sessionDetails = sessionDetailsParts.join('، ');
                     const formattedDatesString = dateEntries.join('<br>');
                     
-                     if (formattedDatesString) {
-                         printContent += `
-                            <tr>
-                                <td style="border: 1px solid #ccc; padding: 4px;">${p.program}<br><small style="color: #555; font-weight: normal;">(${sessionDetails})</small></td>
-                                <td style="border: 1px solid #ccc; padding: 4px;">${p.teacher.replace(/\n/g, '<br>')}</td>
-                                <td style="border: 1px solid #ccc; padding: 4px;">${formattedDatesString}</td>
-                                <td style="border: 1px solid #ccc; padding: 4px;"></td>
-                                <td style="border: 1px solid #ccc; padding: 4px;"></td>
-                                <td style="border: 1px solid #ccc; padding: 4px;"></td>
-                            </tr>`;
-                     }
-                });
-            });
-            printContent += '</table>';
+                     if (!formattedDatesString) return ''; // Skip row if no dates for selected grades
 
-            return `
+                    return `
+                    <tr>
+                        <td>${p.program}<br><small style="color: #555; font-weight: normal;">(${sessionDetails})</small></td>
+                        <td>${p.teacher.replace(/\n/g, '<br>')}</td>
+                        <td>${formattedDatesString}</td>
+                        <td></td>
+                        <td></td>
+                        <td></td>
+                    </tr>`;
+                }).join('');
+                
+                if (tableRows.trim() === '') {
+                     printContent += '</div>';
+                     return; 
+                }
+
+                printContent += `
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>البرنامج</th>
+                                <th>المعلم/ة</th>
+                                <th>تاريخ التنفيذ</th>
+                                <th>نفذ</th>
+                                <th>لم ينفذ</th>
+                                <th>التوقيع</th>
+                            </tr>
+                        </thead>
+                        <tbody>${tableRows}</tbody>
+                    </table>`;
+                printContent += '</div>';
+            });
+            printContent += '</div>';
+            
+            // Filter out empty columns from the final content
+            printContent = printContent.replace(/<div class="print-column"><\/div>/g, '');
+
+            printWindow.document.write(`
                 <!DOCTYPE html>
                 <html lang="ar" dir="rtl">
                 <head>
                     <meta charset="UTF-8">
                     <title>خطة النشاط الطلابي لـ ${schoolName}</title>
                     <style>
-                        body { font-family: 'Arial', sans-serif; direction: rtl; }
-                        table { width: 100%; border-collapse: collapse; }
-                        th, td { border: 1px solid black; padding: 8px; text-align: right; }
-                        th { background-color: #f2f2f2; }
+                        @import url('https://fonts.googleapis.com/css2?family=Cairo:wght@400;700&display=swap');
+                        * { -webkit-print-color-adjust: exact !important; print-color-adjust: exact !important; }
+                        @page { size: A4 landscape; margin: 0; }
+                        html, body { height: 100%; margin: 0; padding: 0; }
+                        body { font-family: 'Cairo', sans-serif; font-size: ${printFontSize}; display: flex; flex-direction: column; }
+                        .print-gradient-top { height: 30px; background: linear-gradient(to left, #00A383, #0093B5); flex-shrink: 0; }
+                        .print-gradient-bottom { height: 15px; background: linear-gradient(to left, #00A383, #0093B5); flex-shrink: 0; }
+                        .print-content-wrapper { padding: 5mm; flex-grow: 1; display: flex; flex-direction: column; }
+                        .print-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px; flex-shrink: 0; }
+                        .print-header .right-side { display: flex; align-items: center; gap: 8px; }
+                        .print-header img { height: 40px; }
+                        .print-header .header-text { font-size: 0.9em; line-height: 1.2; }
+                        .print-header .header-text p { margin: 0; }
+                        .print-header .title-container { text-align: center; }
+                        .print-header h1 { color: #00A383; margin: 0; font-size: 1.8em; }
+                        .print-header h2 { font-size: 1.6em; font-weight: bold; color: #0093B5; margin: 1px 0; }
+                        .print-header p { color: #555; margin-top: 2px; font-size: 1.1em; }
+                        .print-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; flex-grow: 1; align-content: start; }
+                        .print-column { page-break-inside: avoid; break-inside: avoid; }
+                        .print-column h3 { font-size: 1.2em; padding: 3px; border-radius: 4px 4px 0 0; margin: 0; }
+                        table { width: 100%; border-collapse: collapse; font-size: 1em; }
+                        th, td { border: 1px solid #ccc; padding: 2px; text-align: right; vertical-align: middle; word-wrap: break-word; font-weight: normal; }
+                        th { background-color: #f2f2f2; font-weight: bold; }
+                        table th:nth-child(1), table td:nth-child(1) { width: 24%; }
+                        table th:nth-child(2), table td:nth-child(2) { width: 16%; }
+                        table th:nth-child(3), table td:nth-child(3) { width: 42%; }
+                        table th:nth-child(4), table td:nth-child(4) { width: 6%; }
+                        table th:nth-child(5), table td:nth-child(5) { width: 6%; }
+                        table th:nth-child(6), table td:nth-child(6) { width: 6%; }
+                        .print-signatures { display: flex; justify-content: space-around; margin-top: auto; padding-top: 10px; font-size: 1.1em; font-weight: bold; page-break-inside: avoid; flex-shrink: 0; }
+                        .signature-box { text-align: center; }
                     </style>
                 </head>
                 <body>
-                    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px;">
-                         <div style="display: flex; align-items: center; gap: 10px;">
-                            <img src="https://j.top4top.io/p_3516qltr40.png" alt="شعار الوزارة" style="height: 50px;">
-                             <div>
-                                <p>${eduAdmin}</p>
-                                <p>${eduRegion}</p>
-                                <p>${schoolName}</p>
+                    <div class="print-gradient-top"></div>
+                    <div class="print-content-wrapper">
+                        <div class="print-header">
+                            <div class="right-side">
+                                <img src="https://salogos.org/wp-content/uploads/2021/11/UntiTtled-1-1300x988.png" alt="شعار الوزارة">
+                                <div class="header-text">
+                                    <p>${eduAdmin}</p>
+                                    <p>${eduRegion}</p>
+                                    <p>${schoolName}</p>
+                                </div>
+                            </div>
+                            <div class="title-container">
+                                <h1>خطة النشاط الطلابي</h1>
+                                <h2>${printStageTitle}</h2>
+                                <p>${printSemesterSubtitle}</p>
+                            </div>
+                            <div></div> 
+                        </div>
+                        ${printContent}
+                        <div class="print-signatures">
+                            <div class="signature-box">
+                                <p>${leaderName}</p>
+                            </div>
+                            <div class="signature-box">
+                                <p>${directorName}</p>
                             </div>
                         </div>
-                        <div style="text-align: center;">
-                            <h1>خطة النشاط الطلابي</h1>
-                            <h2>${printStageTitle}</h2>
-                            <p>${printSemesterSubtitle}</p>
-                        </div>
-                        <div></div> 
                     </div>
-                    ${printContent}
-                    <div style="display: flex; justify-content: space-around; margin-top: 40px; font-weight: bold;">
-                        <div>
-                            <p>رائد/ة النشاط</p>
-                            <p>${leaderName}</p>
-                        </div>
-                        <div>
-                            <p>مدير/ة المدرسة</p>
-                            <p>${directorName}</p>
-                        </div>
-                    </div>
+                    <div class="print-gradient-bottom"></div>
                 </body>
                 </html>
-            `;
-        }
-
-        function printSchedule() {
-            const printFontSize = document.getElementById('print-font-size').value;
-            const htmlContent = getPrintableHtml();
-            if (!htmlContent) return;
-
-            const printWindow = window.open('', '_blank');
-            const style = `
-                <style>
-                    @import url('https://fonts.googleapis.com/css2?family=Cairo:wght@400;700&display=swap');
-                    * { 
-                        -webkit-print-color-adjust: exact !important;
-                        print-color-adjust: exact !important;
-                    }
-                    @page { 
-                        size: A4 landscape; 
-                        margin: 10mm;
-                    }
-                    body { 
-                        font-family: 'Cairo', sans-serif; 
-                        font-size: ${printFontSize};
-                        direction: rtl;
-                    }
-                    table { 
-                        width: 100%; 
-                        border-collapse: collapse; 
-                        font-size: 1em;
-                    }
-                    th, td { 
-                        border: 1px solid #333; 
-                        padding: 4px; 
-                        text-align: right; 
-                        vertical-align: middle;
-                        word-wrap: break-word;
-                    }
-                    th { 
-                        background-color: #f2f2f2 !important; 
-                        font-weight: bold; 
-                    }
-                    h1, h2, p { margin: 0; padding: 0; }
-                </style>
-            `;
-            printWindow.document.write(htmlContent.replace('</head>', `${style}</head>`));
+            `);
+            
             printWindow.document.close();
             
-            printWindow.onload = function() {
-                printWindow.print();
-                printWindow.onafterprint = () => printWindow.close();
+            printWindow.onafterprint = function() {
+                printWindow.close();
+                isPrinting = false; 
             };
+
+            setTimeout(() => {
+                try {
+                    printWindow.print();
+                } catch (e) {
+                    console.error("Print failed:", e);
+                    isPrinting = false; 
+                    printWindow.close();
+                }
+            }, 500);
         }
+        // ===== END: CORRECTED PRINT FUNCTION =====
 
         function saveBackup() {
             saveState(); // Ensure current state is saved before backup
