@@ -148,7 +148,6 @@
         </header>
 
         <div class="flex flex-col lg:flex-row gap-8">
-            <!-- Input Section -->
             <div class="w-full lg:w-1/3 card p-6 self-start">
                 <h2 class="text-2xl font-semibold mb-6 border-b-2 border-gray-200 pb-3">1. المدخلات</h2>
                 
@@ -174,16 +173,18 @@
                 <div class="mb-6">
                     <h3 class="text-lg font-medium text-gray-700 mb-3">اختر المراحل الدراسية</h3>
                     <div id="stages-checkboxes" class="grid grid-cols-2 gap-3">
-                        <div><label class="flex items-center space-x-2 space-x-reverse"><input type="checkbox" data-stage="primary" class="h-5 w-5 text-green-600 border-gray-300 rounded focus:ring-green-500"> <span>الأولية</span></label></div>
-                        <div><label class="flex items-center space-x-2 space-x-reverse"><input type="checkbox" data-stage="upper" class="h-5 w-5 text-green-600 border-gray-300 rounded focus:ring-green-500"> <span>العليا</span></label></div>
+                        <div><label class="flex items-center space-x-2 space-x-reverse"><input type="checkbox" data-stage="primary" class="h-5 w-5 text-green-600 border-gray-300 rounded focus:ring-green-500"> <span>الأولية (عادي)</span></label></div>
+                        <div><label class="flex items-center space-x-2 space-x-reverse"><input type="checkbox" data-stage="upper" class="h-5 w-5 text-green-600 border-gray-300 rounded focus:ring-green-500"> <span>العليا (عادي)</span></label></div>
                         <div><label class="flex items-center space-x-2 space-x-reverse"><input type="checkbox" data-stage="middle" class="h-5 w-5 text-green-600 border-gray-300 rounded focus:ring-green-500"> <span>المتوسطة</span></label></div>
                         <div><label class="flex items-center space-x-2 space-x-reverse"><input type="checkbox" data-stage="high" class="h-5 w-5 text-green-600 border-gray-300 rounded focus:ring-green-500"> <span>الثانوية</span></label></div>
+                        <div><label class="flex items-center space-x-2 space-x-reverse"><input type="checkbox" data-stage="primary_tahfiz" class="h-5 w-5 text-green-600 border-gray-300 rounded focus:ring-green-500"> <span>الأولية (تحفيظ)</span></label></div>
+                        <div><label class="flex items-center space-x-2 space-x-reverse"><input type="checkbox" data-stage="primary_private" class="h-5 w-5 text-green-600 border-gray-300 rounded focus:ring-green-500"> <span>الأولية (خاص)</span></label></div>
+                        <div><label class="flex items-center space-x-2 space-x-reverse"><input type="checkbox" data-stage="upper_private" class="h-5 w-5 text-green-600 border-gray-300 rounded focus:ring-green-500"> <span>العليا (خاص)</span></label></div>
                     </div>
                 </div>
 
                 <div id="sessions-inputs" class="space-y-4">
-                    <!-- Dynamic inputs for sessions will be inserted here -->
-                </div>
+                    </div>
 
                 <button id="analyze-btn" class="w-full mt-8 py-3 px-4 bg-blue-600 text-white font-bold rounded-lg shadow-md hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500">
                     بدء التحليل
@@ -196,7 +197,6 @@
                 </button>
             </div>
 
-            <!-- Results Section -->
             <div class="w-full lg:w-2/3 space-y-6">
                 <div id="results-summary"></div>
                 <div id="results-cards" class="grid grid-cols-1 md:grid-cols-2 gap-6">
@@ -210,14 +210,12 @@
                 </div>
                  <div id="unfeasible-container"></div>
                  <div id="stage-plans-container" class="space-y-6">
-                    <!-- Stage-specific plan cards will be injected here -->
-                 </div>
+                    </div>
             </div>
         </div>
     </div>
 
-     <!-- Footer -->
-    <footer class="mt-12 py-6 border-t border-gray-200 no-print">
+     <footer class="mt-12 py-6 border-t border-gray-200 no-print">
         <div class="container mx-auto flex items-center justify-center gap-4">
             <a href="https://www.rasmcom.com" target="_blank">
                 <img src="https://e.top4top.io/p_3463x5tj40.png" alt="شعار رسم" class="h-16 w-auto">
@@ -228,7 +226,6 @@
         </div>
     </footer>
 
-    <!-- Add Program Modal -->
     <div id="add-program-modal" class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center p-4 hidden opacity-0 no-print">
         <div class="bg-white rounded-lg shadow-xl p-6 w-full max-w-md" id="modal-content">
             <h3 class="text-xl font-bold mb-4" id="modal-title">إضافة برنامج</h3>
@@ -258,7 +255,10 @@
             primary: 166, upper: 209, middle: 221, high: 229
         };
         const SESSIONS_PER_WEEK = {
-            primary: 3, upper: 2, middle: 1, high_2: 2, high_3: 1
+            primary: 3, upper: 2, middle: 1, high_2: 2, high_3: 1,
+            primary_tahfiz: 1, // المرحلة الأولية (تحفيظ)
+            primary_private: 1, // المرحلة الأولية (خاص)
+            upper_private: 1 // المرحلة العليا (خاص)
         };
         const activitiesData = [
             { id: 'citizenship', title: 'المواطنة والحياة', programs: [
@@ -303,7 +303,14 @@
             let programToAddInfo = null; // {name, stage}
 
             const stageNames = {
-                primary: 'الأولية', upper: 'العليا', middle: 'المتوسطة', high_2: 'ثاني ثانوي', high_3: 'ثالث ثانوي'
+                primary: 'الأولية (عادي)', 
+                upper: 'العليا (عادي)', 
+                middle: 'المتوسطة', 
+                high_2: 'ثاني ثانوي', 
+                high_3: 'ثالث ثانوي',
+                primary_tahfiz: 'الأولية (تحفيظ)',
+                primary_private: 'الأولية (خاص)',
+                upper_private: 'العليا (خاص)'
             };
             
             stagesCheckboxes.addEventListener('change', (e) => {
@@ -388,9 +395,12 @@
                         const n = parseInt(document.getElementById(`classes-${stage}`).value) || 0;
                         if (n === 0) continue;
                         
+                        // Determine the base stage for required programs (primary or upper)
+                        const requiredStageKey = stage.includes('primary') ? 'primary' : stage.includes('upper') ? 'upper' : stage;
+                        
                         analysisData[stage] = {
                             name: stageNames[stage],
-                            totalRequired: Math.round(REQUIRED_PROGRAMS_PER_CLASS[stage] * n * requiredMultiplier),
+                            totalRequired: Math.round(REQUIRED_PROGRAMS_PER_CLASS[requiredStageKey] * n * requiredMultiplier),
                             totalAvailable: n * SESSIONS_PER_WEEK[stage] * analysisWeeks,
                             numClasses: n,
                             sessionsPerWeek: SESSIONS_PER_WEEK[stage]
@@ -675,7 +685,7 @@
                         semester2: (displayMode === 'semester1') ? 0 : semester2Weeks * analysisData[stage].numClasses * analysisData[stage].sessionsPerWeek,
                     };
 
-                    const stageKey = stage.startsWith('high') ? 'high' : stage;
+                    const stageKey = stage.includes('primary') ? 'primary' : stage.includes('upper') ? 'upper' : stage.includes('high') ? 'high' : 'middle';
                     
                     const semester1Events = ['يوم التسامح العالمي', 'اليوم العالمي للطفل', 'اليوم العالمي لذوي الإعاقة', 'اليوم العالمي للغة العربية', 'اليوم الوطني'];
                     const semester2Events = ['اليوم العالمي للتعليم', 'يوم التأسيس', 'يوم العلم', 'يوم السعودية الخضراء', 'يوم الصحة العالمي'];
@@ -748,7 +758,7 @@
                 stages.forEach(stage => {
                     const card = document.createElement('div');
                     card.className = 'card p-6 plan-card';
-                    const stageKey = stage.startsWith('high') ? 'high' : stage;
+                    const stageKey = stage.includes('primary') ? 'primary' : stage.includes('upper') ? 'upper' : stage.includes('high') ? 'high' : 'middle';
                     
                     const s1Programs = currentPlan.stages[stage].semester1;
                     const s2Programs = currentPlan.stages[stage].semester2;
@@ -863,7 +873,7 @@
 
                     if (progIndex > -1) {
                         const [removedProg] = planSemester.splice(progIndex, 1);
-                        const stageKey = stage.startsWith('high') ? 'high' : stage;
+                        const stageKey = stage.includes('primary') ? 'primary' : stage.includes('upper') ? 'upper' : stage.includes('high') ? 'high' : 'middle';
                         
                         currentPlan.unfeasible[stage].push({
                             name: removedProg.name,
