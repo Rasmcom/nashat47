@@ -75,9 +75,10 @@
 
         @media print {
             .no-print { display: none !important; }
+            * { -webkit-print-color-adjust: exact !important; print-color-adjust: exact !important; }
             @page { 
                 size: A4 landscape; 
-                margin: 0; 
+                margin: 10mm 5mm; 
             } 
             body { 
                 -webkit-print-color-adjust: exact !important; 
@@ -85,6 +86,31 @@
                 margin: 0;
                 padding: 0;
             }
+            .page-container { display: flex; flex-direction: column; min-height: 98vh; }
+            .print-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px; flex-shrink: 0; }
+            .print-header .right-side { display: flex; align-items: center; gap: 8px; }
+            .print-header img { height: 40px; }
+            .print-header .header-text p { margin: 0; font-size: 0.9em; line-height: 1.2; }
+            .print-header .title-container { text-align: center; }
+            .print-header h1 { color: #00A383; margin: 0; font-size: 1.8em; }
+            .print-header h2 { font-size: 1.6em; font-weight: bold; color: #0093B5; margin: 1px 0; }
+            .print-header p.subtitle { color: #555; margin-top: 2px; font-size: 1.1em; }
+            .print-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; flex-grow: 1; align-content: start; }
+            .print-column { page-break-inside: avoid; break-inside: avoid; }
+            .print-column h3 { font-size: 1.2em; padding: 3px 5px; border-radius: 4px 4px 0 0; margin: 0; color: white; }
+            table { width: 100%; border-collapse: collapse; font-size: 1em; table-layout: fixed; }
+            th, td { border: 1px solid #ccc; padding: 3px; text-align: right; vertical-align: top; word-wrap: break-word; font-weight: normal; }
+            .stage-entry:not(:last-child) { border-bottom: 1px dashed #ccc; padding-bottom: 3px; margin-bottom: 3px; }
+            strong { font-weight: bold; }
+            th { background-color: #f2f2f2; font-weight: bold; vertical-align: middle; }
+            table th:nth-child(1), table td:nth-child(1) { width: 28%; }
+            table th:nth-child(2), table td:nth-child(2) { width: 18%; }
+            table th:nth-child(3), table td:nth-child(3) { width: 36%; }
+            table th:nth-child(4), table td:nth-child(4),
+            table th:nth-child(5), table td:nth-child(5),
+            table th:nth-child(6), table td:nth-child(6) { width: 6%; text-align: center; }
+            .print-signatures { display: flex; justify-content: space-around; margin-top: auto; padding-top: 15px; font-size: 1.1em; font-weight: bold; flex-shrink: 0; page-break-inside: avoid;}
+            .signature-box { text-align: center; }
         }
     </style>
 </head>
@@ -335,6 +361,18 @@
                 { name: 'برنامج الذكاء الاصطناعي', sessions: { p1:10, p2:10, p3:10, p4:10, p5:10, p6:10, m1:10, m2:10, m3:10, h2:10, h3:10 } },
                 { name: 'برنامج تحدي إنترنت الأشياء', sessions: { p1:3, p2:3, p3:3, p4:4, p5:4, p6:4, m1:7, m2:7, m3:7, h2:9, h3:9 } },
             ]},
+            { id: 'events', title: 'الأيام والمناسبات', color: '#583C71', icon: 'https://e.top4top.io/p_34729xucx5.gif', programs: [
+                { name: 'اليوم الوطني', date: 'يوافق ١ / ٤ / ١٤٤٧ هـ', sessions: { p1:4, p2:4, p3:4, p4:4, p5:4, p6:4, m1:4, m2:4, m3:4, h2:4, h3:4 } },
+                { name: 'يوم التسامح العالمي', date: 'يوافق ٢٥ / ٥ / ١٤٤٧ هـ', sessions: { p1:2, p2:2, p3:2, p4:2, p5:2, p6:2, m1:1, m2:1, m3:1, h2:1, h3:1 } },
+                { name: 'اليوم العالمي للطفل', date: 'يوافق ٢٩ / ٥ / ١٤٤٧ هـ', sessions: { p1:2, p2:2, p3:2, p4:2, p5:2, p6:2 } },
+                { name: 'اليوم العالمي لذوي الإعاقة', date: 'يوافق ١٢ / ٦ / ١٤٤٧ هـ', sessions: { p1:2, p2:2, p3:2, p4:2, p5:2, p6:2, m1:2, m2:2, m3:2, h2:2, h3:2 } },
+                { name: 'اليوم العالمي للغة العربية', date: 'يوافق ٢٧ / ٦ / ١٤٤٧ هـ', sessions: { p1:2, p2:2, p3:2, p4:2, p5:2, p6:2, m1:1, m2:1, m3:1, h2:1, h3:1 } },
+                { name: 'اليوم العالمي للتعليم', date: 'يوافق ٧ / ٨ / ١٤٤٧ هـ', sessions: { p1:2, p2:2, p3:2, p4:2, p5:2, p6:2, m1:2, m2:2, m3:2, h2:2, h3:2 } },
+                { name: 'يوم التأسيس', date: 'يوافق ٥ / ٩ / ١٤٤٧ هـ', sessions: { p1:4, p2:4, p3:4, p4:4, p5:4, p6:4, m1:4, m2:4, m3:4, h2:4, h3:4 } },
+                { name: 'يوم العلم السعودي', date: 'يوافق ٢٢ / ٩ / ١٤٤٧ هـ', sessions: { p1:3, p2:3, p3:3, p4:3, p5:3, p6:3, m1:2, m2:2, m3:2, h2:2, h3:2 } },
+                { name: 'يوم السعودية الخضراء', date: 'يوافق ٨ / ١٠ / ١٤٤٧ هـ', sessions: { p1:3, p2:3, p3:3, p4:3, p5:3, p6:3, m1:2, m2:2, m3:2, h2:2, h3:2 } },
+                { name: 'يوم الصحة العالمي', date: 'يوافق ١٩ / ١٠ / ١٤٤٧ هـ', sessions: { p1:2, p2:2, p3:2, p4:2, p5:2, p6:2, m1:2, m2:2, m3:2, h2:2, h3:2 } },
+            ]},
             { id: 'scouting', title: 'النشاط الكشفي', color: '#018083', icon: 'https://b.top4top.io/p_3472h0ngk3.gif', programs: [
                 { name: 'خيمتي الجميلة', sessions: { p1:3, p2:3, p3:3 } },
                 { name: 'خشبة وحبل', sessions: { p4:12, p5:12, p6:12 } },
@@ -365,18 +403,6 @@
                 { name: 'مهاراتي الكشفية من الاستعداد إلى الإنجاز', sessions: { m1:4, m2:4, m3:4 } },
                 { name: 'أفقي الكشفي الواسع', sessions: { h2:6, h3:6 } },
             ]},
-            { id: 'events', title: 'الأيام والمناسبات', color: '#583C71', icon: 'https://e.top4top.io/p_34729xucx5.gif', programs: [
-                { name: 'اليوم الوطني', date: 'يوافق ١ / ٤ / ١٤٤٧ هـ', sessions: { p1:4, p2:4, p3:4, p4:4, p5:4, p6:4, m1:4, m2:4, m3:4, h2:4, h3:4 } },
-                { name: 'يوم التسامح العالمي', date: 'يوافق ٢٥ / ٥ / ١٤٤٧ هـ', sessions: { p1:2, p2:2, p3:2, p4:2, p5:2, p6:2, m1:1, m2:1, m3:1, h2:1, h3:1 } },
-                { name: 'اليوم العالمي للطفل', date: 'يوافق ٢٩ / ٥ / ١٤٤٧ هـ', sessions: { p1:2, p2:2, p3:2, p4:2, p5:2, p6:2 } },
-                { name: 'اليوم العالمي لذوي الإعاقة', date: 'يوافق ١٢ / ٦ / ١٤٤٧ هـ', sessions: { p1:2, p2:2, p3:2, p4:2, p5:2, p6:2, m1:2, m2:2, m3:2, h2:2, h3:2 } },
-                { name: 'اليوم العالمي للغة العربية', date: 'يوافق ٢٧ / ٦ / ١٤٤٧ هـ', sessions: { p1:2, p2:2, p3:2, p4:2, p5:2, p6:2, m1:1, m2:1, m3:1, h2:1, h3:1 } },
-                { name: 'اليوم العالمي للتعليم', date: 'يوافق ٧ / ٨ / ١٤٤٧ هـ', sessions: { p1:2, p2:2, p3:2, p4:2, p5:2, p6:2, m1:2, m2:2, m3:2, h2:2, h3:2 } },
-                { name: 'يوم التأسيس', date: 'يوافق ٥ / ٩ / ١٤٤٧ هـ', sessions: { p1:4, p2:4, p3:4, p4:4, p5:4, p6:4, m1:4, m2:4, m3:4, h2:4, h3:4 } },
-                { name: 'يوم العلم السعودي', date: 'يوافق ٢٢ / ٩ / ١٤٤٧ هـ', sessions: { p1:3, p2:3, p3:3, p4:3, p5:3, p6:3, m1:2, m2:2, m3:2, h2:2, h3:2 } },
-                { name: 'يوم السعودية الخضراء', date: 'يوافق ٨ / ١٠ / ١٤٤٧ هـ', sessions: { p1:3, p2:3, p3:3, p4:3, p5:3, p6:3, m1:2, m2:2, m3:2, h2:2, h3:2 } },
-                { name: 'يوم الصحة العالمي', date: 'يوافق ١٩ / ١٠ / ١٤٤٧ هـ', sessions: { p1:2, p2:2, p3:2, p4:2, p5:2, p6:2, m1:2, m2:2, m3:2, h2:2, h3:2 } },
-            ]},
         ];
         
         // Helper functions for date formatting
@@ -396,36 +422,8 @@
                 return { text: '', json: '[]' };
             }
 
-            const getWeekInfoForDate = (fullDateStr) => {
-                const datePartWithSpaces = fullDateStr.split(' ').slice(1).join(' '); 
-                for (const weekKey in weeksData) {
-                    const week = weeksData[weekKey];
-                    if (Object.values(week.days).includes(datePartWithSpaces)) {
-                        return week;
-                    }
-                }
-                return null;
-            };
-            
             const sortedDates = [...datesArray].sort((a, b) => parseDateForSort(a) - parseDateForSort(b));
-            const firstDateStr = sortedDates[0];
-            const lastDateStr = sortedDates[sortedDates.length - 1];
-            
-            const firstWeekInfo = getWeekInfoForDate(firstDateStr);
-            const lastWeekInfo = getWeekInfoForDate(lastDateStr);
-
-            let textContent = '';
-
-            if (firstWeekInfo && lastWeekInfo && firstWeekInfo.name === lastWeekInfo.name) {
-                // All dates fall within the same week
-                textContent = `${firstWeekInfo.name} من ${firstWeekInfo.startDate} إلى ${firstWeekInfo.endDate}`;
-            } else if (sortedDates.length > 1 && firstWeekInfo && lastWeekInfo) {
-                // Dates span multiple weeks
-                textContent = `من ${firstWeekInfo.name} (${firstDateStr}) إلى ${lastWeekInfo.name} (${lastDateStr})`;
-            } else {
-                // Fallback (e.g., single date)
-                textContent = sortedDates.join(' | ');
-            }
+            const textContent = sortedDates.join(' | ');
 
             return {
                 text: textContent,
@@ -1031,8 +1029,8 @@
                         
                         let label;
                         switch (key) {
-                            case 'primary_lower': label = 'الصفوف الأولية'; break;
-                            case 'primary_upper': label = 'الصفوف العليا'; break;
+                            case 'primary_lower': label = 'الأولية'; break;
+                            case 'primary_upper': label = 'العليا'; break;
                             case 'middle_all': label = 'المرحلة المتوسطة'; break;
                             case 'high_all': label = 'المرحلة الثانوية'; break;
                             default: label = gradeNames[key];
@@ -1139,14 +1137,14 @@
                         .print-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; flex-grow: 1; align-content: start; }
                         .print-column { page-break-inside: avoid; break-inside: avoid; }
                         .print-column h3 { font-size: 1.2em; padding: 3px 5px; border-radius: 4px 4px 0 0; margin: 0; color: white; }
-                        table { width: 100%; border-collapse: collapse; font-size: 1em; }
+                        table { width: 100%; border-collapse: collapse; font-size: 1em; table-layout: fixed; }
                         th, td { border: 1px solid #ccc; padding: 3px; text-align: right; vertical-align: top; word-wrap: break-word; font-weight: normal; }
                         .stage-entry:not(:last-child) { border-bottom: 1px dashed #ccc; padding-bottom: 3px; margin-bottom: 3px; }
                         strong { font-weight: bold; }
                         th { background-color: #f2f2f2; font-weight: bold; vertical-align: middle; }
                         table th:nth-child(1), table td:nth-child(1) { width: 28%; }
-                        table th:nth-child(2), table td:nth-child(2) { width: 22%; }
-                        table th:nth-child(3), table td:nth-child(3) { width: 32%; }
+                        table th:nth-child(2), table td:nth-child(2) { width: 18%; }
+                        table th:nth-child(3), table td:nth-child(3) { width: 36%; }
                         table th:nth-child(4), table td:nth-child(4),
                         table th:nth-child(5), table td:nth-child(5),
                         table th:nth-child(6), table td:nth-child(6) { width: 6%; text-align: center; }
@@ -1413,4 +1411,3 @@
     </script>
 </body>
 </html>
-
