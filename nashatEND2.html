@@ -245,10 +245,10 @@
                 padding: 2px; /* Slightly reduced padding to save space */
             }
             .print-table td.week-label, .print-table td.program-label {
-                width: 3%; /* Adjusted width for the first column */
+                width: 8%; /* Adjusted width for the first column */
             }
             .print-table .week-header {
-                width: calc(97% / 7); /* Distribute remaining width to other 7 columns */
+                width: calc(92% / 7); /* Distribute remaining width to other 7 columns */
             }
         }
     </style>
@@ -1248,571 +1248,580 @@
             }
             isPrinting = true;
         
-            const state = JSON.parse(localStorage.getItem('activityPlanState')) || {};
-            if (!state) {
-                alert('لا توجد بيانات محفوظة للطباعة.');
-                isPrinting = false;
-                return;
-            }
-        
-            const programSelections = state.programSelections || {};
-            const effectiveGradesForPrint = getEffectiveIndividualGrades();
-            
-            if (effectiveGradesForPrint.length === 0) {
-                 alert('يرجى اختيار الفصول الدراسية أولاً قبل الطباعة.');
-                 isPrinting = false;
-                 return;
-            }
-            
-            const programsByWeekAndField = {};
-            
-            const getWeekInfoForDate = (fullDateStr) => {
-                const datePartWithSpaces = fullDateStr.split(' ').slice(1).join(' '); 
-                for (const weekKey in weeksData) {
-                    const week = weeksData[weekKey];
-                    if (Object.values(week.days).includes(datePartWithSpaces)) {
-                        return week;
-                    }
+            try {
+                const state = JSON.parse(localStorage.getItem('activityPlanState')) || {};
+                if (!state) {
+                    alert('لا توجد بيانات محفوظة للطباعة.');
+                    isPrinting = false;
+                    return;
                 }
-                return null;
-            };
-
-            const getGradeLabelForPrint = (gradeKey) => {
-                const selectedGradeKeys = selectedGrades.filter(g => g !== 'all');
-
-                if (selectedGrades.includes('all')) {
-                    if (gradeGroups['primary_lower'].includes(gradeKey) || gradeGroups['primary_upper'].includes(gradeKey) || gradeGroups['quran_lower'].includes(gradeKey) || gradeGroups['quran_upper'].includes(gradeKey)) {
-                        const isQuran = gradeGroups['quran_lower'].includes(gradeKey) || gradeGroups['quran_upper'].includes(gradeKey);
-                        return isQuran ? 'المرحلة الابتدائية تحفيظ' : 'المرحلة الابتدائية';
-                    }
-                    if (gradeGroups['middle_all'].includes(gradeKey)) return 'المرحلة المتوسطة';
-                    if (gradeGroups['high_all'].includes(gradeKey)) return 'المرحلة الثانوية';
-                }
-
-                if (selectedGradeKeys.includes('primary_all')) return 'المرحلة الابتدائية';
-                if (selectedGradeKeys.includes('quran_all')) return 'المرحلة الابتدائية تحفيظ';
-                if (selectedGradeKeys.includes('middle_all')) return 'المرحلة المتوسطة';
-                if (selectedGradeKeys.includes('high_all')) return 'المرحلة الثانوية';
                 
-                if (selectedGradeKeys.includes('primary_lower') && gradeGroups['primary_lower'].includes(gradeKey)) return 'الصفوف الأولية';
-                if (selectedGradeKeys.includes('primary_upper') && gradeGroups['primary_upper'].includes(gradeKey)) return 'الصفوف العليا';
-                if (selectedGradeKeys.includes('quran_lower') && gradeGroups['quran_lower'].includes(gradeKey)) return 'أولية تحفيظ';
-                if (selectedGradeKeys.includes('quran_upper') && gradeGroups['quran_upper'].includes(gradeKey)) return 'عليا تحفيظ';
+                const currentWeeksData = state.currentRegion === 'western' ? weeksDataWestern : weeksDataDefault;
 
-                return gradeNames[gradeKey];
-            };
-            
-            const fieldColors = {
-                 'المواطنة والحياة': '#981E47',
-                 'العلوم والتقنية': '#24344D',
-                 'الرياضة والصحة': '#2FB7BD',
-                 'الثقافة والفنون': '#FF7145',
-                 'النشاط الكشفي': '#018083',
-                 'الأيام والمناسبات': '#583C71',
-            };
-
-            const getProgramDetailsByWeek = (id, dates, teachersByGrade) => {
-                let programInfo;
-                let fieldTitle;
-                for (const field of activitiesData) {
-                    const programIndex = field.programs.findIndex(p => `${field.id}-${field.programs.indexOf(p)}` === id);
-                    if (programIndex !== -1) {
-                        programInfo = field.programs[programIndex];
-                        fieldTitle = field.title;
-                        break;
-                    }
+                const programSelections = state.programSelections || {};
+                const effectiveGradesForPrint = getEffectiveIndividualGrades();
+                
+                if (effectiveGradesForPrint.length === 0) {
+                     alert('يرجى اختيار الفصول الدراسية أولاً قبل الطباعة.');
+                     isPrinting = false;
+                     return;
                 }
+                
+                const programsByWeekAndField = {};
+                
+                const getWeekInfoForDate = (fullDateStr) => {
+                    const datePartWithSpaces = fullDateStr.split(' ').slice(1).join(' '); 
+                    for (const weekKey in currentWeeksData) {
+                        const week = currentWeeksData[weekKey];
+                        if (Object.values(week.days).includes(datePartWithSpaces)) {
+                            return week;
+                        }
+                    }
+                    return null;
+                };
 
-                if (!programInfo) return;
+                const getGradeLabelForPrint = (gradeKey) => {
+                    const selectedGradeKeys = state.selectedGrades.filter(g => g !== 'all');
 
-                const processedGrades = new Set();
-                Object.entries(dates).forEach(([gradeKey, dateArray]) => {
-                    if (processedGrades.has(gradeKey)) return;
+                    if (state.selectedGrades.includes('all')) {
+                        if (gradeGroups['primary_lower'].includes(gradeKey) || gradeGroups['primary_upper'].includes(gradeKey) || gradeGroups['quran_lower'].includes(gradeKey) || gradeGroups['quran_upper'].includes(gradeKey)) {
+                            const isQuran = gradeGroups['quran_lower'].includes(gradeKey) || gradeGroups['quran_upper'].includes(gradeKey);
+                            return isQuran ? 'المرحلة الابتدائية تحفيظ' : 'المرحلة الابتدائية';
+                        }
+                        if (gradeGroups['middle_all'].includes(gradeKey)) return 'المرحلة المتوسطة';
+                        if (gradeGroups['high_all'].includes(gradeKey)) return 'المرحلة الثانوية';
+                    }
+
+                    if (selectedGradeKeys.includes('primary_all')) return 'المرحلة الابتدائية';
+                    if (selectedGradeKeys.includes('quran_all')) return 'المرحلة الابتدائية تحفيظ';
+                    if (selectedGradeKeys.includes('middle_all')) return 'المرحلة المتوسطة';
+                    if (selectedGradeKeys.includes('high_all')) return 'المرحلة الثانوية';
                     
-                    const individualGradesInGroup = gradeGroups[gradeKey] || [gradeKey];
-                    const isGroupSelected = selectedGrades.includes(gradeKey);
+                    if (selectedGradeKeys.includes('primary_lower') && gradeGroups['primary_lower'].includes(gradeKey)) return 'الصفوف الأولية';
+                    if (selectedGradeKeys.includes('primary_upper') && gradeGroups['primary_upper'].includes(gradeKey)) return 'الصفوف العليا';
+                    if (selectedGradeKeys.includes('quran_lower') && gradeGroups['quran_lower'].includes(gradeKey)) return 'أولية تحفيظ';
+                    if (selectedGradeKeys.includes('quran_upper') && gradeGroups['quran_upper'].includes(gradeKey)) return 'عليا تحفيظ';
 
-                    if (!isGroupSelected) {
-                        individualGradesInGroup.forEach(indKey => {
-                            if (selectedGrades.includes(indKey) && dateArray.length > 0) {
-                                const gradeLabel = getGradeLabelForPrint(indKey);
-                                const sessionsCountForGrade = dateArray.length;
-                                const weekToDatesMap = {};
-                                dateArray.forEach(dateStr => {
-                                    const weekInfo = getWeekInfoForDate(dateStr);
-                                    if (weekInfo) {
-                                        const weekKey = Object.keys(weeksData).find(key => weeksData[key].name === weekInfo.name);
-                                        if (!weekToDatesMap[weekKey]) weekToDatesMap[weekKey] = [];
-                                        weekToDatesMap[weekKey].push(dateStr);
+                    return gradeNames[gradeKey];
+                };
+                
+                const fieldColors = {
+                     'المواطنة والحياة': '#981E47',
+                     'العلوم والتقنية': '#24344D',
+                     'الرياضة والصحة': '#2FB7BD',
+                     'الثقافة والفنون': '#FF7145',
+                     'النشاط الكشفي': '#018083',
+                     'الأيام والمناسبات': '#583C71',
+                };
+
+                const getProgramDetailsByWeek = (id, dates, teachersByGrade) => {
+                    let programInfo;
+                    let fieldTitle;
+                    for (const field of activitiesData) {
+                        const programIndex = field.programs.findIndex(p => `${field.id}-${field.programs.indexOf(p)}` === id);
+                        if (programIndex !== -1) {
+                            programInfo = field.programs[programIndex];
+                            fieldTitle = field.title;
+                            break;
+                        }
+                    }
+
+                    if (!programInfo) return;
+
+                    const processedGrades = new Set();
+                    Object.entries(dates).forEach(([gradeKey, dateArray]) => {
+                        if (processedGrades.has(gradeKey)) return;
+                        
+                        const individualGradesInGroup = gradeGroups[gradeKey] || [gradeKey];
+                        const isGroupSelected = state.selectedGrades.includes(gradeKey);
+
+                        if (!isGroupSelected) {
+                            individualGradesInGroup.forEach(indKey => {
+                                if (state.selectedGrades.includes(indKey) && dateArray.length > 0) {
+                                    const gradeLabel = getGradeLabelForPrint(indKey);
+                                    const sessionsCountForGrade = dateArray.length;
+                                    const weekToDatesMap = {};
+                                    dateArray.forEach(dateStr => {
+                                        const weekInfo = getWeekInfoForDate(dateStr);
+                                        if (weekInfo) {
+                                            const weekKey = Object.keys(currentWeeksData).find(key => currentWeeksData[key].name === weekInfo.name);
+                                            if (!weekToDatesMap[weekKey]) weekToDatesMap[weekKey] = [];
+                                            weekToDatesMap[weekKey].push(dateStr);
+                                        }
+                                    });
+
+                                    for (const weekKey in weekToDatesMap) {
+                                         const sessionsCountForWeek = weekToDatesMap[weekKey].length;
+                                         if (!programsByWeekAndField[weekKey]) programsByWeekAndField[weekKey] = {};
+                                         if (!programsByWeekAndField[weekKey][fieldTitle]) programsByWeekAndField[weekKey][fieldTitle] = [];
+                                         
+                                         let teacherName = 'غير محدد';
+                                         if (teachersByGrade && teachersByGrade[indKey]) {
+                                            teacherName = teachersByGrade[indKey];
+                                         }
+
+                                         let displayText = programInfo.name;
+                                         if (gradeLabel) {
+                                             displayText += `<br><span style="font-weight: normal;">(${gradeLabel} - ${sessionsCountForWeek} حصة)</span>`;
+                                         }
+                                          if (teacherName !== 'غير محدد') {
+                                              displayText += `<br>بإشراف: ${teacherName}`;
+                                          }
+
+                                          if (!programsByWeekAndField[weekKey][fieldTitle].some(entry => entry.includes(displayText))) {
+                                              programsByWeekAndField[weekKey][fieldTitle].push(displayText);
+                                          }
                                     }
-                                });
+                                    processedGrades.add(indKey);
+                                }
+                            });
+                        } else { // It's a group
+                            if (dateArray.length > 0) {
+                                 const gradeLabel = getLabel(gradeKey);
+                                 const sessionsCountForGroup = programInfo.sessions[gradeKey]; // Corrected line
+                                 const weekToDatesMap = {};
+                                 dateArray.forEach(dateStr => {
+                                     const weekInfo = getWeekInfoForDate(dateStr);
+                                     if (weekInfo) {
+                                         const weekKey = Object.keys(currentWeeksData).find(key => currentWeeksData[key].name === weekInfo.name);
+                                         if (!weekToDatesMap[weekKey]) weekToDatesMap[weekKey] = [];
+                                         weekToDatesMap[weekKey].push(dateStr);
+                                     }
+                                 });
 
-                                for (const weekKey in weekToDatesMap) {
+                                 for (const weekKey in weekToDatesMap) {
                                      const sessionsCountForWeek = weekToDatesMap[weekKey].length;
                                      if (!programsByWeekAndField[weekKey]) programsByWeekAndField[weekKey] = {};
                                      if (!programsByWeekAndField[weekKey][fieldTitle]) programsByWeekAndField[weekKey][fieldTitle] = [];
                                      
                                      let teacherName = 'غير محدد';
-                                     if (teachersByGrade && teachersByGrade[indKey]) {
-                                        teacherName = teachersByGrade[indKey];
+                                     if (teachersByGrade && teachersByGrade[gradeKey]) {
+                                        teacherName = teachersByGrade[gradeKey];
                                      }
-
+                                     
                                      let displayText = programInfo.name;
-                                     if (gradeLabel) {
+                                      if (gradeLabel) {
                                          displayText += `<br><span style="font-weight: normal;">(${gradeLabel} - ${sessionsCountForWeek} حصة)</span>`;
                                      }
-                                      if (teacherName !== 'غير محدد') {
-                                          displayText += `<br>بإشراف: ${teacherName}`;
-                                      }
-
-                                      if (!programsByWeekAndField[weekKey][fieldTitle].some(entry => entry.includes(displayText))) {
-                                          programsByWeekAndField[weekKey][fieldTitle].push(displayText);
-                                      }
-                                }
-                                processedGrades.add(indKey);
+                                     if (teacherName !== 'غير محدد') {
+                                         displayText += `<br>بإشراف: ${teacherName}`;
+                                     }
+                                     
+                                     if (!programsByWeekAndField[weekKey][fieldTitle].some(entry => entry.includes(displayText))) {
+                                         programsByWeekAndField[weekKey][fieldTitle].push(displayText);
+                                     }
+                                 }
+                                 processedGrades.add(gradeKey);
                             }
-                        });
-                    } else { // It's a group
-                        if (dateArray.length > 0) {
-                             const gradeLabel = getLabel(gradeKey);
-                             const sessionsCountForGroup = programInfo.sessions[gradeKey]; // Corrected line
-                             const weekToDatesMap = {};
-                             dateArray.forEach(dateStr => {
-                                 const weekInfo = getWeekInfoForDate(dateStr);
-                                 if (weekInfo) {
-                                     const weekKey = Object.keys(weeksData).find(key => weeksData[key].name === weekInfo.name);
-                                     if (!weekToDatesMap[weekKey]) weekToDatesMap[weekKey] = [];
-                                     weekToDatesMap[weekKey].push(dateStr);
-                                 }
-                             });
-
-                             for (const weekKey in weekToDatesMap) {
-                                 const sessionsCountForWeek = weekToDatesMap[weekKey].length;
-                                 if (!programsByWeekAndField[weekKey]) programsByWeekAndField[weekKey] = {};
-                                 if (!programsByWeekAndField[weekKey][fieldTitle]) programsByWeekAndField[weekKey][fieldTitle] = [];
-                                 
-                                 let teacherName = 'غير محدد';
-                                 if (teachersByGrade && teachersByGrade[gradeKey]) {
-                                    teacherName = teachersByGrade[gradeKey];
-                                 }
-                                 
-                                 let displayText = programInfo.name;
-                                  if (gradeLabel) {
-                                     displayText += `<br><span style="font-weight: normal;">(${gradeLabel} - ${sessionsCountForWeek} حصة)</span>`;
-                                 }
-                                 if (teacherName !== 'غير محدد') {
-                                     displayText += `<br>بإشراف: ${teacherName}`;
-                                 }
-                                 
-                                 if (!programsByWeekAndField[weekKey][fieldTitle].some(entry => entry.includes(displayText))) {
-                                     programsByWeekAndField[weekKey][fieldTitle].push(displayText);
-                                 }
-                             }
-                             processedGrades.add(gradeKey);
                         }
-                    }
+                    });
+                };
+
+                Object.entries(programSelections).forEach(([id, data]) => {
+                     getProgramDetailsByWeek(id, data.datesByGrade, data.teachersByGrade);
                 });
-            };
 
-            Object.entries(programSelections).forEach(([id, data]) => {
-                 getProgramDetailsByWeek(id, data.datesByGrade, data.teachersByGrade);
-            });
-
-            const row1Weeks = ['week1', 'week2', 'week3', 'week4', 'week5', 'week6', 'week7'];
-            const row3Weeks = ['week8', 'week9', 'week10', 'week11', 'week12', 'week13', 'autumn_break'];
-            const row5Weeks = ['week14', 'week15', 'week16', 'week17', 'week18'];
-            
-            const getWeekContent = (weeks) => {
-                let weekHtml = '';
-                let programHtml = '';
+                const row1Weeks = ['week1', 'week2', 'week3', 'week4', 'week5', 'week6', 'week7'];
+                const row3Weeks = ['week8', 'week9', 'week10', 'week11', 'week12', 'week13', 'autumn_break'];
+                const row5Weeks = ['week14', 'week15', 'week16', 'week17', 'week18'];
                 
-                weeks.forEach((weekKey) => {
-                    const weekData = weeksData[weekKey];
-                    let weekLabel = weekData.name;
-                    let programsContent = '';
+                const getWeekContent = (weeks) => {
+                    let weekHtml = '';
+                    let programHtml = '';
                     
-                    const fieldNames = Object.keys(programsByWeekAndField[weekKey] || {});
-                    
-                    if (fieldNames.length > 0) {
-                        fieldNames.forEach(fieldName => {
-                             programsContent += `<strong style="color: ${fieldColors[fieldName] || 'black'};">${fieldName}</strong><br>`;
-                             programsContent += `<div class="program-entries">`;
-                             programsContent += [...new Set(programsByWeekAndField[weekKey][fieldName] || [])].map(p => `<div class="program-entry">${p}</div>`).join('');
-                             programsContent += `</div>`;
-                        });
-                    }
-                    
-                    if (weekKey === 'exams') {
-                         weekHtml += `<th class="week-header" colspan="2">${weekLabel}<br>(${weekData.startDate} - ${weekData.endDate})</th>`;
-                         programHtml += `<td colspan="2">${programsContent}</td>`;
-                    } else if (weekKey === 'autumn_break') {
-                         weekHtml += `<th class="week-header">${weekLabel}<br>(${weekData.startDate} - ${weekData.endDate})</th>`;
-                         programHtml += `<td>${programsContent}</td>`;
-                    } else {
-                         weekHtml += `<th class="week-header">${weekLabel}<br>(${weekData.startDate} - ${weekData.endDate})</th>`;
-                         programHtml += `<td>${programsContent}</td>`;
-                    }
-
-                });
-                return { weekHtml, programHtml };
-            };
-            
-            const row1Data = getWeekContent(row1Weeks);
-            const row3Data = getWeekContent(row3Weeks);
-            const row5Data = getWeekContent(row5Weeks);
-
-
-            const printTableContent = `
-                <table class="print-table" style="page-break-inside: auto;">
-                    <thead>
-                        <tr>
-                            <td class="week-label" style="width: 8%;">الأسابيع</td>
-                            ${row1Data.weekHtml}
-                        </tr>
-                        <tr>
-                            <td class="program-label" style="width: 8%;">البرامج</td>
-                            ${row1Data.programHtml}
-                        </tr>
-                        <tr>
-                            <td class="week-label" style="width: 8%;">الأسابيع</td>
-                            ${row3Data.weekHtml}
-                        </tr>
-                        <tr>
-                            <td class="program-label" style="width: 8%;">البرامج</td>
-                            ${row3Data.programHtml}
-                        </tr>
-                        <tr>
-                            <td class="week-label" style="width: 8%;">الأسابيع</td>
-                            ${row5Data.weekHtml}
-                            <th class="week-header" colspan="2">الاختبارات<br>(${weeksData.exams.startDate} - ${weeksData.exams.endDate})</th>
-                        </tr>
-                        <tr>
-                            <td class="program-label" style="width: 8%;">البرامج</td>
-                            ${row5Data.programHtml}
-                            <td colspan="2">${Object.keys(programsByWeekAndField.exams || {}).map(fieldName => `<strong style="color: ${fieldColors[fieldName] || 'black'}">${fieldName}</strong><br>${[...new Set(programsByWeekAndField.exams[fieldName] || [])].join('<br>')}</div>`).join('<br>')}</td>
-                        </tr>
-                    </thead>
-                    <tbody></tbody>
-                </table>
-            `;
-            
-            const schoolName = state.schoolName || 'اسم المدرسة';
-            const printFontSize = state.printFontSize || '8px';
-            const printFontFamily = 'Cairo';
-            const printStageTitle = document.getElementById('stage-title-header').textContent || 'لجميع المراحل الدراسية';
-            const printSemesterSubtitle = document.getElementById('subtitle').textContent;
-            const eduAdmin = state.educationAdmin || '';
-            const eduRegion = state.educationRegion || '';
-            const leaderName = state.activityLeaderName || 'رائد/ة النشاط';
-            const directorName = state.schoolDirectorName || 'مدير/ة المدرسة';
-            
-            // Generate the content for the second table based on selected programs only
-            let secondTableRows = '';
-            let programNumber = 1;
-            
-            // Get all selected programs and sort them based on their original order
-            const selectedPrograms = [];
-            activitiesData.forEach(field => {
-                field.programs.forEach((program, programIndex) => {
-                    const programId = `${field.id}-${programIndex}`;
-                    if (programSelections[programId]) {
-                        selectedPrograms.push({
-                            field,
-                            program,
-                            programId,
-                            selectionData: programSelections[programId]
-                        });
-                    }
-                });
-            });
-
-            selectedPrograms.forEach(item => {
-                const { field, program, programId, selectionData } = item;
-                const datesByGrade = selectionData?.datesByGrade || {};
-                const notes = selectionData?.notes || '';
-                
-                const stagesList = [];
-                const handledKeys = new Set();
-                
-                const groupsOrder = ['primary_all', 'quran_all', 'middle_all', 'high_all', 'primary_lower', 'primary_upper', 'quran_lower', 'quran_upper'];
-                
-                groupsOrder.forEach(groupKey => {
-                    const gradesInGroup = gradeGroups[groupKey] || [groupKey];
-                    const isGroupExplicitlySelected = selectedGrades.includes(groupKey);
-                    const isGroupImplicitlySelected = gradesInGroup.length > 0 && gradesInGroup.every(g => selectedGrades.includes(g));
-                
-                    if ((isGroupExplicitlySelected || isGroupImplicitlySelected) && !handledKeys.has(groupKey)) {
-                        const sessionsCounts = gradesInGroup.map(g => program.sessions[g] || 0);
-                        const maxSessions = Math.max(...sessionsCounts);
-
-                        if (maxSessions > 0) {
-                            stagesList.push(`${getLabel(groupKey)} (${maxSessions} حصة)`);
-                            gradesInGroup.forEach(g => handledKeys.add(g));
+                    weeks.forEach((weekKey) => {
+                         const weekData = currentWeeksData[weekKey];
+                         if (!weekData) return; // Added null check here
+                         let weekLabel = weekData.name;
+                         let programsContent = '';
+                        
+                        const fieldNames = Object.keys(programsByWeekAndField[weekKey] || {});
+                        
+                        if (fieldNames.length > 0) {
+                            fieldNames.forEach(fieldName => {
+                                 programsContent += `<strong style="color: ${fieldColors[fieldName] || 'black'};">${fieldName}</strong><br>`;
+                                 programsContent += `<div class="program-entries">`;
+                                 programsContent += [...new Set(programsByWeekAndField[weekKey][fieldName] || [])].map(p => `<div class="program-entry">${p}</div>`).join('');
+                                 programsContent += `</div>`;
+                            });
                         }
-                    }
-                });
+                        
+                        if (weekKey === 'exams') {
+                             weekHtml += `<th class="week-header" colspan="2">${weekLabel}<br>(${weekData.startDate} - ${weekData.endDate})</th>`;
+                             programHtml += `<td colspan="2">${programsContent}</td>`;
+                        } else if (weekKey === 'autumn_break') {
+                             weekHtml += `<th class="week-header">${weekLabel}<br>(${weekData.startDate} - ${weekData.endDate})</th>`;
+                             programHtml += `<td>${programsContent}</td>`;
+                        } else {
+                             weekHtml += `<th class="week-header">${weekLabel}<br>(${weekData.startDate} - ${weekData.endDate})</th>`;
+                             programHtml += `<td>${programsContent}</td>`;
+                        }
 
-                const allSelectedKeys = getEffectiveIndividualGrades();
-                allSelectedKeys.forEach(key => {
-                    if (!handledKeys.has(key)) {
-                         const sessionCount = program.sessions[key] || 0;
-                         if (sessionCount > 0) {
-                            stagesList.push(`${getLabel(key)} (${sessionCount} حصة)`);
-                         }
-                    }
-                });
+                    });
+                    return { weekHtml, programHtml };
+                };
                 
-                const allDates = Object.values(datesByGrade).flat();
-                const formattedDates = allDates.length > 0 ? formatDatesForDisplay(allDates).text : '';
-                
-                secondTableRows += `
-                    <tr class="text-center">
-                        <td style="padding: 4px; border: 1px solid #ccc; width: 3%;">${programNumber++}</td>
-                        <td style="padding: 4px; border: 1px solid #ccc; background-color: ${field.color}; color: white; font-weight: bold; text-align: center; width: 20%;">${field.title}</td>
-                        <td style="padding: 4px; border: 1px solid #ccc; text-align: right; width: 28%;">
-                            ${program.name}<br>
-                            <span style="font-size: 0.8em; color: #666; font-weight: normal; line-height: 1.5; ">${stagesList.join(' | ')}</span>
-                        </td>
-                        <td style="padding: 4px; border: 1px solid #ccc; text-align: right; width: 25%;">${formattedDates}</td>
-                        <td style="padding: 4px; border: 1px solid #ccc; width: 10%;">
-                           <div style="display:flex; justify-content:space-around; align-items:center; gap: 2px;">
-                                <label style="display:flex; align-items:center; gap:2px;"><input type="checkbox" style="width:10px; height:10px;"> نفذ</label>
-                                <label style="display:flex; align-items:center; gap:2px;"><input type="checkbox" style="width:10px; height:10px;"> لم ينفذ</label>
-                           </div>
-                        </td>
-                        <td style="padding: 4px; border: 1px solid #ccc; width: 14%;">${notes}</td>
-                    </tr>
+                const row1Data = getWeekContent(row1Weeks);
+                const row3Data = getWeekContent(row3Weeks);
+                const row5Data = getWeekContent(row5Weeks);
+
+
+                const printTableContent = `
+                    <table class="print-table" style="page-break-inside: auto;">
+                        <thead>
+                            <tr>
+                                <td class="week-label" style="width: 8%;">الأسابيع</td>
+                                ${row1Data.weekHtml}
+                            </tr>
+                            <tr>
+                                <td class="program-label" style="width: 8%;">البرامج</td>
+                                ${row1Data.programHtml}
+                            </tr>
+                            <tr>
+                                <td class="week-label" style="width: 8%;">الأسابيع</td>
+                                ${row3Data.weekHtml}
+                            </tr>
+                            <tr>
+                                <td class="program-label" style="width: 8%;">البرامج</td>
+                                ${row3Data.programHtml}
+                            </tr>
+                            <tr>
+                                <td class="week-label" style="width: 8%;">الأسابيع</td>
+                                ${row5Data.weekHtml}
+                                <th class="week-header" colspan="2">الاختبارات<br>(${currentWeeksData.exams.startDate} - ${currentWeeksData.exams.endDate})</th>
+                            </tr>
+                            <tr>
+                                <td class="program-label" style="width: 8%;">البرامج</td>
+                                ${row5Data.programHtml}
+                                <td colspan="2">${Object.keys(programsByWeekAndField.exams || {}).map(fieldName => `<strong style="color: ${fieldColors[fieldName] || 'black'}">${fieldName}</strong><br>${[...new Set(programsByWeekAndField.exams[fieldName] || [])].join('<br>')}</div>`).join('<br>')}</td>
+                            </tr>
+                        </thead>
+                        <tbody></tbody>
+                    </table>
                 `;
-            });
+                
+                const schoolName = state.schoolName || 'اسم المدرسة';
+                const printFontSize = state.printFontSize || '8px';
+                const printFontFamily = 'Cairo';
+                const printStageTitle = document.getElementById('stage-title-header').textContent || 'لجميع المراحل الدراسية';
+                const printSemesterSubtitle = document.getElementById('subtitle').textContent;
+                const eduAdmin = state.educationAdmin || '';
+                const eduRegion = state.educationRegion || '';
+                const leaderName = state.activityLeaderName || 'رائد/ة النشاط';
+                const directorName = state.schoolDirectorName || 'مدير/ة المدرسة';
+                
+                // Generate the content for the second table based on selected programs only
+                let secondTableRows = '';
+                let programNumber = 1;
+                
+                // Get all selected programs and sort them based on their original order
+                const selectedPrograms = [];
+                activitiesData.forEach(field => {
+                    field.programs.forEach((program, programIndex) => {
+                        const programId = `${field.id}-${programIndex}`;
+                        if (programSelections[programId]) {
+                            selectedPrograms.push({
+                                field,
+                                program,
+                                programId,
+                                selectionData: programSelections[programId]
+                            });
+                        }
+                    });
+                });
 
-            const printWindow = window.open('', '_blank', 'width=1200,height=800');
-            if (!printWindow) {
-                alert('فشل فتح نافذة الطباعة. يرجى السماح بالنوافذ المنبثقة لهذا الموقع.');
-                isPrinting = false;
-                return;
-            }
-
-            printWindow.document.write(`
-                <!DOCTYPE html>
-                <html lang="ar" dir="rtl">
-                <head>
-                    <meta charset="UTF-8">
-                    <title>خطة النشاط الطلابي لـ ${schoolName}</title>
-                    <style>
-                        @import url('https://fonts.googleapis.com/css2?family=Cairo:wght@400;700&display=swap');
-                        @font-face {
-                            font-family: 'Mohammad Bold Art 1';
-                            src: url('https://d.top4top.io/p_2901k1t2b0.ttf') format('truetype');
-                            font-weight: normal;
-                            font-style: normal;
-                        }
-                        * { -webkit-print-color-adjust: exact !important; print-color-adjust: exact !important; }
-                        @page { size: A4 landscape; margin: 0; }
-                        html, body { margin: 0; padding: 0; }
-                        body { font-family: '${printFontFamily}', sans-serif; font-size: ${printFontSize}; }
-                        .print-page { 
-                            display: flex;
-                            flex-direction: column;
-                            min-height: 100vh;
-                            position: relative;
-                        }
-                        .print-page + .print-page {
-                             page-break-before: always;
-                        }
-                        .print-header-line {
-                           height: 30px;
-                           background: linear-gradient(135deg, #00A383 0%, #0093B5 100%);
-                           width: 100%;
-                           flex-shrink: 0;
-                        }
-                        .print-footer-line {
-                           height: 30px;
-                           background: linear-gradient(135deg, #00A383 0%, #0093B5 100%);
-                           width: 100%;
-                           flex-shrink: 0;
-                        }
-                        .print-header { 
-                            display: flex; 
-                            justify-content: space-between; 
-                            align-items: center; 
-                            margin: 8px 10mm; 
-                            flex-shrink: 0; 
-                            padding-top: 5mm;
-                            margin-top: 0; 
-                        }
-                        .print-header .right-side { display: flex; align-items: center; gap: 8px; }
-                        .print-header img { height: 40px; }
-                        .print-header .header-text p { margin: 0; font-size: 0.9em; line-height: 1.2; }
-                        .print-header .title-container { text-align: center; flex-grow: 1; }
-                        .print-header h1 { color: #00A383; margin: 0; font-size: 1.8em; display: inline; }
-                        .print-header h2 { font-size: 1.6em; font-weight: bold; color: #0093B5; margin: 1px 0; display: inline; margin-right: 5px; }
-                        .print-header p.subtitle { color: #555; margin-top: 2px; font-size: 1.1em; }
-                        .print-table {
-                            width: calc(100% - 20mm);
-                            margin: 0 10mm;
-                            border-collapse: collapse;
-                            table-layout: fixed;
-                            font-size: 0.9em;
-                            margin-top: 8px;
-                            page-break-inside: auto !important; /* Allow tables to break across pages */
-                        }
-                        .print-table th, .print-table td {
-                            border: 1px solid #ccc;
-                            padding: 4px;
-                            text-align: center;
-                            vertical-align: top;
-                            word-wrap: break-word;
-                        }
-                        .print-table th {
-                            background-color: #f2f2f2;
-                            font-weight: bold;
-                        }
-                        .print-table td.week-label {
-                            background-color: #e6f7ff;
-                            font-weight: bold;
-                            color: #005f99;
-                            text-align: center;
-                            width: 8%; /* Specific width for this column */
-                        }
-                        .print-table td.program-label {
-                            background-color: #f0f0f0;
-                            font-weight: bold;
-                            text-align: center;
-                            width: 8%; /* Specific width for this column */
-                        }
-                         .print-table .week-header {
-                            background-color: #e6f7ff;
-                            font-weight: bold;
-                            color: #005f99;
-                            text-align: center;
-                            width: 13.14%; /* Calculated width for other columns */
-                         }
-                        .print-signatures { 
-                            display: flex; 
-                            justify-content: space-around; 
-                            margin: 15px 10mm; 
-                            font-size: 1.1em; 
-                            font-weight: bold; 
-                            flex-shrink: 0; 
-                            page-break-inside: avoid;
-                        }
-                        .signature-box { text-align: center; }
-                        .checkbox-cell {
-                            padding: 2px 4px;
-                        }
-                        .checkbox-label {
-                            display: flex;
-                            align-items: center;
-                            gap: 4px;
-                            cursor: pointer;
-                        }
-                        .checkbox-box {
-                            width: 12px;
-                            height: 12px;
-                            border: 1px solid #000;
-                            background-color: #fff;
-                            display: inline-block;
-                        }
-                        .program-entry {
-                            line-height: 1.3;
-                            margin-bottom: 8px; 
-                        }
-                        .program-entry span {
-                             font-weight: normal;
-                             font-size: 0.85em;
-                             display: block;
-                        }
-                        .print-second-table {
-                            margin-top: 0;
-                            padding-top: 0;
-                        }
-                    </style>
-                </head>
-                <body>
-                    <div class="print-page">
-                        <div class="print-header-line"></div>
-                        <div class="print-page-content">
-                            <div class="print-header">
-                                <div class="right-side">
-                                    <img src="https://salogos.org/wp-content/uploads/2021/11/UntiTtled-1-1300x988.png" alt="شعار الوزارة">
-                                    <div class="header-text">
-                                        <p>${eduAdmin}</p><p>${eduRegion}</p><p>${schoolName}</p>
-                                    </div>
-                                </div>
-                                <div class="title-container">
-                                    <h1 style="display: inline;">خطة النشاط الطلابي</h1>
-                                    <h2 style="display: inline; margin-right: 5px;">${printStageTitle}</h2>
-                                    <p class="subtitle">${printSemesterSubtitle}</p>
-                                </div>
-                                <div></div> 
-                            </div>
-                            ${printTableContent}
-                        </div>
-                        <div class="print-signatures">
-                            <div class="signature-box"><p>${leaderName}</p></div>
-                            <div class="signature-box"><p>${directorName}</p></div>
-                        </div>
-                    </div>
+                selectedPrograms.forEach(item => {
+                    const { field, program, programId, selectionData } = item;
+                    const datesByGrade = selectionData?.datesByGrade || {};
+                    const notes = selectionData?.notes || '';
                     
-                    ${secondTableRows.length > 0 ? `
-                    <div class="print-page">
-                        <div class="print-header-line"></div>
-                        <div class="print-page-content">
-                            <div class="print-header">
-                                <div class="right-side">
-                                    <img src="https://salogos.org/wp-content/uploads/2021/11/UntiTtled-1-1300x988.png" alt="شعار الوزارة">
-                                    <div class="header-text">
-                                        <p>${eduAdmin}</p><p>${eduRegion}</p><p>${schoolName}</p>
-                                    </div>
-                                </div>
-                                <div class="title-container">
-                                    <h1 style="display: inline;">خطة النشاط الطلابي</h1>
-                                    <h2 style="display: inline; margin-right: 5px;">${printStageTitle}</h2>
-                                    <p class="subtitle">${printSemesterSubtitle}</p>
-                                </div>
-                                <div></div> 
-                            </div>
-                            <div class="second-table-container">
-                                <h2 style="font-size: 1.5em; font-weight: bold; text-align: center; margin-bottom: 10px;">جدول البرامج</h2>
-                                <table class="print-table print-second-table" style="page-break-inside: auto; margin-top: 0;">
-                                    <thead>
-                                        <tr class="bg-gray-100 text-gray-700">
-                                            <th style="padding: 4px; border: 1px solid #ccc; width: 3%;">م</th>
-                                            <th style="padding: 4px; border: 1px solid #ccc; width: 20%;">المجال</th>
-                                            <th style="padding: 4px; border: 1px solid #ccc; text-align: right; width: 28%;">البرنامج وعدد حصصه لكل مرحلة</th>
-                                            <th style="padding: 4px; border: 1px solid #ccc; text-align: right; width: 25%;">تاريخ التنفيذ من - إلى</th>
-                                            <th style="padding: 4px; border: 1px solid #ccc; width: 10%;">حالة التنفيذ</th>
-                                            <th style="padding: 4px; border: 1px solid #ccc; width: 14%;">ملاحظات</th>
-                                        </tr>
-                                    </thead>
-                                    <tbody>
-                                        ${secondTableRows}
-                                    </tbody>
-                                </table>
-                            </div>
-                        </div>
-                        <div class="print-signatures">
-                            <div class="signature-box"><p>${leaderName}</p></div>
-                            <div class="signature-box"><p>${directorName}</p></div>
-                        </div>
-                    </div>
-                    ` : ''}
-                </body>
-                </html>
-            `);
-            
-            printWindow.document.close();
-            printWindow.focus();
-            
-            printWindow.onload = () => {
-                printWindow.print();
-                isPrinting = false;
-                printWindow.close();
-            };
+                    const stagesList = [];
+                    const handledKeys = new Set();
+                    
+                    const groupsOrder = ['primary_all', 'quran_all', 'middle_all', 'high_all', 'primary_lower', 'primary_upper', 'quran_lower', 'quran_upper'];
+                    
+                    groupsOrder.forEach(groupKey => {
+                        const gradesInGroup = gradeGroups[groupKey] || [groupKey];
+                        const isGroupExplicitlySelected = selectedGrades.includes(groupKey);
+                        const isGroupImplicitlySelected = gradesInGroup.length > 0 && gradesInGroup.every(g => selectedGrades.includes(g));
+                    
+                        if ((isGroupExplicitlySelected || isGroupImplicitlySelected) && !handledKeys.has(groupKey)) {
+                            const sessionsCounts = gradesInGroup.map(g => program.sessions[g] || 0);
+                            const maxSessions = Math.max(...sessionsCounts);
 
-            printWindow.onafterprint = () => {
+                            if (maxSessions > 0) {
+                                stagesList.push(`${getLabel(groupKey)} (${maxSessions} حصة)`);
+                                gradesInGroup.forEach(g => handledKeys.add(g));
+                            }
+                        }
+                    });
+
+                    const allSelectedKeys = getEffectiveIndividualGrades();
+                    allSelectedKeys.forEach(key => {
+                        if (!handledKeys.has(key)) {
+                             const sessionCount = program.sessions[key] || 0;
+                             if (sessionCount > 0) {
+                                stagesList.push(`${getLabel(key)} (${sessionCount} حصة)`);
+                             }
+                        }
+                    });
+                    
+                    const allDates = Object.values(datesByGrade).flat();
+                    const formattedDates = allDates.length > 0 ? formatDatesForDisplay(allDates).text : '';
+                    
+                    secondTableRows += `
+                        <tr class="text-center">
+                            <td style="padding: 4px; border: 1px solid #ccc; width: 3%;">${programNumber++}</td>
+                            <td style="padding: 4px; border: 1px solid #ccc; background-color: ${field.color}; color: white; font-weight: bold; text-align: center; width: 20%;">${field.title}</td>
+                            <td style="padding: 4px; border: 1px solid #ccc; text-align: right; width: 28%;">
+                                ${program.name}<br>
+                                <span style="font-size: 0.8em; color: #666; font-weight: normal; line-height: 1.5; ">${stagesList.join(' | ')}</span>
+                            </td>
+                            <td style="padding: 4px; border: 1px solid #ccc; text-align: right; width: 25%;">${formattedDates}</td>
+                            <td style="padding: 4px; border: 1px solid #ccc; width: 10%;">
+                               <div style="display:flex; justify-content:space-around; align-items:center; gap: 2px;">
+                                    <label style="display:flex; align-items:center; gap:2px;"><input type="checkbox" style="width:10px; height:10px;"> نفذ</label>
+                                    <label style="display:flex; align-items:center; gap:2px;"><input type="checkbox" style="width:10px; height:10px;"> لم ينفذ</label>
+                               </div>
+                            </td>
+                            <td style="padding: 4px; border: 1px solid #ccc; width: 14%;">${notes}</td>
+                        </tr>
+                    `;
+                });
+
+                const printWindow = window.open('', '_blank', 'width=1200,height=800');
+                if (!printWindow) {
+                    alert('فشل فتح نافذة الطباعة. يرجى السماح بالنوافذ المنبثقة لهذا الموقع.');
+                    isPrinting = false;
+                    return;
+                }
+
+                printWindow.document.write(`
+                    <!DOCTYPE html>
+                    <html lang="ar" dir="rtl">
+                    <head>
+                        <meta charset="UTF-8">
+                        <title>خطة النشاط الطلابي لـ ${schoolName}</title>
+                        <style>
+                            @import url('https://fonts.googleapis.com/css2?family=Cairo:wght@400;700&display=swap');
+                            @font-face {
+                                font-family: 'Mohammad Bold Art 1';
+                                src: url('https://d.top4top.io/p_2901k1t2b0.ttf') format('truetype');
+                                font-weight: normal;
+                                font-style: normal;
+                            }
+                            * { -webkit-print-color-adjust: exact !important; print-color-adjust: exact !important; }
+                            @page { size: A4 landscape; margin: 0; }
+                            html, body { margin: 0; padding: 0; }
+                            body { font-family: '${printFontFamily}', sans-serif; font-size: ${printFontSize}; }
+                            .print-page { 
+                                display: flex;
+                                flex-direction: column;
+                                min-height: 100vh;
+                                position: relative;
+                            }
+                            .print-page + .print-page {
+                                 page-break-before: always;
+                            }
+                            .print-header-line {
+                               height: 30px;
+                               background: linear-gradient(135deg, #00A383 0%, #0093B5 100%);
+                               width: 100%;
+                               flex-shrink: 0;
+                            }
+                            .print-footer-line {
+                               height: 30px;
+                               background: linear-gradient(135deg, #00A383 0%, #0093B5 100%);
+                               width: 100%;
+                               flex-shrink: 0;
+                            }
+                            .print-header { 
+                                display: flex; 
+                                justify-content: space-between; 
+                                align-items: center; 
+                                margin: 8px 10mm; 
+                                flex-shrink: 0; 
+                                padding-top: 5mm;
+                                margin-top: 0; 
+                            }
+                            .print-header .right-side { display: flex; align-items: center; gap: 8px; }
+                            .print-header img { height: 40px; }
+                            .print-header .header-text p { margin: 0; font-size: 0.9em; line-height: 1.2; }
+                            .print-header .title-container { text-align: center; flex-grow: 1; }
+                            .print-header h1 { color: #00A383; margin: 0; font-size: 1.8em; display: inline; }
+                            .print-header h2 { font-size: 1.6em; font-weight: bold; color: #0093B5; margin: 1px 0; display: inline; margin-right: 5px; }
+                            .print-header p.subtitle { color: #555; margin-top: 2px; font-size: 1.1em; }
+                            .print-table {
+                                width: calc(100% - 20mm);
+                                margin: 0 10mm;
+                                border-collapse: collapse;
+                                table-layout: fixed;
+                                font-size: 0.9em;
+                                margin-top: 8px;
+                                page-break-inside: auto !important; /* Allow tables to break across pages */
+                            }
+                            .print-table th, .print-table td {
+                                border: 1px solid #ccc;
+                                padding: 4px;
+                                text-align: center;
+                                vertical-align: top;
+                                word-wrap: break-word;
+                            }
+                            .print-table th {
+                                background-color: #f2f2f2;
+                                font-weight: bold;
+                            }
+                            .print-table td.week-label {
+                                background-color: #e6f7ff;
+                                font-weight: bold;
+                                color: #005f99;
+                                text-align: center;
+                                width: 8%; /* Specific width for this column */
+                            }
+                            .print-table td.program-label {
+                                background-color: #f0f0f0;
+                                font-weight: bold;
+                                text-align: center;
+                                width: 8%; /* Specific width for this column */
+                            }
+                             .print-table .week-header {
+                                background-color: #e6f7ff;
+                                font-weight: bold;
+                                color: #005f99;
+                                text-align: center;
+                                width: 13.14%; /* Calculated width for other columns */
+                             }
+                            .print-signatures { 
+                                display: flex; 
+                                justify-content: space-around; 
+                                margin: 15px 10mm; 
+                                font-size: 1.1em; 
+                                font-weight: bold; 
+                                flex-shrink: 0; 
+                                page-break-inside: avoid;
+                            }
+                            .signature-box { text-align: center; }
+                            .checkbox-cell {
+                                padding: 2px 4px;
+                            }
+                            .checkbox-label {
+                                display: flex;
+                                align-items: center;
+                                gap: 4px;
+                                cursor: pointer;
+                            }
+                            .checkbox-box {
+                                width: 12px;
+                                height: 12px;
+                                border: 1px solid #000;
+                                background-color: #fff;
+                                display: inline-block;
+                            }
+                            .program-entry {
+                                line-height: 1.3;
+                                margin-bottom: 8px; 
+                            }
+                            .program-entry span {
+                                 font-weight: normal;
+                                 font-size: 0.85em;
+                                 display: block;
+                            }
+                            .print-second-table {
+                                margin-top: 0;
+                                padding-top: 0;
+                            }
+                        </style>
+                    </head>
+                    <body>
+                        <div class="print-page">
+                            <div class="print-header-line"></div>
+                            <div class="print-page-content">
+                                <div class="print-header">
+                                    <div class="right-side">
+                                        <img src="https://salogos.org/wp-content/uploads/2021/11/UntiTtled-1-1300x988.png" alt="شعار الوزارة">
+                                        <div class="header-text">
+                                            <p>${eduAdmin}</p><p>${eduRegion}</p><p>${schoolName}</p>
+                                        </div>
+                                    </div>
+                                    <div class="title-container">
+                                        <h1 style="display: inline;">خطة النشاط الطلابي</h1>
+                                        <h2 style="display: inline; margin-right: 5px;">${printStageTitle}</h2>
+                                        <p class="subtitle">${printSemesterSubtitle}</p>
+                                    </div>
+                                    <div></div> 
+                                </div>
+                                ${printTableContent}
+                            </div>
+                            <div class="print-signatures">
+                                <div class="signature-box"><p>${leaderName}</p></div>
+                                <div class="signature-box"><p>${directorName}</p></div>
+                            </div>
+                        </div>
+                        
+                        ${secondTableRows.length > 0 ? `
+                        <div class="print-page">
+                            <div class="print-header-line"></div>
+                            <div class="print-page-content">
+                                <div class="print-header">
+                                    <div class="right-side">
+                                        <img src="https://salogos.org/wp-content/uploads/2021/11/UntiTtled-1-1300x988.png" alt="شعار الوزارة">
+                                        <div class="header-text">
+                                            <p>${eduAdmin}</p><p>${eduRegion}</p><p>${schoolName}</p>
+                                        </div>
+                                    </div>
+                                    <div class="title-container">
+                                        <h1 style="display: inline;">خطة النشاط الطلابي</h1>
+                                        <h2 style="display: inline; margin-right: 5px;">${printStageTitle}</h2>
+                                        <p class="subtitle">${printSemesterSubtitle}</p>
+                                    </div>
+                                    <div></div> 
+                                </div>
+                                <div class="second-table-container">
+                                    <h2 style="font-size: 1.5em; font-weight: bold; text-align: center; margin-bottom: 10px;">جدول البرامج</h2>
+                                    <table class="print-table print-second-table" style="page-break-inside: auto; margin-top: 0;">
+                                        <thead>
+                                            <tr class="bg-gray-100 text-gray-700">
+                                                <th style="padding: 4px; border: 1px solid #ccc; width: 3%;">م</th>
+                                                <th style="padding: 4px; border: 1px solid #ccc; width: 20%;">المجال</th>
+                                                <th style="padding: 4px; border: 1px solid #ccc; text-align: right; width: 28%;">البرنامج وعدد حصصه لكل مرحلة</th>
+                                                <th style="padding: 4px; border: 1px solid #ccc; text-align: right; width: 25%;">تاريخ التنفيذ من - إلى</th>
+                                                <th style="padding: 4px; border: 1px solid #ccc; width: 10%;">حالة التنفيذ</th>
+                                                <th style="padding: 4px; border: 1px solid #ccc; width: 14%;">ملاحظات</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                            ${secondTableRows}
+                                        </tbody>
+                                    </table>
+                                </div>
+                            </div>
+                            <div class="print-signatures">
+                                <div class="signature-box"><p>${leaderName}</p></div>
+                                <div class="signature-box"><p>${directorName}</p></div>
+                            </div>
+                        </div>
+                        ` : ''}
+                    </body>
+                    </html>
+                `);
+                
+                printWindow.document.close();
+                printWindow.focus();
+                
+                printWindow.onload = () => {
+                    printWindow.print();
+                    isPrinting = false;
+                    printWindow.close();
+                };
+
+                printWindow.onafterprint = () => {
+                    isPrinting = false;
+                };
+            } catch (error) {
+                console.error("Printing error:", error);
+                alert("حدث خطأ أثناء عملية الطباعة. يرجى المحاولة مرة أخرى.");
                 isPrinting = false;
-            };
+            }
         }
         
         function saveBackup() {
