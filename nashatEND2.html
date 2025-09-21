@@ -7,15 +7,9 @@
     <script src="https://cdn.tailwindcss.com"></script>
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Cairo:wght@300;400;600;700&display=swap');
+        @import url('https://fonts.googleapis.com/css2?family=Readex+Pro:wght@300;400;600;700&display=swap');
         @import url('https://fonts.com/css2?family=Changa:wght@400;700&display=swap');
-        
-        /* Font from a custom URL, assuming it's available */
-        @font-face {
-            font-family: 'Mohammad Bold Art 1';
-            src: url('https://d.top4top.io/p_2901k1t2b0.ttf') format('truetype');
-            font-weight: normal;
-            font-style: normal;
-        }
+
 
         :root {
             --main-font: 'Cairo', sans-serif;
@@ -244,11 +238,24 @@
             .print-table th, .print-table td {
                 padding: 2px; /* Slightly reduced padding to save space */
             }
-            .print-table td.week-label, .print-table td.program-label {
+            .print-table td.week-label {
                 width: 8%; /* Adjusted width for the first column */
             }
             .print-table .week-header {
-                width: calc(92% / 7); /* Distribute remaining width to other 7 columns */
+                width: 13.14%; /* Calculated width for other columns */
+            }
+            /* Modified Print styles for second table */
+            .print-second-table th:nth-child(2), .print-second-table td:nth-child(2) {
+                width: 10%; /* Narrower width for 'المجال' */
+            }
+            .print-second-table th:nth-child(3), .print-second-table td:nth-child(3) {
+                width: 25%; /* Narrower width for 'البرنامج' */
+            }
+            .print-second-table th:nth-child(4), .print-second-table td:nth-child(4) {
+                width: 30%; /* Wider width for 'تاريخ التنفيذ' */
+            }
+            .print-second-table td:nth-child(4) {
+                white-space: nowrap; /* Prevent date from wrapping */
             }
         }
     </style>
@@ -256,7 +263,7 @@
 <body class="bg-gray-50 min-h-screen">
 
     <div class="bg-red-600 text-white text-center py-2 no-print font-semibold">
-        تم التحديث بتاريخ ١٣ / ٣ / ١٤٤٧ هـ
+        تم التحديث بتاريخ ٢٩ / ٣ / ١٤٤٧ هـ
     </div>
 
     <div id="update-modal" class="fixed inset-0 z-50 items-center justify-center p-4 no-print bg-black bg-opacity-50 hidden">
@@ -496,7 +503,7 @@
         let weeksData = weeksDataDefault;
 
         const activitiesData = [
-            { id: 'citizenship', title: 'المواطنة والحياة', color: '#981E47',icon: 'https://k.top4top.io/p_3472ccl2l0.gif',  programs: [
+            { id: 'citizenship', title: 'المواطنة والحياة', color: '#981E47',icon: 'https://k.top4top.io/p_3472ccl2l0.gif', programs: [
                 { name: 'التطوع الطلابي', sessions: { p1:4, p2:4, p3:4, p4:6, p5:6, p6:6, quran_lower: 4, quran_upper: 6, m1:5, m2:5, m3:5, h1: 5, h2:5, h3:5 } },
                 { name: 'مهارات طموحة', sessions: { p1:6, p2:6, p3:6, p4:4, p5:4, p6:4, quran_lower: 6, quran_upper: 4, m1:3, m2:3, m3:3, h1: 2, h2:2, h3:2 } },
                 { name: 'قيمنا حياة', sessions: { p4:12, p5:12, p6:12, quran_upper: 12, m1:12, m2:12, m3:12, h1: 12, h2:12, h3:12 } },
@@ -586,6 +593,7 @@
                 return { text: '', json: '[]' };
             }
 
+            // Sort dates chronologically to find the first and last
             const sortedDates = [...datesArray].sort((a, b) => parseDateForSort(a) - parseDateForSort(b));
             
             const firstDateStr = sortedDates[0];
@@ -607,11 +615,17 @@
 
             let textContent = '';
 
-            if (firstWeekInfo && lastWeekInfo && firstWeekInfo.name === lastWeekInfo.name) {
-                textContent = `${firstWeekInfo.name}: ${sortedDates.join(' | ')}`;
-            } else if (sortedDates.length > 1 && firstWeekInfo && lastWeekInfo) {
-                textContent = `من ${firstWeekInfo.name} (${firstDateStr}) إلى ${lastWeekInfo.name} (${lastDateStr})`;
+            // This is the updated logic
+            if (firstWeekInfo && lastWeekInfo) {
+                if (sortedDates.length === 1) {
+                    // For a single date, just show the full date string
+                    textContent = firstDateStr;
+                } else {
+                    // Always show the range for more than one date
+                    textContent = `من ${firstWeekInfo.name} (${firstDateStr}) إلى ${lastWeekInfo.name} (${lastDateStr})`;
+                }
             } else {
+                // Fallback for dates not found in the week data
                 textContent = sortedDates.join(' | ');
             }
 
@@ -620,7 +634,6 @@
                 json: JSON.stringify(sortedDates)
             };
         }
-
 
         function createGradeSelectionUI() {
             const container = document.getElementById('grade-selection-container');
@@ -1502,7 +1515,7 @@
                 
                 const schoolName = state.schoolName || 'اسم المدرسة';
                 const printFontSize = state.printFontSize || '8px';
-                const printFontFamily = 'Cairo';
+                const printFontFamily = 'Readex Pro';
                 const printStageTitle = document.getElementById('stage-title-header').textContent || 'لجميع المراحل الدراسية';
                 const printSemesterSubtitle = document.getElementById('subtitle').textContent;
                 const eduAdmin = state.educationAdmin || '';
@@ -1513,6 +1526,37 @@
                 // Generate the content for the second table based on selected programs only
                 let secondTableRows = '';
                 let programNumber = 1;
+
+                // getProgramAndGradeLabels is a helper function to format the program name with grade and session count
+                const getProgramAndGradeLabels = (program, sessionsByGrade) => {
+                    const programLabels = [];
+                    // This function should aggregate by group if a group is selected, otherwise list individuals.
+                    const effectiveSelection = state.selectedGrades;
+                    const handledGrades = new Set();
+                    
+                    effectiveSelection.forEach(key => {
+                        let label;
+                        let sessionsCount;
+                        if (gradeGroups[key]) {
+                            label = getLabel(key);
+                            sessionsCount = Math.max(0, ...gradeGroups[key].map(g => program.sessions[g] || 0));
+                            if (sessionsCount > 0) {
+                                programLabels.push(`${label} ${sessionsCount} حصة`);
+                                gradeGroups[key].forEach(g => handledGrades.add(g));
+                            }
+                        } else if (!handledGrades.has(key)) {
+                            label = getLabel(key);
+                            sessionsCount = program.sessions[key] || 0;
+                            if (sessionsCount > 0) {
+                                programLabels.push(`${label} ${sessionsCount} حصة`);
+                                handledGrades.add(key);
+                            }
+                        }
+                    });
+
+                    const programName = program.name;
+                    return `${programName} (${programLabels.join(' و ')})`;
+                };
                 
                 // Get all selected programs and sort them based on their original order
                 const selectedPrograms = [];
@@ -1533,38 +1577,10 @@
                 selectedPrograms.forEach(item => {
                     const { field, program, programId, selectionData } = item;
                     const datesByGrade = selectionData?.datesByGrade || {};
+                    const teachersByGrade = selectionData?.teachersByGrade || {};
                     const notes = selectionData?.notes || '';
                     
-                    const stagesList = [];
-                    const handledKeys = new Set();
-                    
-                    const groupsOrder = ['primary_all', 'quran_all', 'middle_all', 'high_all', 'primary_lower', 'primary_upper', 'quran_lower', 'quran_upper'];
-                    
-                    groupsOrder.forEach(groupKey => {
-                        const gradesInGroup = gradeGroups[groupKey] || [groupKey];
-                        const isGroupExplicitlySelected = selectedGrades.includes(groupKey);
-                        const isGroupImplicitlySelected = gradesInGroup.length > 0 && gradesInGroup.every(g => selectedGrades.includes(g));
-                    
-                        if ((isGroupExplicitlySelected || isGroupImplicitlySelected) && !handledKeys.has(groupKey)) {
-                            const sessionsCounts = gradesInGroup.map(g => program.sessions[g] || 0);
-                            const maxSessions = Math.max(...sessionsCounts);
-
-                            if (maxSessions > 0) {
-                                stagesList.push(`${getLabel(groupKey)} (${maxSessions} حصة)`);
-                                gradesInGroup.forEach(g => handledKeys.add(g));
-                            }
-                        }
-                    });
-
-                    const allSelectedKeys = getEffectiveIndividualGrades();
-                    allSelectedKeys.forEach(key => {
-                        if (!handledKeys.has(key)) {
-                             const sessionCount = program.sessions[key] || 0;
-                             if (sessionCount > 0) {
-                                stagesList.push(`${getLabel(key)} (${sessionCount} حصة)`);
-                             }
-                        }
-                    });
+                    const programAndGradeText = getProgramAndGradeLabels(program, program.sessions);
                     
                     const allDates = Object.values(datesByGrade).flat();
                     const formattedDates = allDates.length > 0 ? formatDatesForDisplay(allDates).text : '';
@@ -1572,12 +1588,12 @@
                     secondTableRows += `
                         <tr class="text-center">
                             <td style="padding: 4px; border: 1px solid #ccc; width: 3%;">${programNumber++}</td>
-                            <td style="padding: 4px; border: 1px solid #ccc; background-color: ${field.color}; color: white; font-weight: bold; text-align: center; width: 20%;">${field.title}</td>
-                            <td style="padding: 4px; border: 1px solid #ccc; text-align: right; width: 28%;">
+                            <td style="padding: 4px; border: 1px solid #ccc; background-color: ${field.color}; color: white; font-weight: bold; text-align: center; width: 10%;">${field.title}</td>
+                            <td style="padding: 4px; border: 1px solid #ccc; text-align: right; width: 25%;">
                                 ${program.name}<br>
-                                <span style="font-size: 0.8em; color: #666; font-weight: normal; line-height: 1.5; ">${stagesList.join(' | ')}</span>
+                                <span style="font-size: 0.8em; color: #666; font-weight: normal; line-height: 1.5; ">${programAndGradeText.replace(program.name, '')}</span>
                             </td>
-                            <td style="padding: 4px; border: 1px solid #ccc; text-align: right; width: 25%;">${formattedDates}</td>
+                            <td style="padding: 4px; border: 1px solid #ccc; text-align: right; width: 30%;">${formattedDates}</td>
                             <td style="padding: 4px; border: 1px solid #ccc; width: 10%;">
                                <div style="display:flex; justify-content:space-around; align-items:center; gap: 2px;">
                                     <label style="display:flex; align-items:center; gap:2px;"><input type="checkbox" style="width:10px; height:10px;"> نفذ</label>
@@ -1604,6 +1620,7 @@
                         <title>خطة النشاط الطلابي لـ ${schoolName}</title>
                         <style>
                             @import url('https://fonts.googleapis.com/css2?family=Cairo:wght@400;700&display=swap');
+                            @import url('https://fonts.googleapis.com/css2?family=Readex+Pro:wght@400;700&display=swap');
                             @font-face {
                                 font-family: 'Mohammad Bold Art 1';
                                 src: url('https://d.top4top.io/p_2901k1t2b0.ttf') format('truetype');
@@ -1613,7 +1630,7 @@
                             * { -webkit-print-color-adjust: exact !important; print-color-adjust: exact !important; }
                             @page { size: A4 landscape; margin: 0; }
                             html, body { margin: 0; padding: 0; }
-                            body { font-family: '${printFontFamily}', sans-serif; font-size: ${printFontSize}; }
+                            body { font-family: 'Readex Pro', sans-serif; font-size: ${printFontSize}; }
                             .print-page { 
                                 display: flex;
                                 flex-direction: column;
@@ -1730,6 +1747,13 @@
                                 margin-top: 0;
                                 padding-top: 0;
                             }
+                            /* New CSS for removing space and title */
+                            h2.remove-on-print {
+                                display: none;
+                            }
+                            .second-table-container.remove-margin {
+                                margin-top: 0;
+                            }
                         </style>
                     </head>
                     <body>
@@ -1776,15 +1800,15 @@
                                     </div>
                                     <div></div> 
                                 </div>
-                                <div class="second-table-container">
-                                    <h2 style="font-size: 1.5em; font-weight: bold; text-align: center; margin-bottom: 10px;">جدول البرامج</h2>
+                                <div class="second-table-container remove-margin">
+                                    <h2 class="remove-on-print" style="font-size: 1.5em; font-weight: bold; text-align: center; margin-bottom: 10px;">جدول البرامج</h2>
                                     <table class="print-table print-second-table" style="page-break-inside: auto; margin-top: 0;">
                                         <thead>
                                             <tr class="bg-gray-100 text-gray-700">
                                                 <th style="padding: 4px; border: 1px solid #ccc; width: 3%;">م</th>
-                                                <th style="padding: 4px; border: 1px solid #ccc; width: 20%;">المجال</th>
-                                                <th style="padding: 4px; border: 1px solid #ccc; text-align: right; width: 28%;">البرنامج وعدد حصصه لكل مرحلة</th>
-                                                <th style="padding: 4px; border: 1px solid #ccc; text-align: right; width: 25%;">تاريخ التنفيذ من - إلى</th>
+                                                <th style="padding: 4px; border: 1px solid #ccc; width: 10%;">المجال</th>
+                                                <th style="padding: 4px; border: 1px solid #ccc; text-align: right; width: 25%;">البرنامج وعدد حصصه لكل مرحلة</th>
+                                                <th style="padding: 4px; border: 1px solid #ccc; text-align: right; width: 30%;">تاريخ التنفيذ من - إلى</th>
                                                 <th style="padding: 4px; border: 1px solid #ccc; width: 10%;">حالة التنفيذ</th>
                                                 <th style="padding: 4px; border: 1px solid #ccc; width: 14%;">ملاحظات</th>
                                             </tr>
