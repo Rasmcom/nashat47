@@ -1434,10 +1434,22 @@
                      getProgramDetailsByWeek(id, data.datesByGrade, data.teachersByGrade);
                 });
 
-                const row1Weeks = ['week1', 'week2', 'week3', 'week4', 'week5', 'week6', 'week7'];
-                const row3Weeks = ['week8', 'week9', 'week10', 'week11', 'week12', 'week13', 'autumn_break'];
-                const row5Weeks = ['week14', 'week15', 'week16', 'week17', 'week18'];
-                
+// --- بداية التعديل ---
+                let row1Weeks, row3Weeks, row5Weeks;
+
+                if (state.currentRegion === 'western') {
+                    // ترتيب المنطقة الغربية: إجازة الخريف بعد الأسبوع 12
+                    row1Weeks = ['week1', 'week2', 'week3', 'week4', 'week5', 'week6', 'week7'];
+                    row3Weeks = ['week8', 'week9', 'week10', 'week11', 'week12', 'autumn_break','week13'];
+                    row5Weeks = [ 'week14', 'week15', 'week16', 'week17'];
+                } else {
+                    // الترتيب الافتراضي (باقي المناطق): إجازة الخريف بعد الأسبوع 13
+                    row1Weeks = ['week1', 'week2', 'week3', 'week4', 'week5', 'week6', 'week7'];
+                    row3Weeks = ['week8', 'week9', 'week10', 'week11', 'week12', 'week13', 'autumn_break'];
+                    row5Weeks = ['week14', 'week15', 'week16', 'week17', 'week18'];
+                }
+                // --- نهاية التعديل ---
+
                 const getWeekContent = (weeks) => {
                     let weekHtml = '';
                     let programHtml = '';
