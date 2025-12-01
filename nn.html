@@ -10,6 +10,7 @@
         @import url('https://fonts.googleapis.com/css2?family=Readex+Pro:wght@300;400;600;700&display=swap');
         @import url('https://fonts.com/css2?family=Changa:wght@400;700&display=swap');
 
+
         :root {
             --main-font: 'Cairo', sans-serif;
         }
@@ -52,7 +53,14 @@
             opacity: 1;
         }
 
-        /* تنسيقات النافذة المنبثقة للتقويم */
+        summary {
+            list-style: none;
+            cursor: pointer;
+        }
+        summary::-webkit-details-marker {
+            display: none;
+        }
+        
         #date-picker-modal .week-grid .day.selected {
             background-color: #10B981;
             color: white;
@@ -71,13 +79,184 @@
             transform: scale(1);
             opacity: 1;
         }
-
-        /* تحسينات الطباعة العامة للصفحة الرئيسية (لإخفاء العناصر عند الطباعة بالخطأ من المتصفح مباشرة) */
+        
+        .print-header-line {
+            height: 30px;
+            background: linear-gradient(135deg, #00A383 0%, #0093B5 100%);
+            width: 100%;
+            flex-shrink: 0;
+        }
+        
+     
         @media print {
-            .no-print, header, footer, .hidden-print { display: none !important; }
+            .no-print { display: none !important; }
             * { -webkit-print-color-adjust: exact !important; print-color-adjust: exact !important; }
-            @page { margin: 0; size: auto; }
-            body { margin: 0; padding: 0; }
+            @page { 
+                size: A4 landscape; 
+                margin: 0;
+            } 
+            body { 
+                -webkit-print-color-adjust: exact !important; 
+                print-color-adjust: exact !important; 
+                margin: 0;
+                padding: 0;
+            }
+            .page-container { 
+                display: block; 
+                height: auto;
+            }
+            .print-header { 
+                display: flex; 
+                justify-content: space-between; 
+                align-items: center; 
+                margin: 0 10mm; 
+                flex-shrink: 0;
+                padding-top: 5mm;
+            }
+            .print-header .right-side { display: flex; align-items: center; gap: 8px; }
+            .print-header img { height: 40px; }
+            .print-header .header-text p { margin: 0; font-size: 0.9em; line-height: 1.2; }
+            .print-header .title-container { text-align: center; }
+            .print-header h1 { color: #00A383; margin: 0; font-size: 1.8em; }
+            .print-header h2 { font-size: 1.6em; font-weight: bold; color: #0093B5; margin: 1px 0; }
+            .print-header p.subtitle { color: #555; margin-top: 2px; font-size: 1.1em; }
+            .print-table {
+                width: calc(100% - 20mm);
+                margin: 0 10mm;
+                border-collapse: collapse;
+                table-layout: fixed;
+                font-size: 0.9em;
+                page-break-inside: auto !important; /* Allow table to split if needed */
+            }
+            .print-table th, .print-table td {
+                border: 1px solid #ccc;
+                padding: 4px;
+                text-align: center;
+                vertical-align: middle;
+            }
+            .print-table th {
+                background-color: #f2f2f2;
+                font-weight: bold;
+            }
+            .print-table td.week-label {
+                background-color: #e6f7ff;
+                font-weight: bold;
+                color: #005f99;
+                text-align: center;
+            }
+            .print-table td.program-label {
+                background-color: #f0f0f0;
+                font-weight: bold;
+                text-align: center;
+            }
+             .print-table .week-header {
+                background-color: #e6f7ff;
+                font-weight: bold;
+                color: #005f99;
+                text-align: center;
+             }
+            .print-signatures { 
+                display: flex; 
+                justify-content: space-around; 
+                margin: 15px 10mm; 
+                font-size: 1.1em; 
+                font-weight: bold; 
+                flex-shrink: 0; 
+                page-break-inside: avoid;
+            }
+            .checkbox-cell {
+                padding: 2px 4px;
+            }
+            .checkbox-label {
+                display: flex;
+                align-items: center;
+                gap: 4px;
+                cursor: pointer;
+            }
+            .checkbox-box {
+                width: 12px;
+                height: 12px;
+                border: 1px solid #000;
+                background-color: #fff;
+            }
+            .second-table-container {
+                margin-top: 20px;
+                width: calc(100% - 20mm);
+                margin-left: 10mm;
+                margin-right: 10mm;
+            }
+            .print-page {
+                display: block;
+                height: auto;
+                position: relative;
+                overflow: hidden;
+                page-break-after: always;
+            }
+            .print-page:last-child {
+                page-break-after: auto;
+            }
+            .print-page-content {
+                flex-grow: 1;
+            }
+      
+            .print-page-header-line {
+                 height: 30px;
+                 background: linear-gradient(135deg, #00A383 0%, #0093B5 100%);
+                 width: 100%;
+                 position: fixed;
+                 top: 0;
+                 left: 0;
+                 z-index: 10;
+            }
+            /* Start of new and modified print styles */
+            .print-header {
+                padding-top: 2mm; /* Reduced top padding */
+                margin-top: 0; /* Ensured no top margin */
+                margin-bottom: 2mm; /* Reduced bottom margin */
+            }
+            .print-table {
+                margin-top: 4mm; /* Reduced top margin for the table */
+            }
+            .program-entry .checkbox-group {
+                display: flex;
+                justify-content: center;
+                align-items: center;
+                gap: 2px;
+                font-size: 0.8em;
+                margin-top: 0; /* Removed top margin */
+                padding: 0;
+                line-height: 1; /* Ensured no extra line height */
+            }
+            .program-entry .checkbox-group label {
+                display: flex;
+                align-items: center;
+                gap: 2px;
+                white-space: nowrap;
+                margin: 0; /* Removed all margins */
+                padding: 0;
+            }
+            .print-table th, .print-table td {
+                padding: 2px; /* Slightly reduced padding to save space */
+            }
+            .print-table td.week-label {
+                width: 8%; /* Adjusted width for the first column */
+            }
+            .print-table .week-header {
+                width: 13.14%; /* Calculated width for other columns */
+            }
+            /* Modified Print styles for second table */
+            .print-second-table th:nth-child(2), .print-second-table td:nth-child(2) {
+                width: 10%; /* Narrower width for 'المجال' */
+            }
+            .print-second-table th:nth-child(3), .print-second-table td:nth-child(3) {
+                width: 25%; /* Narrower width for 'البرنامج' */
+            }
+            .print-second-table th:nth-child(4), .print-second-table td:nth-child(4) {
+                width: 30%; /* Wider width for 'تاريخ التنفيذ' */
+            }
+            .print-second-table td:nth-child(4) {
+                white-space: nowrap; /* Prevent date from wrapping */
+            }
         }
     </style>
 </head>
@@ -87,7 +266,6 @@
         تم التحديث بتاريخ ٢٩ / ٣ / ١٤٤٧ هـ
     </div>
 
-    <!-- نافذة التحديث -->
     <div id="update-modal" class="fixed inset-0 z-50 items-center justify-center p-4 no-print bg-black bg-opacity-50 hidden">
         <div class="bg-white rounded-lg shadow-xl p-6 max-w-lg w-full text-center transform transition-all scale-95 opacity-0" id="update-modal-box">
             <h3 class="text-2xl font-bold mb-4 text-gray-800 flex items-center justify-center gap-2">
@@ -97,17 +275,22 @@
             <div class="text-right space-y-3 text-gray-600">
                 <p class="font-semibold text-lg">✨ يسعدنا إبلاغك بأننا أضفنا مميزات جديدة:</p>
                 <ul class="list-disc list-inside space-y-2 pr-4">
-                    <li><strong class="text-teal-600">طباعة محسنة:</strong> تم حل مشاكل الصفحات البيضاء عند الطباعة من الجوال.</li>
-                    <li><strong class="text-teal-600">اختيار تفصيلي:</strong> الآن يمكنك اختيار كل فصل على حدة.</li>
+                    <li><strong class="text-teal-600">اختيار تفصيلي:</strong> الآن يمكنك اختيار كل فصل على حدة عند تحديد البرامج للمراحل.</li>
+                    <li><strong class="text-teal-600">النسخ الاحتياطي:</strong> أضفنا ميزة حفظ واستعادة البيانات لضمان عدم فقدان معلوماتك.</li>
                 </ul>
-                <div class="mt-6">
-                    <button onclick="closeUpdateModal()" class="px-6 py-2 bg-teal-600 text-white rounded-lg hover:bg-teal-700 transition-colors font-semibold">موافق</button>
-                </div>
+                <p class="font-semibold text-lg">✨ كما تم إجراء تحديثات على التصميم:</p>
+                <ul class="list-disc list-inside space-y-2 pr-4">
+                     <li><strong class="text-teal-600">تغيير التخطيط:</strong> تم تغيير التخطيط ليكون أكثر وضوحاً في التنفيذ والمتابعة.</li>
+                     <li><strong class="text-teal-600">مراحل جديدة:</strong> تم إضافة مدارس التحفيظ وأول ثانوي كمراحل إضافية.</li>
+                </ul>
+                <p class="font-bold text-center pt-4">✅ استمتع بالتجربة الجديدة الآن!</p>
+            </div>
+            <div class="mt-6">
+                <button onclick="closeUpdateModal()" class="px-6 py-2 bg-teal-600 text-white rounded-lg hover:bg-teal-700 transition-colors font-semibold">موافق</button>
             </div>
         </div>
     </div>
 
-    <!-- نافذة التقويم -->
     <div id="date-picker-modal" class="fixed inset-0 z-40 items-center justify-center p-4 no-print bg-black bg-opacity-50 hidden">
         <div class="bg-white rounded-lg shadow-xl p-6 max-w-4xl w-full">
             <h3 id="modal-title" class="text-xl font-bold mb-4">اختر تواريخ التنفيذ</h3>
@@ -121,7 +304,6 @@
     </div>
 
     <div id="main-content" class="transition-opacity duration-500">
-        <!-- الهيدر -->
         <header class="gradient-header text-white py-4 shadow-lg no-print">
             <div class="container mx-auto px-6 flex justify-between items-center">
                 <div class="flex items-center gap-4">
@@ -140,7 +322,6 @@
             </div>
         </header>
 
-        <!-- أدوات التحكم -->
         <section class="py-8 bg-gray-50 no-print">
             <div class="container mx-auto px-6">
                 <div class="mb-8 p-6 bg-white rounded-lg shadow-md">
@@ -182,10 +363,9 @@
             </div>
         </section>
 
-        <!-- المحتوى الرئيسي -->
         <main class="container mx-auto px-6 py-8">
             <h2 class="text-2xl font-bold mb-4 text-gray-800">تفاصيل الخطة</h2>
-        </main>
+            </main>
             
         <div class="container mx-auto px-6 py-4 no-print">
             <div class="flex justify-between items-center gap-8">
@@ -206,7 +386,7 @@
     
 
     <script>
-        const UPDATE_VERSION_KEY = 'updateModalSeen_v2'; // تم تغيير الإصدار لعرض التحديث الجديد
+        const UPDATE_VERSION_KEY = 'updateModalSeen_v1';
         let selectedGrades = [];
         let currentRegion = 'other';
         let activeSelection = null;
@@ -235,20 +415,46 @@
         };
         
         const teacherInputGroups = {
-            'primary_lower': { label: 'الصفوف الأولية', grades: ['p1', 'p2', 'p3'] },
-            'primary_upper': { label: 'الصفوف العليا', grades: ['p4', 'p5', 'p6'] },
-            'quran_lower': { label: 'أولية تحفيظ', grades: ['quran_lower'] },
-            'quran_upper': { label: 'عليا تحفيظ', grades: ['quran_upper'] },
-            'quran_all': { label: 'المرحلة الابتدائية تحفيظ', grades: ['quran_lower', 'quran_upper'] },
-            'middle_all': { label: 'المرحلة المتوسطة', grades: ['m1', 'm2', 'm3'] },
-            'high_all': { label: 'المرحلة الثانوية', grades: ['h1', 'h2', 'h3'] },
-            'all': { label: 'كل المراحل', grades: Object.keys(gradeNames) },
-            'individual': { label: (grade) => gradeNames[grade], grades: (selectedGrades) => selectedGrades }
+            'primary_lower': {
+                label: 'الصفوف الأولية',
+                grades: ['p1', 'p2', 'p3'],
+            },
+            'primary_upper': {
+                label: 'الصفوف العليا',
+                grades: ['p4', 'p5', 'p6'],
+            },
+             'quran_lower': {
+                label: 'أولية تحفيظ',
+                grades: ['quran_lower'],
+            },
+            'quran_upper': {
+                label: 'عليا تحفيظ',
+                grades: ['quran_upper'],
+            },
+            'quran_all': {
+                label: 'المرحلة الابتدائية تحفيظ',
+                grades: ['quran_lower', 'quran_upper'],
+            },
+            'middle_all': {
+                label: 'المرحلة المتوسطة',
+                grades: ['m1', 'm2', 'm3'],
+            },
+            'high_all': {
+                label: 'المرحلة الثانوية',
+                grades: ['h1', 'h2', 'h3'],
+            },
+            'all': {
+                label: 'كل المراحل',
+                grades: Object.keys(gradeNames),
+            },
+            'individual': {
+                label: (grade) => gradeNames[grade],
+                grades: (selectedGrades) => selectedGrades,
+            }
         };
 
         const allGradeKeys = Object.keys(gradeNames);
 
-        // البيانات الافتراضية للأسابيع
         const weeksDataDefault = {
             'week1': { name: 'الأسبوع الأول', startDate: '1 / 3', endDate: '5 / 3', days: { 'الأحد': '1 / 3', 'الاثنين': '2 / 3', 'الثلاثاء': '3 / 3', 'الأربعاء': '4 / 3', 'الخميس': '5 / 3' } },
             'week2': { name: 'الأسبوع الثاني', startDate: '8 / 3', endDate: '12 / 3', days: { 'الأحد': '8 / 3', 'الاثنين': '9 / 3', 'الثلاثاء': '10 / 3', 'الأربعاء': '11 / 3', 'الخميس': '12 / 3' } },
@@ -272,7 +478,6 @@
             'exams': { name: 'الاختبارات', startDate: '15 / 7', endDate: '19 / 7', days: {} },
         };
 
-        // بيانات المنطقة الغربية
         const weeksDataWestern = {
             'week1': { name: 'الأسبوع الأول', startDate: '8 / 3', endDate: '12 / 3', days: { 'الأحد': '8 / 3', 'الاثنين': '9 / 3', 'الثلاثاء': '10 / 3', 'الأربعاء': '11 / 3', 'الخميس': '12 / 3' } },
             'week2': { name: 'الأسبوع الثاني', startDate: '15 / 3', endDate: '19 / 3', days: { 'الأحد': '15 / 3', 'الاثنين': '16 / 3', 'الثلاثاء': '17 / 3', 'الأربعاء': '18 / 3', 'الخميس': '19 / 3' } },
@@ -297,7 +502,6 @@
 
         let weeksData = weeksDataDefault;
 
-        // البيانات الكاملة للأنشطة
         const activitiesData = [
             { id: 'citizenship', title: 'المواطنة والحياة', color: '#981E47',icon: 'https://k.top4top.io/p_3472ccl2l0.gif', programs: [
                 { name: 'التطوع الطلابي', sessions: { p1:4, p2:4, p3:4, p4:6, p5:6, p6:6, quran_lower: 4, quran_upper: 6, m1:5, m2:5, m3:5, h1: 5, h2:5, h3:5 } },
@@ -335,7 +539,7 @@
                 { name: 'يوم التسامح العالمي', date: 'يوافق ٢٥ / ٥ / ١٤٤٧ هـ', sessions: { p1:2, p2:2, p3:2, p4:2, p5:2, p6:2, quran_lower: 2, quran_upper: 2, m1:1, m2:1, m3:1, h1: 1, h2:1, h3:1 } },
                 { name: 'اليوم العالمي للطفل', date: 'يوافق ٢٩ / ٥ / ١٤٤٧ هـ', sessions: { p1:2, p2:2, p3:2, p4:2, p5:2, p6:2, quran_lower: 2, quran_upper: 2 } },
                 { name: 'اليوم العالمي لذوي الإعاقة', date: 'يوافق ١٢ / ٦ / ١٤٤٧ هـ', sessions: { p1:2, p2:2, p3:2, p4:2, p5:2, p6:2, quran_lower: 2, quran_upper: 2, m1:2, m2:2, m3:2, h1: 2, h2:2, h3:2 } },
-                { name: 'اليوم العالمي للغة العربية', date: 'يوافق ٢٧ / ٦ / ١٤٤٧ هـ', sessions: { p1:2, p2:2, p3:2, p4:2, p5:2, p6:2, quran_lower: 2, quran_upper: 2, m1:1, m2:1, m3:1, h1: 1, h2:1, h3:1 } },
+                { name: 'اليوم العالمي لللغة العربية', date: 'يوافق ٢٧ / ٦ / ١٤٤٧ هـ', sessions: { p1:2, p2:2, p3:2, p4:2, p5:2, p6:2, quran_lower: 2, quran_upper: 2, m1:1, m2:1, m3:1, h1: 1, h2:1, h3:1 } },
                 { name: 'اليوم العالمي للتعليم', date: 'يوافق ٧ / ٨ / ١٤٤٧ هـ', sessions: { p1:2, p2:2, p3:2, p4:2, p5:2, p6:2, quran_lower: 2, quran_upper: 2, m1:2, m2:2, m3:2, h1: 2, h2:2, h3:2 } },
                 { name: 'يوم التأسيس', date: 'يوافق ٥ / ٩ / ١٤٤٧ هـ', sessions: { p1:4, p2:4, p3:4, p4:4, p5:4, p6:4, quran_lower: 4, quran_upper: 4, m1:4, m2:4, m3:4, h1: 4, h2:4, h3:4 } },
                 { name: 'يوم العلم السعودي', date: 'يوافق ٢٢ / ٩ / ١٤٤٧ هـ', sessions: { p1:3, p2:3, p3:3, p4:3, p5:3, p6:3, quran_lower: 3, quran_upper: 3, m1:2, m2:2, m3:2, h1: 2, h2:2, h3:2 } },
@@ -374,8 +578,6 @@
             ]},
         ];
         
-        // --- دوال مساعدة للتاريخ والواجهة ---
-
         function parseDateForSort(dateStr) {
             const parts = dateStr.split(' ');
             const datePart = parts.slice(1).join('');
@@ -390,7 +592,10 @@
             if (!datesArray || datesArray.length === 0) {
                 return { text: '', json: '[]' };
             }
+
+            // Sort dates chronologically to find the first and last
             const sortedDates = [...datesArray].sort((a, b) => parseDateForSort(a) - parseDateForSort(b));
+            
             const firstDateStr = sortedDates[0];
             const lastDateStr = sortedDates[sortedDates.length - 1];
             
@@ -407,17 +612,27 @@
 
             const firstWeekInfo = getWeekInfoForDate(firstDateStr);
             const lastWeekInfo = getWeekInfoForDate(lastDateStr);
+
             let textContent = '';
+
+            // This is the updated logic
             if (firstWeekInfo && lastWeekInfo) {
                 if (sortedDates.length === 1) {
+                    // For a single date, just show the full date string
                     textContent = firstDateStr;
                 } else {
+                    // Always show the range for more than one date
                     textContent = `من ${firstWeekInfo.name} (${firstDateStr}) إلى ${lastWeekInfo.name} (${lastDateStr})`;
                 }
             } else {
+                // Fallback for dates not found in the week data
                 textContent = sortedDates.join(' | ');
             }
-            return { text: textContent, json: JSON.stringify(sortedDates) };
+
+            return {
+                text: textContent,
+                json: JSON.stringify(sortedDates)
+            };
         }
 
         function createGradeSelectionUI() {
@@ -425,39 +640,47 @@
             container.innerHTML = `
                 <button onclick="handleGradeSelection('all')" id="btn-all" class="w-full max-w-sm flex items-center justify-center gap-2 px-4 py-2 rounded-full font-medium transition-all duration-300">🏫 الكل</button>
             `;
+
             const stages = [
                 { title: 'الابتدائية', groups: [
                     { label: 'الكل', key: 'primary_all' }, 
                     { label: 'الصفوف الأولية', key: 'primary_lower' },
                     { label: 'الصفوف العليا', key: 'primary_upper' },
                     { label: 'تحفيظ', key: 'quran_all' },
+                    
                 ], individuals: ['p1', 'p2', 'p3', 'p4', 'p5', 'p6', 'quran_lower', 'quran_upper'] },
                 { title: 'المتوسطة', groups: [{ label: 'الكل', key: 'middle_all' }], individuals: ['m1', 'm2', 'm3'] },
                 { title: 'الثانوية', groups: [{ label: 'الكل', key: 'high_all' }], individuals: ['h1', 'h2', 'h3'] }
             ];
+
             stages.forEach(stage => {
                 const stageWrapper = document.createElement('div');
                 stageWrapper.className = 'w-full max-w-sm border p-2 rounded-lg';
+                
                 const titleEl = document.createElement('h4');
                 titleEl.className = 'font-semibold mb-2';
                 titleEl.textContent = stage.title;
                 stageWrapper.appendChild(titleEl);
+
                 const groupsContainer = document.createElement('div');
                 groupsContainer.className = 'flex flex-wrap justify-center gap-2 mb-2';
                 stage.groups.forEach(group => {
                     groupsContainer.innerHTML += `<button onclick="handleGradeSelection('${group.key}')" id="btn-${group.key}" class="px-3 py-1 rounded-full text-sm font-medium transition-all duration-300">${group.label}</button>`;
                 });
                 stageWrapper.appendChild(groupsContainer);
+
                 const individualsContainer = document.createElement('div');
                 individualsContainer.className = 'flex flex-wrap justify-center gap-2 border-t pt-2 mt-2';
                  stage.individuals.forEach(indKey => {
                     individualsContainer.innerHTML += `<button onclick="handleGradeSelection('${indKey}')" id="btn-${indKey}" class="px-3 py-1 rounded-full text-sm font-medium transition-all duration-300">${gradeNames[indKey]}</button>`;
                 });
                 stageWrapper.appendChild(individualsContainer);
+
                 container.appendChild(stageWrapper);
             });
         }
         
+        // Global utility function to get the correct label for a grade key
         const getLabel = (key) => {
             if (key === 'primary_all') return 'المرحلة الابتدائية';
             if (key === 'primary_lower') return 'الصفوف الأولية';
@@ -468,6 +691,71 @@
             if (key === 'quran_upper') return 'عليا تحفيظ';
             return gradeNames[key];
         };
+
+        // This function is now updated to get the original session count
+        function getProgramSessionsText(programSelection, programId) {
+            if (!programSelection || !programSelection.datesByGrade) {
+                return '';
+            }
+            
+            const programData = activitiesData.flatMap(f => f.programs).find((p, i) => `${f.id}-${i}` === programId);
+            if (!programData) {
+                return '';
+            }
+            
+            const gradeLabels = [];
+            const allSelectedKeys = Object.keys(programSelection.datesByGrade);
+            
+            // This function needs to return the original session count for a given grade key
+            const getOriginalSessions = (gradeKey) => {
+                return programData.sessions[gradeKey] || 0;
+            };
+
+            const handledKeys = new Set();
+            const groupsOrder = ['primary_all', 'quran_all', 'middle_all', 'high_all', 'primary_lower', 'primary_upper', 'quran_lower', 'quran_upper'];
+            
+            groupsOrder.forEach(groupKey => {
+                // Check if the group itself was selected, or if all its members were selected individually
+                const isGroupExplicitlySelected = selectedGrades.includes(groupKey);
+                const isGroupImplicitlySelected = (gradeGroups[groupKey] || []).length > 0 && (gradeGroups[groupKey] || []).every(g => selectedGrades.includes(g));
+
+                if ((isGroupExplicitlySelected || isGroupImplicitlySelected) && !handledKeys.has(groupKey)) {
+                    let maxSessionsInGroup = 0;
+                    if(groupKey === 'all') { // Handle 'all' separately if needed
+                       maxSessionsInGroup = Math.max(...(Object.keys(programData.sessions).map(k => programData.sessions[k])));
+                    } else {
+                        const gradesInGroup = gradeGroups[groupKey] || [groupKey];
+                        maxSessionsInGroup = Math.max(...gradesInGroup.map(g => getOriginalSessions(g)));
+                    }
+
+                    if (maxSessionsInGroup > 0) {
+                        gradeLabels.push(`${getLabel(groupKey)}: ${maxSessionsInGroup} حصة`);
+                        (gradeGroups[groupKey] || [groupKey]).forEach(g => handledKeys.add(g));
+                    }
+                }
+            });
+
+            // Fallback for individual grades if their groups weren't selected
+            allSelectedKeys.forEach(key => {
+                if (!handledKeys.has(key)) {
+                    const sessionCount = getOriginalSessions(key);
+                    if (sessionCount > 0) {
+                        gradeLabels.push(`${getLabel(key)}: ${sessionCount} حصة`);
+                    }
+                }
+            });
+            
+            return gradeLabels.join('، ');
+        }
+        
+        function populateProgramsTable() {
+            // This function is no longer needed to render the table in the main view
+            // as it will be generated only on print.
+        }
+        
+        function updateSecondTableDates() {
+            // This function is no longer needed
+        }
 
         function generateSections() {
             const mainContainer = document.querySelector('main');
@@ -541,29 +829,37 @@
                 updateDateSelectorsForRow(row);
                 updateTeacherInputsForRow(row);
             });
+            // updateSecondTableDates(); // Removed this call as the function is no longer needed
         }
         
         function updateTeacherInputsForRow(row) {
             const uniqueId = row.dataset.programId;
             const container = row.querySelector(`.teacher-inputs-container`);
             if (!container) return;
+
             const sessions = JSON.parse(row.dataset.sessions);
             const effectiveGrades = getEffectiveIndividualGrades().filter(grade => sessions[grade] > 0);
+
             let newHTML = '';
+            
             let teacherGroupsToDisplay = [];
             const isAllSelected = selectedGrades.includes('all');
+            
             if (isAllSelected) {
                 teacherGroupsToDisplay.push('all');
             } else {
                  teacherGroupsToDisplay.push(...selectedGrades);
             }
+
             teacherGroupsToDisplay = teacherGroupsToDisplay.filter(key => {
                 const groupGrades = gradeGroups[key] || [key];
                 return groupGrades.some(g => effectiveGrades.includes(g));
             });
+
             if (teacherGroupsToDisplay.length === 0 && effectiveGrades.length > 0) {
                  teacherGroupsToDisplay = effectiveGrades;
             }
+
             teacherGroupsToDisplay.forEach(key => {
                 const groupData = teacherInputGroups[key];
                 const label = (groupData ? groupData.label : gradeNames[key]) || 'مرحلة غير محددة';
@@ -574,6 +870,7 @@
                     </div>
                 `;
             });
+
             container.innerHTML = newHTML;
         }
 
@@ -583,15 +880,19 @@
             const container = document.getElementById(`selectors-container-${uniqueId}`);
             if (!container) return;
             container.innerHTML = '';
+
             const itemsToDisplay = selectedGrades.includes('all') 
                 ? ['primary_lower', 'primary_upper', 'quran_lower', 'quran_upper', 'middle_all', 'high_all'] 
                 : selectedGrades;
+
             let newHTML = '';
             itemsToDisplay.forEach(key => {
                 const individualGradeKeys = gradeGroups[key] || [key];
                 let sessionCount = 0;
                 let label = getLabel(key); 
+                
                 sessionCount = Math.max(0, ...individualGradeKeys.map(g => sessions[g] || 0));
+
                 if (sessionCount > 0) {
                     newHTML += `
                     <div class="grade-date-selector p-2 border-t first:border-t-0" data-grade-key="${key}">
@@ -609,11 +910,14 @@
                     </div>`;
                 }
             });
+
             container.innerHTML = newHTML;
         }
 
         function getEffectiveIndividualGrades() {
-            if (selectedGrades.includes('all')) return [...allGradeKeys];
+            if (selectedGrades.includes('all')) {
+                return [...allGradeKeys];
+            }
             let individuals = [];
             selectedGrades.forEach(item => {
                 individuals.push(...(gradeGroups[item] || [item]));
@@ -626,7 +930,9 @@
                 selectedGrades = ['all'];
             } else {
                 let newSelection = selectedGrades.includes('all') ? [] : [...selectedGrades];
+                
                 const isAdding = !newSelection.includes(key);
+
                 if (isAdding) {
                     if (key === 'quran_all') {
                         newSelection = newSelection.filter(item => !gradeGroups['quran_all'].includes(item));
@@ -674,16 +980,20 @@
                          }
                     }
                 }
+                
                 selectedGrades = newSelection;
             }
+
             updateButtonStyles();
             updateTitle();
             updateAllDateSelectors();
             saveState();
         }
 
+
         function updateButtonStyles() {
             const effectiveSelection = getEffectiveIndividualGrades();
+            
             allGradeKeys.forEach(key => {
                 const btn = document.getElementById(`btn-${key}`);
                 if(btn) {
@@ -696,6 +1006,7 @@
                     }
                 }
             });
+
             Object.keys(gradeGroups).forEach(key => {
                 const btn = document.getElementById(`btn-${key}`);
                 if(btn) {
@@ -712,6 +1023,7 @@
                     }
                 }
             });
+
             const btnAll = document.getElementById('btn-all');
             if (selectedGrades.includes('all')) {
                 btnAll.classList.add('bg-blue-600', 'text-white', 'shadow-lg');
@@ -722,11 +1034,14 @@
             }
         }
 
+
         function selectRegion(region) {
             currentRegion = region;
             weeksData = region === 'western' ? weeksDataWestern : weeksDataDefault;
+
             const btnWestern = document.getElementById('btn-western-region');
             const btnOther = document.getElementById('btn-other-region');
+
             if (region === 'western') {
                 btnWestern.className = 'px-4 py-2 rounded-full font-medium transition-all duration-300 bg-blue-600 text-white shadow-lg';
                 btnOther.className = 'px-4 py-2 rounded-full font-medium transition-all duration-300 bg-gray-200 text-gray-700';
@@ -740,6 +1055,7 @@
         function toggleDropdown(dropdownId) {
             const dropdown = document.getElementById(dropdownId);
             const arrow = document.getElementById(dropdownId.replace('-dropdown', '-arrow'));
+            
             document.querySelectorAll('.dropdown-content.active').forEach(openDropdown => {
                 if (openDropdown.id !== dropdownId) {
                     openDropdown.classList.remove('active');
@@ -747,6 +1063,7 @@
                     if (otherArrow) otherArrow.classList.remove('rotate-arrow');
                 }
             });
+
             dropdown.classList.toggle('active');
             arrow.classList.toggle('rotate-arrow');
         }
@@ -755,6 +1072,7 @@
             const stageTitleHeader = document.getElementById('stage-title-header');
             const selectedGradeKeys = selectedGrades.filter(g => g !== 'all');
             let titleText = '';
+
             if (selectedGrades.includes('all')) {
                 titleText = 'لجميع المراحل الدراسية';
             } else if (selectedGradeKeys.length > 0) {
@@ -764,28 +1082,50 @@
                 const hasUpperPrimary = selectedGradeKeys.includes('primary_upper');
                 const hasQuranLower = selectedGradeKeys.includes('quran_lower');
                 const hasQuranUpper = selectedGradeKeys.includes('quran_upper');
-                if (hasLowerPrimary && hasUpperPrimary) parts.push('للمرحلة الابتدائية');
-                else if (hasLowerPrimary) parts.push('للصفوف الأولية');
-                else if (hasUpperPrimary) parts.push('للصفوف العليا');
-                if (hasQuranLower && hasQuranUpper) parts.push('للمرحلة الابتدائية تحفيظ');
-                else {
+                
+                if (hasLowerPrimary && hasUpperPrimary) {
+                    parts.push('للمرحلة الابتدائية');
+                } else if (hasLowerPrimary) {
+                    parts.push('للصفوف الأولية');
+                } else if (hasUpperPrimary) {
+                    parts.push('للصفوف العليا');
+                }
+
+                if (hasQuranLower && hasQuranUpper) {
+                     parts.push('للمرحلة الابتدائية تحفيظ');
+                } else {
                     const quranIndividuals = selectedGradeKeys.filter(g => g.startsWith('quran'));
-                    if (quranIndividuals.length > 0) parts.push(...quranIndividuals.map(g => gradeNames[g]));
+                    if (quranIndividuals.length > 0) {
+                        parts.push(...quranIndividuals.map(g => gradeNames[g]));
+                    }
                 }
-                if (selectedGradeKeys.includes('middle_all')) parts.push('للمرحلة المتوسطة');
-                else {
+
+                if (selectedGradeKeys.includes('middle_all')) {
+                    parts.push('للمرحلة المتوسطة');
+                } else {
                     const middleIndividuals = selectedGradeKeys.filter(g => g.startsWith('m'));
-                    if (middleIndividuals.length > 0) parts.push(...middleIndividuals.map(g => gradeNames[g]));
+                    if (middleIndividuals.length > 0) {
+                        parts.push(...middleIndividuals.map(g => gradeNames[g]));
+                    }
                 }
-                if (selectedGradeKeys.includes('high_all')) parts.push('للمرحلة الثانوية');
-                else {
+
+                if (selectedGradeKeys.includes('high_all')) {
+                    parts.push('للمرحلة الثانوية');
+                } else {
                     const highIndividuals = selectedGradeKeys.filter(g => g.startsWith('h'));
-                    if (highIndividuals.length > 0) parts.push(...highIndividuals.map(g => gradeNames[g]));
+                    if (highIndividuals.length > 0) {
+                        parts.push(...highIndividuals.map(g => gradeNames[g]));
+                    }
                 }
+                
                 const individualPrimary = selectedGradeKeys.filter(g => primaryGrades.includes(g) && !hasLowerPrimary && !hasUpperPrimary);
-                if (individualPrimary.length > 0) parts.push(...individualPrimary.map(g => gradeNames[g]));
+                if (individualPrimary.length > 0) {
+                     parts.push(...individualPrimary.map(g => gradeNames[g]));
+                }
+                
                 titleText = 'لـ ' + [...new Set(parts)].join(' و ');
             }
+            
             stageTitleHeader.textContent = titleText;
         }
         
@@ -814,26 +1154,38 @@
             const row = document.querySelector(`tr[data-program-id="${programId}"]`);
             const programName = row.dataset.programName;
             const sessions = JSON.parse(row.dataset.sessions);
+            
             const individualGradeKeys = gradeGroups[key] || [key];
-            let totalRequiredSessions = Math.max(0, ...individualGradeKeys.map(g => sessions[g] || 0));
+            
+            let totalRequiredSessions = 0;
             let label = getLabel(key);
+            
+            totalRequiredSessions = Math.max(0, ...individualGradeKeys.map(g => sessions[g] || 0));
+            
             document.getElementById('modal-title').textContent = `${programName} - ${label}`;
+            
             const displayDiv = row.querySelector(`.grade-date-selector[data-grade-key="${key}"] .dates-display`);
             tempSelectedDates = displayDiv.dataset.dates ? JSON.parse(displayDiv.dataset.dates) : [];
+
             updateDatePickerCounter(totalRequiredSessions);
+
             const container = document.getElementById('modal-weeks-container');
             container.innerHTML = '';
+
             Object.entries(weeksData).forEach(([weekKey, weekData]) => {
                 const weekDiv = document.createElement('div');
                 weekDiv.className = 'p-2 border rounded-md';
                 weekDiv.innerHTML = `<p class="font-semibold text-center mb-2">${weekData.name} (${weekData.startDate} - ${weekData.endDate})</p>`;
+                
                 const weekGrid = document.createElement('div');
                 weekGrid.className = 'week-grid grid grid-cols-5 gap-2';
+                
                 Object.entries(weekData.days).forEach(([dayName, dayDate]) => {
                     const dayButton = document.createElement('button');
                     const fullDate = `${dayName} ${dayDate}`;
                     dayButton.className = 'day p-2 border rounded-md text-sm';
                     dayButton.dataset.date = fullDate;
+                    
                     let buttonText = `${dayName}<br>${dayDate}`;
                     if (weekData.specialDays && weekData.specialDays[dayDate]) {
                         dayButton.classList.add('disabled');
@@ -842,21 +1194,25 @@
                     } else {
                         dayButton.onclick = () => toggleDateSelection(dayButton, totalRequiredSessions);
                     }
+                    
                     if (tempSelectedDates.includes(fullDate)) {
                         dayButton.classList.add('selected');
                     }
+                    
                     dayButton.innerHTML = buttonText;
                     weekGrid.appendChild(dayButton);
                 });
                 weekDiv.appendChild(weekGrid);
                 container.appendChild(weekDiv);
             });
+
             document.getElementById('date-picker-modal').style.display = 'flex';
         }
 
         function toggleDateSelection(button, totalMaxDates) {
             const date = button.dataset.date;
             const isSelected = tempSelectedDates.includes(date);
+
             if (isSelected) {
                 tempSelectedDates = tempSelectedDates.filter(d => d !== date);
                 button.classList.remove('selected');
@@ -898,10 +1254,6 @@
             closeDatePicker();
         }
         
-        // -------------------------
-        // الوظيفة الأساسية للطباعة
-        // تم التعديل لمنع الصفحات البيضاء + ترتيب الغربية
-        // -------------------------
         function printSchedule() {
             if (isPrinting) {
                 alert('عملية طباعة جارية بالفعل. يرجى الانتظار.');
@@ -918,6 +1270,7 @@
                 }
                 
                 const currentWeeksData = state.currentRegion === 'western' ? weeksDataWestern : weeksDataDefault;
+
                 const programSelections = state.programSelections || {};
                 const effectiveGradesForPrint = getEffectiveIndividualGrades();
                 
@@ -941,8 +1294,8 @@
                 };
 
                 const getGradeLabelForPrint = (gradeKey) => {
-                   // منطق تسمية المراحل للطباعة
                     const selectedGradeKeys = state.selectedGrades.filter(g => g !== 'all');
+
                     if (state.selectedGrades.includes('all')) {
                         if (gradeGroups['primary_lower'].includes(gradeKey) || gradeGroups['primary_upper'].includes(gradeKey) || gradeGroups['quran_lower'].includes(gradeKey) || gradeGroups['quran_upper'].includes(gradeKey)) {
                             const isQuran = gradeGroups['quran_lower'].includes(gradeKey) || gradeGroups['quran_upper'].includes(gradeKey);
@@ -951,24 +1304,32 @@
                         if (gradeGroups['middle_all'].includes(gradeKey)) return 'المرحلة المتوسطة';
                         if (gradeGroups['high_all'].includes(gradeKey)) return 'المرحلة الثانوية';
                     }
+
                     if (selectedGradeKeys.includes('primary_all')) return 'المرحلة الابتدائية';
                     if (selectedGradeKeys.includes('quran_all')) return 'المرحلة الابتدائية تحفيظ';
                     if (selectedGradeKeys.includes('middle_all')) return 'المرحلة المتوسطة';
                     if (selectedGradeKeys.includes('high_all')) return 'المرحلة الثانوية';
+                    
                     if (selectedGradeKeys.includes('primary_lower') && gradeGroups['primary_lower'].includes(gradeKey)) return 'الصفوف الأولية';
                     if (selectedGradeKeys.includes('primary_upper') && gradeGroups['primary_upper'].includes(gradeKey)) return 'الصفوف العليا';
                     if (selectedGradeKeys.includes('quran_lower') && gradeGroups['quran_lower'].includes(gradeKey)) return 'أولية تحفيظ';
                     if (selectedGradeKeys.includes('quran_upper') && gradeGroups['quran_upper'].includes(gradeKey)) return 'عليا تحفيظ';
+
                     return gradeNames[gradeKey];
                 };
                 
                 const fieldColors = {
-                     'المواطنة والحياة': '#981E47', 'العلوم والتقنية': '#24344D', 'الرياضة والصحة': '#2FB7BD',
-                     'الثقافة والفنون': '#FF7145', 'النشاط الكشفي': '#018083', 'الأيام والمناسبات': '#583C71',
+                     'المواطنة والحياة': '#981E47',
+                     'العلوم والتقنية': '#24344D',
+                     'الرياضة والصحة': '#2FB7BD',
+                     'الثقافة والفنون': '#FF7145',
+                     'النشاط الكشفي': '#018083',
+                     'الأيام والمناسبات': '#583C71',
                 };
 
                 const getProgramDetailsByWeek = (id, dates, teachersByGrade) => {
-                    let programInfo, fieldTitle;
+                    let programInfo;
+                    let fieldTitle;
                     for (const field of activitiesData) {
                         const programIndex = field.programs.findIndex(p => `${field.id}-${field.programs.indexOf(p)}` === id);
                         if (programIndex !== -1) {
@@ -977,11 +1338,13 @@
                             break;
                         }
                     }
+
                     if (!programInfo) return;
 
                     const processedGrades = new Set();
                     Object.entries(dates).forEach(([gradeKey, dateArray]) => {
                         if (processedGrades.has(gradeKey)) return;
+                        
                         const individualGradesInGroup = gradeGroups[gradeKey] || [gradeKey];
                         const isGroupSelected = state.selectedGrades.includes(gradeKey);
 
@@ -999,14 +1362,25 @@
                                             weekToDatesMap[weekKey].push(dateStr);
                                         }
                                     });
+
                                     for (const weekKey in weekToDatesMap) {
                                          const sessionsCountForWeek = weekToDatesMap[weekKey].length;
                                          if (!programsByWeekAndField[weekKey]) programsByWeekAndField[weekKey] = {};
                                          if (!programsByWeekAndField[weekKey][fieldTitle]) programsByWeekAndField[weekKey][fieldTitle] = [];
-                                         let teacherName = (teachersByGrade && teachersByGrade[indKey]) ? teachersByGrade[indKey] : 'غير محدد';
+                                         
+                                         let teacherName = 'غير محدد';
+                                         if (teachersByGrade && teachersByGrade[indKey]) {
+                                            teacherName = teachersByGrade[indKey];
+                                         }
+
                                          let displayText = programInfo.name;
-                                         if (gradeLabel) displayText += `<br><span style="font-weight: normal;">(${gradeLabel} - ${sessionsCountForWeek} حصة)</span>`;
-                                         if (teacherName !== 'غير محدد') displayText += `<br>بإشراف: ${teacherName}`;
+                                         if (gradeLabel) {
+                                             displayText += `<br><span style="font-weight: normal;">(${gradeLabel} - ${sessionsCountForWeek} حصة)</span>`;
+                                         }
+                                          if (teacherName !== 'غير محدد') {
+                                              displayText += `<br>بإشراف: ${teacherName}`;
+                                          }
+
                                           if (!programsByWeekAndField[weekKey][fieldTitle].some(entry => entry.includes(displayText))) {
                                               programsByWeekAndField[weekKey][fieldTitle].push(displayText);
                                           }
@@ -1014,9 +1388,10 @@
                                     processedGrades.add(indKey);
                                 }
                             });
-                        } else {
+                        } else { // It's a group
                             if (dateArray.length > 0) {
                                  const gradeLabel = getLabel(gradeKey);
+                                 const sessionsCountForGroup = programInfo.sessions[gradeKey]; // Corrected line
                                  const weekToDatesMap = {};
                                  dateArray.forEach(dateStr => {
                                      const weekInfo = getWeekInfoForDate(dateStr);
@@ -1026,14 +1401,25 @@
                                          weekToDatesMap[weekKey].push(dateStr);
                                      }
                                  });
+
                                  for (const weekKey in weekToDatesMap) {
                                      const sessionsCountForWeek = weekToDatesMap[weekKey].length;
                                      if (!programsByWeekAndField[weekKey]) programsByWeekAndField[weekKey] = {};
                                      if (!programsByWeekAndField[weekKey][fieldTitle]) programsByWeekAndField[weekKey][fieldTitle] = [];
-                                     let teacherName = (teachersByGrade && teachersByGrade[gradeKey]) ? teachersByGrade[gradeKey] : 'غير محدد';
+                                     
+                                     let teacherName = 'غير محدد';
+                                     if (teachersByGrade && teachersByGrade[gradeKey]) {
+                                        teacherName = teachersByGrade[gradeKey];
+                                     }
+                                     
                                      let displayText = programInfo.name;
-                                      if (gradeLabel) displayText += `<br><span style="font-weight: normal;">(${gradeLabel} - ${sessionsCountForWeek} حصة)</span>`;
-                                     if (teacherName !== 'غير محدد') displayText += `<br>بإشراف: ${teacherName}`;
+                                      if (gradeLabel) {
+                                         displayText += `<br><span style="font-weight: normal;">(${gradeLabel} - ${sessionsCountForWeek} حصة)</span>`;
+                                     }
+                                     if (teacherName !== 'غير محدد') {
+                                         displayText += `<br>بإشراف: ${teacherName}`;
+                                     }
+                                     
                                      if (!programsByWeekAndField[weekKey][fieldTitle].some(entry => entry.includes(displayText))) {
                                          programsByWeekAndField[weekKey][fieldTitle].push(displayText);
                                      }
@@ -1048,27 +1434,32 @@
                      getProgramDetailsByWeek(id, data.datesByGrade, data.teachersByGrade);
                 });
 
-                // --- ترتيب الأسابيع (معدل) ---
                 let row1Weeks, row3Weeks, row5Weeks;
+
                 if (state.currentRegion === 'western') {
+                    // ترتيب المنطقة الغربية: إجازة الخريف بعد الأسبوع 12
                     row1Weeks = ['week1', 'week2', 'week3', 'week4', 'week5', 'week6', 'week7'];
                     row3Weeks = ['week8', 'week9', 'week10', 'week11', 'week12', 'autumn_break','week13'];
-                    row5Weeks = ['week14', 'week15', 'week16', 'week17'];
+                    row5Weeks = [ 'week14', 'week15', 'week16', 'week17'];
                 } else {
+                    // الترتيب الافتراضي (باقي المناطق): إجازة الخريف بعد الأسبوع 13
                     row1Weeks = ['week1', 'week2', 'week3', 'week4', 'week5', 'week6', 'week7'];
                     row3Weeks = ['week8', 'week9', 'week10', 'week11', 'week12', 'week13', 'autumn_break'];
                     row5Weeks = ['week14', 'week15', 'week16', 'week17', 'week18'];
                 }
-                
+
                 const getWeekContent = (weeks) => {
                     let weekHtml = '';
                     let programHtml = '';
+                    
                     weeks.forEach((weekKey) => {
                          const weekData = currentWeeksData[weekKey];
-                         if (!weekData) return;
+                         if (!weekData) return; // Added null check here
                          let weekLabel = weekData.name;
                          let programsContent = '';
+                        
                         const fieldNames = Object.keys(programsByWeekAndField[weekKey] || {});
+                        
                         if (fieldNames.length > 0) {
                             fieldNames.forEach(fieldName => {
                                  programsContent += `<strong style="color: ${fieldColors[fieldName] || 'black'};">${fieldName}</strong><br>`;
@@ -1077,13 +1468,18 @@
                                  programsContent += `</div>`;
                             });
                         }
+                        
                         if (weekKey === 'exams') {
                              weekHtml += `<th class="week-header" colspan="2">${weekLabel}<br>(${weekData.startDate} - ${weekData.endDate})</th>`;
                              programHtml += `<td colspan="2">${programsContent}</td>`;
+                        } else if (weekKey === 'autumn_break') {
+                             weekHtml += `<th class="week-header">${weekLabel}<br>(${weekData.startDate} - ${weekData.endDate})</th>`;
+                             programHtml += `<td>${programsContent}</td>`;
                         } else {
                              weekHtml += `<th class="week-header">${weekLabel}<br>(${weekData.startDate} - ${weekData.endDate})</th>`;
                              programHtml += `<td>${programsContent}</td>`;
                         }
+
                     });
                     return { weekHtml, programHtml };
                 };
@@ -1091,6 +1487,7 @@
                 const row1Data = getWeekContent(row1Weeks);
                 const row3Data = getWeekContent(row3Weeks);
                 const row5Data = getWeekContent(row5Weeks);
+
 
                 const printTableContent = `
                     <table class="print-table" style="page-break-inside: auto;">
@@ -1128,6 +1525,7 @@
                 
                 const schoolName = state.schoolName || 'اسم المدرسة';
                 const printFontSize = state.printFontSize || '8px';
+                const printFontFamily = 'Readex Pro';
                 const printStageTitle = document.getElementById('stage-title-header').textContent || 'لجميع المراحل الدراسية';
                 const printSemesterSubtitle = document.getElementById('subtitle').textContent;
                 const eduAdmin = state.educationAdmin || '';
@@ -1135,13 +1533,17 @@
                 const leaderName = state.activityLeaderName || 'رائد/ة النشاط';
                 const directorName = state.schoolDirectorName || 'مدير/ة المدرسة';
                 
+                // Generate the content for the second table based on selected programs only
                 let secondTableRows = '';
                 let programNumber = 1;
 
+                // getProgramAndGradeLabels is a helper function to format the program name with grade and session count
                 const getProgramAndGradeLabels = (program, sessionsByGrade) => {
                     const programLabels = [];
+                    // This function should aggregate by group if a group is selected, otherwise list individuals.
                     const effectiveSelection = state.selectedGrades;
                     const handledGrades = new Set();
+                    
                     effectiveSelection.forEach(key => {
                         let label;
                         let sessionsCount;
@@ -1161,15 +1563,23 @@
                             }
                         }
                     });
-                    return `${program.name} (${programLabels.join(' و ')})`;
+
+                    const programName = program.name;
+                    return `${programName} (${programLabels.join(' و ')})`;
                 };
                 
+                // Get all selected programs and sort them based on their original order
                 const selectedPrograms = [];
                 activitiesData.forEach(field => {
                     field.programs.forEach((program, programIndex) => {
                         const programId = `${field.id}-${programIndex}`;
                         if (programSelections[programId]) {
-                            selectedPrograms.push({ field, program, programId, selectionData: programSelections[programId] });
+                            selectedPrograms.push({
+                                field,
+                                program,
+                                programId,
+                                selectionData: programSelections[programId]
+                            });
                         }
                     });
                 });
@@ -1177,8 +1587,11 @@
                 selectedPrograms.forEach(item => {
                     const { field, program, programId, selectionData } = item;
                     const datesByGrade = selectionData?.datesByGrade || {};
+                    const teachersByGrade = selectionData?.teachersByGrade || {};
                     const notes = selectionData?.notes || '';
+                    
                     const programAndGradeText = getProgramAndGradeLabels(program, program.sessions);
+                    
                     const allDates = Object.values(datesByGrade).flat();
                     const formattedDates = allDates.length > 0 ? formatDatesForDisplay(allDates).text : '';
                     
@@ -1209,7 +1622,6 @@
                     return;
                 }
 
-                // بناء صفحة الطباعة مع CSS محسن جداً للجوال والويب
                 printWindow.document.write(`
                     <!DOCTYPE html>
                     <html lang="ar" dir="rtl">
@@ -1219,55 +1631,47 @@
                         <style>
                             @import url('https://fonts.googleapis.com/css2?family=Cairo:wght@400;700&display=swap');
                             @import url('https://fonts.googleapis.com/css2?family=Readex+Pro:wght@400;700&display=swap');
-                            
-                            * { 
-                                -webkit-print-color-adjust: exact !important; 
-                                print-color-adjust: exact !important; 
-                                box-sizing: border-box;
+                            @font-face {
+                                font-family: 'Mohammad Bold Art 1';
+                                src: url('https://d.top4top.io/p_2901k1t2b0.ttf') format('truetype');
+                                font-weight: normal;
+                                font-style: normal;
                             }
-                            
-                            @page { 
-                                size: A4 landscape; 
-                                margin: 0; /* إزالة هوامش المتصفح بالكامل */
-                            }
-                            
-                            html, body { 
-                                margin: 0; 
-                                padding: 0; 
-                                width: 100%;
-                            }
-                            
-                            body { 
-                                font-family: 'Readex Pro', sans-serif; 
-                                font-size: ${printFontSize}; 
-                            }
-                            
+                            * { -webkit-print-color-adjust: exact !important; print-color-adjust: exact !important; }
+                            @page { size: A4 landscape; margin: 0; }
+                            html, body { margin: 0; padding: 0; width: 100%; height: 100%; }
+                            body { font-family: 'Readex Pro', sans-serif; font-size: ${printFontSize}; }
                             .print-page { 
                                 display: block;
                                 width: 100%;
-                                height: 100%; /* استخدام 100% بدلاً من 100vh للجوال */
+                                height: auto;
                                 position: relative;
                                 page-break-after: always;
-                                overflow: hidden; /* قص أي محتوى زائد يسبب صفحة بيضاء */
-                                padding: 5mm; /* هامش داخلي آمن */
+                                overflow: hidden;
                             }
-                            
                             .print-page:last-child {
                                 page-break-after: auto;
                             }
-
                             .print-header-line {
                                height: 30px;
                                background: linear-gradient(135deg, #00A383 0%, #0093B5 100%);
                                width: 100%;
-                               margin-bottom: 10px;
+                               flex-shrink: 0;
                             }
-                            
+                            .print-footer-line {
+                               height: 30px;
+                               background: linear-gradient(135deg, #00A383 0%, #0093B5 100%);
+                               width: 100%;
+                               flex-shrink: 0;
+                            }
                             .print-header { 
                                 display: flex; 
                                 justify-content: space-between; 
                                 align-items: center; 
-                                margin-bottom: 10px;
+                                margin: 8px 10mm; 
+                                flex-shrink: 0; 
+                                padding-top: 5mm;
+                                margin-top: 0; 
                             }
                             .print-header .right-side { display: flex; align-items: center; gap: 8px; }
                             .print-header img { height: 40px; }
@@ -1276,54 +1680,114 @@
                             .print-header h1 { color: #00A383; margin: 0; font-size: 1.8em; display: inline; }
                             .print-header h2 { font-size: 1.6em; font-weight: bold; color: #0093B5; margin: 1px 0; display: inline; margin-right: 5px; }
                             .print-header p.subtitle { color: #555; margin-top: 2px; font-size: 1.1em; }
-                            
                             .print-table {
-                                width: 100%;
+                                width: calc(100% - 20mm);
+                                margin: 0 10mm;
                                 border-collapse: collapse;
                                 table-layout: fixed;
                                 font-size: 0.9em;
+                                margin-top: 8px;
+                                page-break-inside: auto !important; /* Allow tables to break across pages */
                             }
                             .print-table th, .print-table td {
                                 border: 1px solid #ccc;
-                                padding: 2px;
+                                padding: 4px;
                                 text-align: center;
                                 vertical-align: top;
                                 word-wrap: break-word;
                             }
-                            .print-table th { background-color: #f2f2f2; font-weight: bold; }
-                            .print-table td.week-label, .print-table td.program-label { width: 8%; background-color: #e6f7ff; color: #005f99; font-weight: bold; }
-                             .print-table .week-header { width: 13.14%; background-color: #e6f7ff; color: #005f99; font-weight: bold; }
-                            
+                            .print-table th {
+                                background-color: #f2f2f2;
+                                font-weight: bold;
+                            }
+                            .print-table td.week-label {
+                                background-color: #e6f7ff;
+                                font-weight: bold;
+                                color: #005f99;
+                                text-align: center;
+                                width: 8%; /* Specific width for this column */
+                            }
+                            .print-table td.program-label {
+                                background-color: #f0f0f0;
+                                font-weight: bold;
+                                text-align: center;
+                                width: 8%; /* Specific width for this column */
+                            }
+                             .print-table .week-header {
+                                background-color: #e6f7ff;
+                                font-weight: bold;
+                                color: #005f99;
+                                text-align: center;
+                                width: 13.14%; /* Calculated width for other columns */
+                             }
                             .print-signatures { 
                                 display: flex; 
                                 justify-content: space-around; 
-                                margin-top: 20px;
+                                margin: 15px 10mm; 
                                 font-size: 1.1em; 
                                 font-weight: bold; 
+                                flex-shrink: 0; 
                                 page-break-inside: avoid;
                             }
                             .signature-box { text-align: center; }
-                            .program-entry { line-height: 1.1; margin-bottom: 4px; }
-                            .program-entry span { font-weight: normal; font-size: 0.85em; display: block; }
-                            
-                            .second-table-container { margin-top: 0; }
+                            .checkbox-cell {
+                                padding: 2px 4px;
+                            }
+                            .checkbox-label {
+                                display: flex;
+                                align-items: center;
+                                gap: 4px;
+                                cursor: pointer;
+                            }
+                            .checkbox-box {
+                                width: 12px;
+                                height: 12px;
+                                border: 1px solid #000;
+                                background-color: #fff;
+                                display: inline-block;
+                            }
+                            .program-entry {
+                                line-height: 1.3;
+                                margin-bottom: 8px; 
+                            }
+                            .program-entry span {
+                                 font-weight: normal;
+                                 font-size: 0.85em;
+                                 display: block;
+                            }
+                            .print-second-table {
+                                margin-top: 0;
+                                padding-top: 0;
+                            }
+                            /* New CSS for removing space and title */
+                            h2.remove-on-print {
+                                display: none;
+                            }
+                            .second-table-container.remove-margin {
+                                margin-top: 0;
+                            }
                         </style>
                     </head>
                     <body>
                         <div class="print-page">
                             <div class="print-header-line"></div>
-                            <div class="print-header">
-                                <div class="right-side">
-                                    <img src="https://salogos.org/wp-content/uploads/2021/11/UntiTtled-1-1300x988.png" alt="شعار الوزارة">
-                                    <div class="header-text"><p>${eduAdmin}</p><p>${eduRegion}</p><p>${schoolName}</p></div>
+                            <div class="print-page-content">
+                                <div class="print-header">
+                                    <div class="right-side">
+                                        <img src="https://salogos.org/wp-content/uploads/2021/11/UntiTtled-1-1300x988.png" alt="شعار الوزارة">
+                                        <div class="header-text">
+                                            <p>${eduAdmin}</p><p>${eduRegion}</p><p>${schoolName}</p>
+                                        </div>
+                                    </div>
+                                    <div class="title-container">
+                                        <h1 style="display: inline;">خطة النشاط الطلابي</h1>
+                                        <h2 style="display: inline; margin-right: 5px;">${printStageTitle}</h2>
+                                        <p class="subtitle">${printSemesterSubtitle}</p>
+                                    </div>
+                                    <div></div> 
                                 </div>
-                                <div class="title-container">
-                                    <h1>خطة النشاط الطلابي</h1><h2>${printStageTitle}</h2>
-                                    <p class="subtitle">${printSemesterSubtitle}</p>
-                                </div>
-                                <div></div> 
+                                ${printTableContent}
                             </div>
-                            ${printTableContent}
                             <div class="print-signatures">
                                 <div class="signature-box"><p>${leaderName}</p></div>
                                 <div class="signature-box"><p>${directorName}</p></div>
@@ -1333,31 +1797,39 @@
                         ${secondTableRows.length > 0 ? `
                         <div class="print-page">
                             <div class="print-header-line"></div>
-                            <div class="print-header">
-                                <div class="right-side">
-                                    <img src="https://salogos.org/wp-content/uploads/2021/11/UntiTtled-1-1300x988.png" alt="شعار الوزارة">
-                                    <div class="header-text"><p>${eduAdmin}</p><p>${eduRegion}</p><p>${schoolName}</p></div>
+                            <div class="print-page-content">
+                                <div class="print-header">
+                                    <div class="right-side">
+                                        <img src="https://salogos.org/wp-content/uploads/2021/11/UntiTtled-1-1300x988.png" alt="شعار الوزارة">
+                                        <div class="header-text">
+                                            <p>${eduAdmin}</p><p>${eduRegion}</p><p>${schoolName}</p>
+                                        </div>
+                                    </div>
+                                    <div class="title-container">
+                                        <h1 style="display: inline;">خطة النشاط الطلابي</h1>
+                                        <h2 style="display: inline; margin-right: 5px;">${printStageTitle}</h2>
+                                        <p class="subtitle">${printSemesterSubtitle}</p>
+                                    </div>
+                                    <div></div> 
                                 </div>
-                                <div class="title-container">
-                                    <h1>خطة النشاط الطلابي</h1><h2>${printStageTitle}</h2>
-                                    <p class="subtitle">${printSemesterSubtitle}</p>
+                                <div class="second-table-container remove-margin">
+                                    <h2 class="remove-on-print" style="font-size: 1.5em; font-weight: bold; text-align: center; margin-bottom: 10px;">جدول البرامج</h2>
+                                    <table class="print-table print-second-table" style="page-break-inside: auto; margin-top: 0;">
+                                        <thead>
+                                            <tr class="bg-gray-100 text-gray-700">
+                                                <th style="padding: 4px; border: 1px solid #ccc; width: 3%;">م</th>
+                                                <th style="padding: 4px; border: 1px solid #ccc; width: 10%;">المجال</th>
+                                                <th style="padding: 4px; border: 1px solid #ccc; text-align: right; width: 25%;">البرنامج وعدد حصصه لكل مرحلة</th>
+                                                <th style="padding: 4px; border: 1px solid #ccc; text-align: right; width: 30%;">تاريخ التنفيذ من - إلى</th>
+                                                <th style="padding: 4px; border: 1px solid #ccc; width: 10%;">حالة التنفيذ</th>
+                                                <th style="padding: 4px; border: 1px solid #ccc; width: 14%;">ملاحظات</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                            ${secondTableRows}
+                                        </tbody>
+                                    </table>
                                 </div>
-                                <div></div> 
-                            </div>
-                            <div class="second-table-container">
-                                <table class="print-table">
-                                    <thead>
-                                        <tr class="bg-gray-100 text-gray-700">
-                                            <th style="width: 3%;">م</th>
-                                            <th style="width: 10%;">المجال</th>
-                                            <th style="width: 25%;">البرنامج وعدد حصصه</th>
-                                            <th style="width: 30%;">تاريخ التنفيذ</th>
-                                            <th style="width: 10%;">الحالة</th>
-                                            <th style="width: 14%;">ملاحظات</th>
-                                        </tr>
-                                    </thead>
-                                    <tbody>${secondTableRows}</tbody>
-                                </table>
                             </div>
                             <div class="print-signatures">
                                 <div class="signature-box"><p>${leaderName}</p></div>
@@ -1371,13 +1843,16 @@
                 
                 printWindow.document.close();
                 printWindow.focus();
-                // تأخير بسيط لضمان تحميل الصور والخطوط قبل الطباعة
-                setTimeout(() => {
+                
+                printWindow.onload = () => {
                     printWindow.print();
                     isPrinting = false;
                     printWindow.close();
-                }, 500);
+                };
 
+                printWindow.onafterprint = () => {
+                    isPrinting = false;
+                };
             } catch (error) {
                 console.error("Printing error:", error);
                 alert("حدث خطأ أثناء عملية الطباعة. يرجى المحاولة مرة أخرى.");
@@ -1385,7 +1860,6 @@
             }
         }
         
-        // --- وظائف الحفظ والاسترجاع ---
         function saveBackup() {
             saveState();
             const stateToSave = localStorage.getItem('activityPlanState');
@@ -1411,6 +1885,7 @@
                 alert('لم يتم اختيار أي ملف.');
                 return;
             }
+
             const reader = new FileReader();
             reader.onload = function(e) {
                 try {
@@ -1421,24 +1896,31 @@
                         alert('تم استعادة النسخة الاحتياطية بنجاح! سيتم إعادة تحميل الصفحة لتطبيق التغييرات.');
                         location.reload();
                     } else {
-                        throw new Error('ملف غير صالح');
+                        throw new Error('ملف غير صالح أو تالف. يرجى اختيار ملف نسخة احتياطية صحيح تم إنشاؤه من هذه الصفحة.');
                     }
                 } catch (error) {
-                    alert('ملف غير صالح أو تالف.');
+                    alert('ملف غير صالح أو تالف. يرجى اختيار ملف نسخة احتياطية صحيح تم إنشاؤه من هذه الصفحة.');
                 }
             };
             reader.readAsText(file);
             event.target.value = '';
         }
         
+        function changeFontFamily(fontFamily) {
+             document.documentElement.style.setProperty('--main-font', `"${fontFamily}", sans-serif`);
+             saveState();
+        }
+        
         function saveState() {
             if (isLoading) return;
+
             const programSelections = {};
             document.querySelectorAll('main tr[data-program-id]').forEach(row => {
                 const id = row.dataset.programId;
                 const datesByGrade = {};
                 const teachersByGrade = {};
                 let hasData = false;
+
                 row.querySelectorAll('.teacher-input').forEach(input => {
                     const key = input.dataset.gradeKey;
                     if (input.value.trim() !== '') {
@@ -1446,16 +1928,23 @@
                         hasData = true;
                     }
                 });
+
                 row.querySelectorAll('.grade-date-selector').forEach(selector => {
                     const key = selector.dataset.gradeKey;
                     const displayDiv = selector.querySelector('.dates-display');
                     const datesJson = displayDiv.dataset.dates;
+                    
                     if (datesJson) {
                         const dates = JSON.parse(datesJson);
                         if (dates.length > 0) {
                             const groupOrGradeKey = selector.dataset.gradeKey;
-                            if(gradeGroups[groupOrGradeKey]) datesByGrade[groupOrGradeKey] = dates;
-                            else datesByGrade[groupOrGradeKey] = dates;
+                            
+                            if(gradeGroups[groupOrGradeKey]) {
+                                datesByGrade[groupOrGradeKey] = dates;
+                            } else {
+                                datesByGrade[groupOrGradeKey] = dates;
+                            }
+                            
                             const individualKeys = gradeGroups[key] || [key];
                              individualKeys.forEach(indKey => {
                                 datesByGrade[indKey] = dates;
@@ -1464,7 +1953,10 @@
                         }
                     }
                 });
-                if (hasData) programSelections[id] = { teachersByGrade, datesByGrade };
+
+                if (hasData) {
+                   programSelections[id] = { teachersByGrade, datesByGrade };
+                }
             });
 
             const state = {
@@ -1488,18 +1980,24 @@
                 isLoading = false;
                 return;
             }
+            
             const state = JSON.parse(savedState);
+            
             document.getElementById('education-admin').value = state.educationAdmin || '';
             document.getElementById('education-region').value = state.educationRegion || '';
             document.getElementById('school-name').value = state.schoolName || '';
             document.getElementById('activity-leader-name').value = state.activityLeaderName || '';
             document.getElementById('school-director-name').value = state.schoolDirectorName || '';
             document.getElementById('print-font-size').value = state.printFontSize || '8px';
+            
             selectRegion(state.currentRegion || 'other');
+            
             selectedGrades = state.selectedGrades || [];
+            
             updateButtonStyles();
             updateTitle();
             updateAllDateSelectors();
+
              if (state.programSelections) {
                 Object.entries(state.programSelections).forEach(([id, data]) => {
                     const row = document.querySelector(`tr[data-program-id="${id}"]`);
@@ -1507,13 +2005,17 @@
                          if (data.teachersByGrade) {
                             Object.entries(data.teachersByGrade).forEach(([gradeKey, teacherName]) => {
                                 const input = row.querySelector(`.teacher-input[data-grade-key="${gradeKey}"]`);
-                                if (input) input.value = teacherName;
+                                if (input) {
+                                    input.value = teacherName;
+                                }
                             });
                         }
+                        
                         if (data.datesByGrade) {
                             row.querySelectorAll('.grade-date-selector').forEach(selector => {
                                 const key = selector.dataset.gradeKey;
                                 let datesToShow = data.datesByGrade[key] || data.datesByGrade[(gradeGroups[key] || [key])[0]] || [];
+                               
                                 const displayDiv = selector.querySelector('.dates-display');
                                 const formatted = formatDatesForDisplay(datesToShow);
                                 displayDiv.textContent = formatted.text;
@@ -1527,10 +2029,19 @@
         }
 
         function resetPlan() {
-            if (confirm("هل أنت متأكد من رغبتك في مسح جميع البيانات والبدء من جديد؟")) {
-                localStorage.removeItem('activityPlanState');
-                location.reload();
-            }
+            const modal = document.createElement('div');
+            modal.className = 'fixed inset-0 z-50 flex items-center justify-center p-4 bg-black bg-opacity-50';
+            modal.innerHTML = `
+                <div class="bg-white rounded-lg shadow-xl p-6 max-w-sm w-full text-center">
+                    <h3 class="text-xl font-bold mb-4">تأكيد المسح</h3>
+                    <p class="text-gray-600 mb-6">هل أنت متأكد من رغبتك في مسح جميع البيانات والبدء من جديد؟ هذا الإجراء لا يمكن التراجع عنه.</p>
+                    <div class="flex justify-center gap-4">
+                        <button onclick="document.body.removeChild(this.closest('.fixed'));" class="px-4 py-2 bg-gray-300 text-gray-800 rounded-lg hover:bg-gray-400 font-semibold">إلغاء</button>
+                        <button onclick="localStorage.removeItem('activityPlanState'); location.reload();" class="px-4 py-2 bg-red-600 text-white rounded-lg hover:bg-red-700 font-semibold">نعم، مسح</button>
+                    </div>
+                </div>
+            `;
+            document.body.appendChild(modal);
         }
 
         function showUpdateModal() {
