@@ -27,22 +27,33 @@
         #update-modal-box { transition: transform 0.3s ease-out, opacity 0.3s ease-out; }
         #update-modal-box.active { transform: scale(1); opacity: 1; }
 
-        /* --- تنسيقات الطباعة --- */
+        /* --- تنسيقات الطباعة (موحدة للجوال والكمبيوتر) --- */
         @media print {
             .no-print { display: none !important; }
-            * { -webkit-print-color-adjust: exact !important; print-color-adjust: exact !important; box-sizing: border-box; }
+            * { 
+                -webkit-print-color-adjust: exact !important; 
+                print-color-adjust: exact !important; 
+                box-sizing: border-box; 
+            }
             
             @page { 
                 size: A4 landscape; 
                 margin: 0; 
             }
             
+            html {
+                font-size: 12px; /* توحيد حجم الخط الأساسي */
+                -webkit-text-size-adjust: 100%; /* منع الجوال من تكبير النصوص */
+            }
+
             body {
                 margin: 0;
                 padding: 0;
                 padding-top: 35mm;
                 padding-bottom: 20mm;
                 font-family: 'Readex Pro', sans-serif;
+                width: 100%; /* ضمان العرض الكامل */
+                min-width: 297mm; /* عرض A4 landscape لضمان عدم الانكماش في الجوال */
             }
 
             /* الرأس الثابت */
@@ -54,7 +65,6 @@
             
             .title-block { text-align: center; }
             .title-block h1 { color: #00A383; margin: 0; font-size: 1.6em; display: inline-block; }
-            /* جعل نص المرحلة بجانب العنوان الرئيسي */
             .title-block span.stage-text { color: #000; font-size: 1.6em; font-weight: bold; margin-right: 5px; }
             .title-block p.semester-text { font-size: 1.2em; font-weight: bold; color: #0093B5; margin: 2px 0 0 0; }
 
@@ -64,7 +74,6 @@
                 margin: 5mm auto;
                 border-collapse: collapse;
                 table-layout: fixed;
-                font-size: 0.85em;
             }
             .print-table th, .print-table td {
                 border: 1px solid #ccc;
@@ -73,16 +82,36 @@
                 vertical-align: middle;
                 word-wrap: break-word;
             }
-            .print-table th { background-color: #f2f2f2; font-weight: bold; }
-            .print-table td.week-label { background-color: #e6f7ff; font-weight: bold; color: #005f99; width: 8%; }
-            .print-table td.program-label { background-color: #f0f0f0; font-weight: bold; width: 8%; }
-            .print-table .week-header { background-color: #e6f7ff; font-weight: bold; color: #005f99; width: 13.14%; }
+            .print-table th { background-color: #f2f2f2; font-weight: bold; font-size: 10pt; } /* تصغير خط الرأس */
             
-            /* تنسيق نص الإجازة في الخلية السفلية */
-            .holiday-details { font-weight: bold; color: #d32f2f; font-size: 0.9em; line-height: 1.4; padding: 5px; }
-            .program-entry { margin-bottom: 4px; border-bottom: 1px dashed #eee; padding-bottom: 2px; }
+            /* تصغير خطوط الأعمدة الأساسية */
+            .print-table td.week-label { 
+                background-color: #e6f7ff; 
+                font-weight: bold; 
+                color: #005f99; 
+                width: 8%; 
+                font-size: 10pt; /* تصغير الخط */
+            }
+            .print-table td.program-label { 
+                background-color: #f0f0f0; 
+                font-weight: bold; 
+                width: 8%; 
+                font-size: 10pt; 
+            }
+            
+            /* تصغير خط الأسابيع */
+            .print-table .week-header { 
+                background-color: #e6f7ff; 
+                font-weight: bold; 
+                color: #005f99; 
+                width: 13.14%; 
+                font-size: 11px !important; /* تصغير الخط كما طلبت */
+            }
+            
+            .holiday-details { font-weight: bold; color: #d32f2f; font-size: 0.85em; line-height: 1.4; padding: 5px; }
+            .program-entry { margin-bottom: 4px; border-bottom: 1px dashed #eee; padding-bottom: 2px; font-size: 0.85em; }
             .program-entry:last-child { border-bottom: none; }
-            .session-details { display: block; font-size: 0.75em; color: #555; margin-top: 1px; }
+            .session-details { display: block; font-size: 0.9em; color: #555; margin-top: 1px; }
 
             .page-break { page-break-before: always; display: block; height: 1px; width: 100%; }
 
@@ -97,19 +126,20 @@
                 width: 100%;
                 border-collapse: collapse;
                 page-break-inside: auto;
+                font-size: 0.9em;
             }
             .print-second-table th, .print-second-table td {
                 border: 1px solid #ccc;
                 padding: 4px;
             }
             
-            /* أوزان الأعمدة المعدلة (الملاحظات صغيرة، الحالة كبيرة) */
+            /* أوزان الأعمدة (المعدلة) */
             .print-second-table th:nth-child(1) { width: 4%; }  /* م */
             .print-second-table th:nth-child(2) { width: 10%; } /* المجال */
-            .print-second-table th:nth-child(3) { width: 26%; } /* البرنامج */
-            .print-second-table th:nth-child(4) { width: 40%; white-space: normal; } /* التاريخ */
-            .print-second-table th:nth-child(5) { width: 15%; } /* الحالة (مكبرة) */
-            .print-second-table th:nth-child(6) { width: 5%; }  /* الملاحظات (مصغرة جداً) */
+            .print-second-table th:nth-child(3) { width: 28%; } /* البرنامج */
+            .print-second-table th:nth-child(4) { width: 35%; white-space: normal; } /* التاريخ */
+            .print-second-table th:nth-child(5) { width: 17%; } /* الحالة (مكبرة جداً) */
+            .print-second-table th:nth-child(6) { width: 6%; }  /* الملاحظات (مصغرة جداً) */
 
             .print-signatures {
                 display: flex;
@@ -126,7 +156,7 @@
 <body class="bg-gray-50 min-h-screen">
 
     <div class="bg-red-600 text-white text-center py-2 no-print font-semibold">
-        تم الإصلاح: عنوان المرحلة دقيق + مكان الإجازات + تنسيق الأعمدة
+        تم الإصلاح: توحيد طباعة الجوال/PC + مسميات المراحل المختصرة
     </div>
 
     <!-- نافذة اختيار التواريخ -->
@@ -234,7 +264,6 @@
         // --- بيانات الأسابيع ---
         const weeksS1_Default = { 'week1': { name: 'الأسبوع الأول', semester: 1, startDate: '1 / 3', endDate: '5 / 3', days: { 'الأحد': '1 / 3', 'الاثنين': '2 / 3', 'الثلاثاء': '3 / 3', 'الأربعاء': '4 / 3', 'الخميس': '5 / 3' } }, 'week2': { name: 'الأسبوع الثاني', semester: 1, startDate: '8 / 3', endDate: '12 / 3', days: { 'الأحد': '8 / 3', 'الاثنين': '9 / 3', 'الثلاثاء': '10 / 3', 'الأربعاء': '11 / 3', 'الخميس': '12 / 3' } }, 'week3': { name: 'الأسبوع الثالث', semester: 1, startDate: '15 / 3', endDate: '19 / 3', days: { 'الأحد': '15 / 3', 'الاثنين': '16 / 3', 'الثلاثاء': '17 / 3', 'الأربعاء': '18 / 3', 'الخميس': '19 / 3' } }, 'week4': { name: 'الأسبوع الرابع', semester: 1, startDate: '22 / 3', endDate: '26 / 3', days: { 'الأحد': '22 / 3', 'الاثنين': '23 / 3', 'الثلاثاء': '24 / 3', 'الأربعاء': '25 / 3', 'الخميس': '26 / 3' } }, 'week5': { name: 'الأسبوع الخامس', semester: 1, startDate: '29 / 3', endDate: '3 / 4', days: { 'الأحد': '29 / 3', 'الاثنين': '30 / 3', 'الثلاثاء': '1 / 4', 'الأربعاء': '2 / 4', 'الخميس': '3 / 4' }, specialDays: { '1 / 4': { name: 'إجازة اليوم الوطني', type: 'occasion', color: 'green' } } }, 'week6': { name: 'الأسبوع السادس', semester: 1, startDate: '6 / 4', endDate: '10 / 4', days: { 'الأحد': '6 / 4', 'الاثنين': '7 / 4', 'الثلاثاء': '8 / 4', 'الأربعاء': '9 / 4', 'الخميس': '10 / 4' } }, 'week7': { name: 'الأسبوع السابع', semester: 1, startDate: '13 / 4', endDate: '17 / 4', days: { 'الأحد': '13 / 4', 'الاثنين': '14 / 4', 'الثلاثاء': '15 / 4', 'الأربعاء': '16 / 4', 'الخميس': '17 / 4' } }, 'week8': { name: 'الأسبوع الثامن', semester: 1, startDate: '20 / 4', endDate: '24 / 4', days: { 'الأحد': '20 / 4', 'الاثنين': '21 / 4', 'الثلاثاء': '22 / 4', 'الأربعاء': '23 / 4', 'الخميس': '24 / 4' }, specialDays: { '20 / 4': { name: 'إجازة إضافية', type: 'holiday', color: 'red' } } }, 'week9': { name: 'الأسبوع التاسع', semester: 1, startDate: '27 / 4', endDate: '1 / 5', days: { 'الأحد': '27 / 4', 'الاثنين': '28 / 4', 'الثلاثاء': '29 / 4', 'الأربعاء': '30 / 4', 'الخميس': '1 / 5' } }, 'week10': { name: 'الأسبوع العاشر', semester: 1, startDate: '4 / 5', endDate: '8 / 5', days: { 'الأحد': '4 / 5', 'الاثنين': '5 / 5', 'الثلاثاء': '6 / 5', 'الأربعاء': '7 / 5', 'الخميس': '8 / 5' } }, 'week11': { name: 'الأسبوع الحادي عشر', semester: 1, startDate: '11 / 5', endDate: '15 / 5', days: { 'الأحد': '11 / 5', 'الاثنين': '12 / 5', 'الثلاثاء': '13 / 5', 'الأربعاء': '14 / 5', 'الخميس': '15 / 5' } }, 'week12': { name: 'الأسبوع الثاني عشر', semester: 1, startDate: '18 / 5', endDate: '22 / 5', days: { 'الأحد': '18 / 5', 'الاثنين': '19 / 5', 'الثلاثاء': '20 / 5', 'الأربعاء': '21 / 5', 'الخميس': '22 / 5' } }, 'week13': { name: 'الأسبوع الثالث عشر', semester: 1, startDate: '25 / 5', endDate: '29 / 5', days: { 'الأحد': '25 / 5', 'الاثنين': '26 / 5', 'الثلاثاء': '27 / 5', 'الأربعاء': '28 / 5', 'الخميس': '29 / 5' } }, 'autumn_break': { name: 'إجازة الخريف', semester: 1, startDate: '30 / 5', endDate: '8 / 6', days: {} }, 'week14': { name: 'الأسبوع الرابع عشر', semester: 1, startDate: '9 / 6', endDate: '13 / 6', days: { 'الأحد': '9 / 6', 'الاثنين': '10 / 6', 'الثلاثاء': '11 / 6', 'الأربعاء': '12 / 6', 'الخميس': '13 / 6' } }, 'week15': { name: 'الأسبوع الخامس عشر', semester: 1, startDate: '16 / 6', endDate: '20 / 6', days: { 'الأحد': '16 / 6', 'الاثنين': '17 / 6', 'الثلاثاء': '18 / 6', 'الأربعاء': '19 / 6', 'الخميس': '20 / 6' }, specialDays: { '20 / 6': { name: 'إجازة إضافية', type: 'holiday', color: 'red' } } }, 'week16': { name: 'الأسبوع السادس عشر', semester: 1, startDate: '23 / 6', endDate: '27 / 6', days: { 'الأحد': '23 / 6', 'الاثنين': '24 / 6', 'الثلاثاء': '25 / 6', 'الأربعاء': '26 / 6', 'الخميس': '27 / 6' }, specialDays: { '23 / 6': { name: 'إجازة إضافية', type: 'holiday', color: 'red' } } }, 'week17': { name: 'الأسبوع السابع عشر', semester: 1, startDate: '1 / 7', endDate: '5 / 7', days: { 'الأحد': '1 / 7', 'الاثنين': '2 / 7', 'الثلاثاء': '3 / 7', 'الأربعاء': '4 / 7', 'الخميس': '5 / 7' } }, 'week18': { name: 'الأسبوع الثامن عشر', semester: 1, startDate: '8 / 7', endDate: '12 / 7', days: { 'الأحد': '8 / 7', 'الاثنين': '9 / 7', 'الثلاثاء': '10 / 7', 'الأربعاء': '11 / 7', 'الخميس': '12 / 7' } }, 'exams': { name: 'الاختبارات', semester: 1, startDate: '15 / 7', endDate: '19 / 7', days: {} } };
         const weeksS1_Western = { 'week1': { name: 'الأسبوع الأول', semester: 1, startDate: '8 / 3', endDate: '12 / 3', days: { 'الأحد': '8 / 3', 'الاثنين': '9 / 3', 'الثلاثاء': '10 / 3', 'الأربعاء': '11 / 3', 'الخميس': '12 / 3' } }, 'week2': { name: 'الأسبوع الثاني', semester: 1, startDate: '15 / 3', endDate: '19 / 3', days: { 'الأحد': '15 / 3', 'الاثنين': '16 / 3', 'الثلاثاء': '17 / 3', 'الأربعاء': '18 / 3', 'الخميس': '19 / 3' } }, 'week3': { name: 'الأسبوع الثالث', semester: 1, startDate: '22 / 3', endDate: '26 / 3', days: { 'الأحد': '22 / 3', 'الاثنين': '23 / 3', 'الثلاثاء': '24 / 3', 'الأربعاء': '25 / 3', 'الخميس': '26 / 3' } }, 'week4': { name: 'الأسبوع الرابع', semester: 1, startDate: '29 / 3', endDate: '3 / 4', days: { 'الأحد': '29 / 3', 'الاثنين': '30 / 3', 'الثلاثاء': '1 / 4', 'الأربعاء': '2 / 4', 'الخميس': '3 / 4' }, specialDays: { '1 / 4': { name: 'إجازة اليوم الوطني', type: 'occasion', color: 'green' } } }, 'week5': { name: 'الأسبوع الخامس', semester: 1, startDate: '6 / 4', endDate: '10 / 4', days: { 'الأحد': '6 / 4', 'الاثنين': '7 / 4', 'الثلاثاء': '8 / 4', 'الأربعاء': '9 / 4', 'الخميس': '10 / 4' } }, 'week6': { name: 'الأسبوع السادس', semester: 1, startDate: '13 / 4', endDate: '17 / 4', days: { 'الأحد': '13 / 4', 'الاثنين': '14 / 4', 'الثلاثاء': '15 / 4', 'الأربعاء': '16 / 4', 'الخميس': '17 / 4' } }, 'week7': { name: 'الأسبوع السابع', semester: 1, startDate: '20 / 4', endDate: '24 / 4', days: { 'الأحد': '20 / 4', 'الاثنين': '21 / 4', 'الثلاثاء': '22 / 4', 'الأربعاء': '23 / 4', 'الخميس': '24 / 4' }, specialDays: { '20 / 4': { name: 'إجازة إضافية', type: 'holiday', color: 'red' } } }, 'week8': { name: 'الأسبوع الثامن', semester: 1, startDate: '27 / 4', endDate: '1 / 5', days: { 'الأحد': '27 / 4', 'الاثنين': '28 / 4', 'الثلاثاء': '29 / 4', 'الأربعاء': '30 / 4', 'الخميس': '1 / 5' } }, 'week9': { name: 'الأسبوع التاسع', semester: 1, startDate: '4 / 5', endDate: '8 / 5', days: { 'الأحد': '4 / 5', 'الاثنين': '5 / 5', 'الثلاثاء': '6 / 5', 'الأربعاء': '7 / 5', 'الخميس': '8 / 5' } }, 'week10': { name: 'الأسبوع العاشر', semester: 1, startDate: '11 / 5', endDate: '15 / 5', days: { 'الأحد': '11 / 5', 'الاثنين': '12 / 5', 'الثلاثاء': '13 / 5', 'الأربعاء': '14 / 5', 'الخميس': '15 / 5' } }, 'week11': { name: 'الأسبوع الحادي عشر', semester: 1, startDate: '18 / 5', endDate: '22 / 5', days: { 'الأحد': '18 / 5', 'الاثنين': '19 / 5', 'الثلاثاء': '20 / 5', 'الأربعاء': '21 / 5', 'الخميس': '22 / 5' } }, 'week12': { name: 'الأسبوع الثاني عشر', semester: 1, startDate: '25 / 5', endDate: '29 / 5', days: { 'الأحد': '25 / 5', 'الاثنين': '26 / 5', 'الثلاثاء': '27 / 5', 'الأربعاء': '28 / 5', 'الخميس': '29 / 5' } }, 'autumn_break': { name: 'إجازة الخريف', semester: 1, startDate: '30 / 5', endDate: '8 / 6', days: {} }, 'week13': { name: 'الأسبوع الثالث عشر', semester: 1, startDate: '9 / 6', endDate: '13 / 6', days: { 'الأحد': '9 / 6', 'الاثنين': '10 / 6', 'الثلاثاء': '11 / 6', 'الأربعاء': '12 / 6', 'الخميس': '13 / 6' } }, 'week14': { name: 'الأسبوع الرابع عشر', semester: 1, startDate: '16 / 6', endDate: '20 / 6', days: { 'الأحد': '16 / 6', 'الاثنين': '17 / 6', 'الثلاثاء': '18 / 6', 'الأربعاء': '19 / 6', 'الخميس': '20 / 6' }, specialDays: { '20 / 6': { name: 'إجازة إضافية', type: 'holiday', color: 'red' } } }, 'week15': { name: 'الأسبوع الخامس عشر', semester: 1, startDate: '23 / 6', endDate: '27 / 6', days: { 'الأحد': '23 / 6', 'الاثنين': '24 / 6', 'الثلاثاء': '25 / 6', 'الأربعاء': '26 / 6', 'الخميس': '27 / 6' }, specialDays: { '23 / 6': { name: 'إجازة إضافية', type: 'holiday', color: 'red' } } }, 'week16': { name: 'الأسبوع السادس عشر', semester: 1, startDate: '1 / 7', endDate: '5 / 7', days: { 'الأحد': '1 / 7', 'الاثنين': '2 / 7', 'الثلاثاء': '3 / 7', 'الأربعاء': '4 / 7', 'الخميس': '5 / 7' } }, 'week17': { name: 'الأسبوع السابع عشر', semester: 1, startDate: '8 / 7', endDate: '12 / 7', days: { 'الأحد': '8 / 7', 'الاثنين': '9 / 7', 'الثلاثاء': '10 / 7', 'الأربعاء': '11 / 7', 'الخميس': '12 / 7' } }, 'exams': { name: 'الاختبارات', semester: 1, startDate: '15 / 7', endDate: '19 / 7', days: {} } };
-        // التعديل هنا: نقل تفاصيل الإجازة إلى خانة "البرامج" بدلاً من العنوان
         const weeksS2_Default = { 
             's2_week1': { name: 'الأسبوع الأول', semester: 2, startDate: '29 / 07', endDate: '03 / 08', days: { 'الأحد': '29 / 07', 'الاثنين': '30 / 07', 'الثلاثاء': '01 / 08', 'الأربعاء': '02 / 08', 'الخميس': '03 / 08' } }, 
             's2_week2': { name: 'الأسبوع الثاني', semester: 2, startDate: '06 / 08', endDate: '10 / 08', days: { 'الأحد': '06 / 08', 'الاثنين': '07 / 08', 'الثلاثاء': '08 / 08', 'الأربعاء': '09 / 08', 'الخميس': '10 / 08' } }, 
@@ -243,7 +272,7 @@
             's2_week5': { name: 'الأسبوع الخامس', semester: 2, startDate: '27 / 08', endDate: '02 / 09', days: { 'الأحد': '27 / 08', 'الاثنين': '28 / 08', 'الثلاثاء': '29 / 08', 'الأربعاء': '01 / 09', 'الخميس': '02 / 09' }, specialDays: { '01 / 09': { name: 'غرة رمضان', type: 'occasion', color: 'green' } } }, 
             's2_week6': { name: 'الأسبوع السادس', semester: 2, startDate: '05 / 09', endDate: '09 / 09', days: { 'الأحد': '05 / 09', 'الاثنين': '06 / 09', 'الثلاثاء': '07 / 09', 'الأربعاء': '08 / 09', 'الخميس': '09 / 09' }, specialDays: { '05 / 09': { name: 'إجازة يوم التأسيس', type: 'holiday', color: 'green' } } }, 
             's2_week7': { name: 'الأسبوع السابع', semester: 2, startDate: '12 / 09', endDate: '16 / 09', days: { 'الأحد': '12 / 09', 'الاثنين': '13 / 09', 'الثلاثاء': '14 / 09', 'الأربعاء': '15 / 09', 'الخميس': '16 / 09' } }, 
-            's2_eid_fitr': { name: 'إجازة عيد الفطر', semester: 2, startDate: '16 / 09', endDate: '09 / 10', days: {}, holidayDetails: 'تبدأ بنهاية دوام الخميس 16/09 إلى السبت 09/10' }, 
+            's2_eid_fitr': { name: 'إجازة عيد الفطر', semester: 2, startDate: '16 / 09', endDate: '09 / 10', days: {}, holidayDetails: 'تبدأ بنهاية دوام الخميس 09/16 إلى السبت 10/09' }, 
             's2_week8': { name: 'الأسبوع الثامن', semester: 2, startDate: '10 / 10', endDate: '14 / 10', days: { 'الأحد': '10 / 10', 'الاثنين': '11 / 10', 'الثلاثاء': '12 / 10', 'الأربعاء': '13 / 10', 'الخميس': '14 / 10' } }, 
             's2_week9': { name: 'الأسبوع التاسع', semester: 2, startDate: '17 / 10', endDate: '21 / 10', days: { 'الأحد': '17 / 10', 'الاثنين': '18 / 10', 'الثلاثاء': '19 / 10', 'الأربعاء': '20 / 10', 'الخميس': '21 / 10' }, specialDays: { '19 / 10': { name: 'يوم الصحة العالمي', type: 'occasion', color: 'blue' } } }, 
             's2_week10': { name: 'الأسبوع العاشر', semester: 2, startDate: '24 / 10', endDate: '28 / 10', days: { 'الأحد': '24 / 10', 'الاثنين': '25 / 10', 'الثلاثاء': '26 / 10', 'الأربعاء': '27 / 10', 'الخميس': '28 / 10' } }, 
@@ -252,7 +281,7 @@
             's2_week13': { name: 'الأسبوع الثالث عشر', semester: 2, startDate: '16 / 11', endDate: '20 / 11', days: { 'الأحد': '16 / 11', 'الاثنين': '17 / 11', 'الثلاثاء': '18 / 11', 'الأربعاء': '19 / 11', 'الخميس': '20 / 11' } }, 
             's2_week14': { name: 'الأسبوع الرابع عشر', semester: 2, startDate: '23 / 11', endDate: '27 / 11', days: { 'الأحد': '23 / 11', 'الاثنين': '24 / 11', 'الثلاثاء': '25 / 11', 'الأربعاء': '26 / 11', 'الخميس': '27 / 11' } }, 
             's2_week15': { name: 'الأسبوع الخامس عشر', semester: 2, startDate: '30 / 11', endDate: '04 / 12', days: { 'الأحد': '30 / 11', 'الاثنين': '01 / 12', 'الثلاثاء': '02 / 12', 'الأربعاء': '03 / 12', 'الخميس': '04 / 12' } }, 
-            's2_eid_adha': { name: 'إجازة عيد الأضحى', semester: 2, startDate: '04 / 12', endDate: '15 / 12', days: {}, holidayDetails: 'تبدأ بنهاية دوام الخميس 04/12 إلى السبت 15/12' }, 
+            's2_eid_adha': { name: 'إجازة عيد الأضحى', semester: 2, startDate: '04 / 12', endDate: '15 / 12', days: {}, holidayDetails: 'تبدأ بنهاية دوام الخميس 12/04 إلى السبت 12/15' }, 
             's2_week16': { name: 'الأسبوع السادس عشر', semester: 2, startDate: '14 / 12', endDate: '18 / 12', days: { 'الأحد': '14 / 12', 'الاثنين': '15 / 12', 'الثلاثاء': '16 / 12', 'الأربعاء': '17 / 12', 'الخميس': '18 / 12' }, specialDays: { '14 / 12': { name: 'إجازة', type: 'holiday', color: 'red' }, '15 / 12': { name: 'إجازة', type: 'holiday', color: 'red' } } }, 
             's2_week17': { name: 'الأسبوع السابع عشر', semester: 2, startDate: '21 / 12', endDate: '25 / 12', days: { 'الأحد': '21 / 12', 'الاثنين': '22 / 12', 'الثلاثاء': '23 / 12', 'الأربعاء': '24 / 12', 'الخميس': '25 / 12' } }, 
             's2_week18': { name: 'الأسبوع الثامن عشر', semester: 2, startDate: '28 / 12', endDate: '03 / 01', days: { 'الأحد': '28 / 12', 'الاثنين': '29 / 12', 'الثلاثاء': '01 / 01', 'الأربعاء': '02 / 01', 'الخميس': '03 / 01' }, specialDays: { '01 / 01': { name: 'سنة هجرية 1448', type: 'occasion', color: 'green' } } }, 
@@ -266,7 +295,7 @@
             's2_week5': { name: 'الأسبوع الخامس', semester: 2, startDate: '27 / 08', endDate: '02 / 09', days: { 'الأحد': '27 / 08', 'الاثنين': '28 / 08', 'الثلاثاء': '29 / 08', 'الأربعاء': '01 / 09', 'الخميس': '02 / 09' }, specialDays: { '01 / 09': { name: 'غرة رمضان', type: 'occasion', color: 'green' } } }, 
             's2_week6': { name: 'الأسبوع السادس', semester: 2, startDate: '05 / 09', endDate: '09 / 09', days: { 'الأحد': '05 / 09', 'الاثنين': '06 / 09', 'الثلاثاء': '07 / 09', 'الأربعاء': '08 / 09', 'الخميس': '09 / 09' }, specialDays: { '05 / 09': { name: 'إجازة يوم التأسيس', type: 'holiday', color: 'green' } } }, 
             's2_week7': { name: 'الأسبوع السابع', semester: 2, startDate: '12 / 09', endDate: '16 / 09', days: { 'الأحد': '12 / 09', 'الاثنين': '13 / 09', 'الثلاثاء': '14 / 09', 'الأربعاء': '15 / 09', 'الخميس': '16 / 09' } }, 
-            's2_eid_fitr': { name: 'إجازة عيد الفطر', semester: 2, startDate: '16 / 09', endDate: '09 / 10', days: {}, holidayDetails: 'تبدأ بنهاية دوام الخميس 16/09 إلى السبت 09/10' }, 
+            's2_eid_fitr': { name: 'إجازة عيد الفطر<br><span style="font-weight:normal; font-size:0.7em; display:block; margin-top:2px;">تبدأ بنهاية دوام الخميس 09/16 إلى السبت 10/09</span>', semester: 2, startDate: '16 / 09', endDate: '09 / 10', days: {} }, 
             's2_week8': { name: 'الأسبوع الثامن', semester: 2, startDate: '10 / 10', endDate: '14 / 10', days: { 'الأحد': '10 / 10', 'الاثنين': '11 / 10', 'الثلاثاء': '12 / 10', 'الأربعاء': '13 / 10', 'الخميس': '14 / 10' } }, 
             's2_week9': { name: 'الأسبوع التاسع', semester: 2, startDate: '17 / 10', endDate: '21 / 10', days: { 'الأحد': '17 / 10', 'الاثنين': '18 / 10', 'الثلاثاء': '19 / 10', 'الأربعاء': '20 / 10', 'الخميس': '21 / 10' }, specialDays: { '19 / 10': { name: 'يوم الصحة العالمي', type: 'occasion', color: 'blue' } } }, 
             's2_week10': { name: 'الأسبوع العاشر', semester: 2, startDate: '24 / 10', endDate: '28 / 10', days: { 'الأحد': '24 / 10', 'الاثنين': '25 / 10', 'الثلاثاء': '26 / 10', 'الأربعاء': '27 / 10', 'الخميس': '28 / 10' } }, 
@@ -274,7 +303,7 @@
             's2_week12': { name: 'الأسبوع الثاني عشر', semester: 2, startDate: '09 / 11', endDate: '13 / 11', days: { 'الأحد': '09 / 11', 'الاثنين': '10 / 11', 'الثلاثاء': '11 / 11', 'الأربعاء': '12 / 11', 'الخميس': '13 / 11' } }, 
             's2_week13': { name: 'الأسبوع الثالث عشر', semester: 2, startDate: '16 / 11', endDate: '20 / 11', days: { 'الأحد': '16 / 11', 'الاثنين': '17 / 11', 'الثلاثاء': '18 / 11', 'الأربعاء': '19 / 11', 'الخميس': '20 / 11' } }, 
             's2_week14': { name: 'الأسبوع الرابع عشر', semester: 2, startDate: '23 / 11', endDate: '27 / 11', days: { 'الأحد': '23 / 11', 'الاثنين': '24 / 11', 'الثلاثاء': '25 / 11', 'الأربعاء': '26 / 11', 'الخميس': '27 / 11' } }, 
-            's2_eid_adha': { name: 'إجازة عيد الأضحى', semester: 2, startDate: '27 / 11', endDate: '16 / 12', days: {}, holidayDetails: 'تبدأ بنهاية دوام الخميس 27/11 إلى السبت 15/12' }, 
+            's2_eid_adha': { name: 'إجازة عيد الأضحى<br><span style="font-weight:normal; font-size:0.7em; display:block; margin-top:2px;">تبدأ بنهاية دوام الخميس 11/27 إلى السبت 12/15</span>', semester: 2, startDate: '27 / 11', endDate: '16 / 12', days: {} }, 
             's2_week15': { name: 'الأسبوع الخامس عشر', semester: 2, startDate: '14 / 12', endDate: '18 / 12', days: { 'الأحد': '14 / 12', 'الاثنين': '15 / 12', 'الثلاثاء': '16 / 12', 'الأربعاء': '17 / 12', 'الخميس': '18 / 12' }, specialDays: { '14 / 12': { name: 'إجازة', type: 'holiday', color: 'red' }, '15 / 12': { name: 'إجازة', type: 'holiday', color: 'red' } } }, 
             's2_week16': { name: 'الأسبوع السادس عشر', semester: 2, startDate: '21 / 12', endDate: '25 / 12', days: { 'الأحد': '21 / 12', 'الاثنين': '22 / 12', 'الثلاثاء': '23 / 12', 'الأربعاء': '24 / 12', 'الخميس': '25 / 12' } }, 
             's2_week17': { name: 'الأسبوع السابع عشر', semester: 2, startDate: '28 / 12', endDate: '03 / 01', days: { 'الأحد': '28 / 12', 'الاثنين': '29 / 12', 'الثلاثاء': '01 / 01', 'الأربعاء': '02 / 01', 'الخميس': '03 / 01' }, specialDays: { '01 / 01': { name: 'سنة هجرية 1448', type: 'occasion', color: 'green' } } }, 
@@ -291,7 +320,17 @@
         function parseDateForSort(dateStr) { const parts = dateStr.split(' '); const datePart = parts.slice(1).join(''); const dateParts = datePart.split('/'); if (dateParts.length < 2) return 9999; const day = parseInt(dateParts[0], 10); let month = parseInt(dateParts[1], 10); if (month < 3) month += 12; return month * 100 + day; }
         // تعديل صيغة التاريخ هنا
         function formatDatesForDisplay(datesArray) { if (!datesArray || datesArray.length === 0) return { text: '', json: '[]' }; const sortedDates = [...datesArray].sort((a, b) => parseDateForSort(a) - parseDateForSort(b)); const firstDateStr = sortedDates[0]; const lastDateStr = sortedDates[sortedDates.length - 1]; let textContent; if (sortedDates.length === 1) textContent = firstDateStr; else textContent = `من ${firstDateStr} إلى ${lastDateStr}`; return { text: textContent, json: JSON.stringify(sortedDates) }; }
-        function getLabel(key) { if (key === 'primary_all') return 'المرحلة الابتدائية'; if (key === 'primary_lower') return 'الصفوف الأولية'; if (key === 'primary_upper') return 'الصفوف العليا'; if (key === 'middle_all') return 'المرحلة المتوسطة'; if (key === 'high_all') return 'المرحلة الثانوية'; if (key === 'quran_lower') return 'أولية تحفيظ'; if (key === 'quran_upper') return 'عليا تحفيظ'; return gradeNames[key]; }
+        function getLabel(key) {
+             if (key === 'primary_all') return 'ابتدائية';
+             if (key === 'primary_lower') return 'أولية';
+             if (key === 'primary_upper') return 'عليا';
+             if (key === 'middle_all') return 'متوسطة';
+             if (key === 'high_all') return 'ثانوية';
+             if (key === 'quran_lower') return 'أولية تحفيظ';
+             if (key === 'quran_upper') return 'عليا تحفيظ';
+             if (key === 'quran_all') return 'ابتدائية تحفيظ';
+             return gradeNames[key]; 
+        }
 
         // --- بناء الواجهة ---
         function createGradeSelectionUI() {
@@ -432,7 +471,7 @@
                 
                 Object.keys(weekData).forEach(progName => {
                     const info = weekData[progName];
-                    // بناء نص التفاصيل: (أول ابتدائي: 2، رابع: 1)
+                    // بناء نص التفاصيل: (أولية: 2، عليا: 1)
                     const details = Object.entries(info.grades).map(([gName, count]) => `${gName}: ${count}`).join('، ');
                     
                     const displayText = `${progName}<br><span class="session-details">(${details})</span>`;
@@ -489,20 +528,20 @@
                                 <span style="font-size: 0.8em; color: #666; font-weight: normal; line-height: 1.5; ">${programAndGradeText.replace(program.name, '')}</span>
                             </td>
                             <td style="padding: 4px; border: 1px solid #ccc; text-align: right; width: 30%;">${formattedDates}</td>
-                            <td style="padding: 4px; border: 1px solid #ccc; width: 10%;">
+                            <td style="padding: 4px; border: 1px solid #ccc; width: 12%;">
                                <div style="display:flex; justify-content:space-around; align-items:center; gap: 2px;">
                                     <label style="display:flex; align-items:center; gap:2px;"><input type="checkbox" style="width:10px; height:10px;"> نفذ</label>
                                     <label style="display:flex; align-items:center; gap:2px;"><input type="checkbox" style="width:10px; height:10px;"> لم ينفذ</label>
                                </div>
                             </td>
-                            <td style="padding: 4px; border: 1px solid #ccc; width: 14%;">${notes}</td>
+                            <td style="padding: 4px; border: 1px solid #ccc; width: 12%;">${notes}</td>
                         </tr>
                     `;
                 }
             });
 
             const printWindow = window.open('', '_blank', 'width=1200,height=800');
-            printWindow.document.write(`<!DOCTYPE html><html lang="ar" dir="rtl"><head><meta charset="UTF-8"><title>خطة النشاط</title><style>@import url('https://fonts.googleapis.com/css2?family=Cairo:wght@400;700&display=swap');@import url('https://fonts.googleapis.com/css2?family=Readex+Pro:wght@400;700&display=swap');* { -webkit-print-color-adjust: exact !important; print-color-adjust: exact !important; box-sizing: border-box; }@page { size: A4 landscape; margin: 0; }body { margin: 0; padding: 0; padding-top: 35mm; padding-bottom: 20mm; font-family: 'Readex Pro', sans-serif; }.print-fixed-header { position: fixed; top: 0; left: 0; width: 100%; height: 30mm; background: white; z-index: 1000; }.print-fixed-footer { position: fixed; bottom: 0; left: 0; width: 100%; height: 18mm; background: white; z-index: 1000; }.print-header-line { height: 15px; background: linear-gradient(135deg, #00A383 0%, #0093B5 100%); width: 100%; }.print-header-content { display: flex; justify-content: space-between; align-items: center; padding: 5mm 15mm 0; width: 100%; }.print-header-content img { height: 40px; }.title-block { text-align: center; }.title-block h1 { color: #00A383; margin: 0; font-size: 1.6em; display: inline-block; }.title-block span.stage-text { color: #000; font-size: 1.6em; font-weight: bold; margin-right: 5px; }.title-block p.semester-text { font-size: 1.2em; font-weight: bold; color: #0093B5; margin: 2px 0 0 0; }.print-table { width: 94%; margin: 5mm auto; border-collapse: collapse; table-layout: fixed; font-size: 0.85em; }.print-table th, .print-table td { border: 1px solid #777; padding: 3px; text-align: center; vertical-align: middle; word-wrap: break-word; }.print-table th { background-color: #f2f2f2; font-weight: bold; }.print-table td.week-label { background-color: #e6f7ff; font-weight: bold; color: #005f99; width: 8%; }.print-table td.program-label { background-color: #f0f0f0; font-weight: bold; width: 8%; }.print-table .week-header { background-color: #e6f7ff; font-weight: bold; color: #005f99; width: 13.14%; } /* New Styles for Details */ .program-entry { margin-bottom: 4px; border-bottom: 1px dashed #eee; padding-bottom: 2px; } .program-entry:last-child { border-bottom: none; } .session-details { display: block; font-size: 0.75em; color: #555; margin-top: 1px; } .holiday-details { font-weight: bold; color: #d32f2f; font-size: 0.9em; line-height: 1.4; padding: 5px; } .page-break { page-break-before: always; display: block; height: 1px; width: 100%; }.second-table-wrapper { width: 94%; margin: 0 auto; margin-top: 40mm; display: block; }.print-second-table { width: 100%; border-collapse: collapse; page-break-inside: auto; }.print-second-table th, .print-second-table td { border: 1px solid #ccc; padding: 4px; }.print-second-table th:nth-child(1) { width: 4%; }.print-second-table th:nth-child(2) { width: 10%; }.print-second-table th:nth-child(3) { width: 27%; }.print-second-table th:nth-child(4) { width: 40%; white-space: normal; }.print-second-table th:nth-child(5) { width: 12%; }.print-second-table th:nth-child(6) { width: 7%; }.print-signatures { display: flex; justify-content: space-around; align-items: center; height: 100%; font-size: 1.1em; font-weight: bold; padding-bottom: 5px; }</style></head><body>
+            printWindow.document.write(`<!DOCTYPE html><html lang="ar" dir="rtl"><head><meta charset="UTF-8"><title>خطة النشاط</title><style>@import url('https://fonts.googleapis.com/css2?family=Cairo:wght@400;700&display=swap');@import url('https://fonts.googleapis.com/css2?family=Readex+Pro:wght@400;700&display=swap');* { -webkit-print-color-adjust: exact !important; print-color-adjust: exact !important; box-sizing: border-box; }@page { size: A4 landscape; margin: 0; }body { margin: 0; padding: 0; padding-top: 35mm; padding-bottom: 20mm; font-family: 'Readex Pro', sans-serif; }.print-fixed-header { position: fixed; top: 0; left: 0; width: 100%; height: 30mm; background: white; z-index: 1000; }.print-fixed-footer { position: fixed; bottom: 0; left: 0; width: 100%; height: 18mm; background: white; z-index: 1000; }.print-header-line { height: 15px; background: linear-gradient(135deg, #00A383 0%, #0093B5 100%); width: 100%; }.print-header-content { display: flex; justify-content: space-between; align-items: center; padding: 5mm 15mm 0; width: 100%; }.print-header-content img { height: 40px; }.title-block { text-align: center; }.title-block h1 { color: #00A383; margin: 0; font-size: 1.6em; display: inline-block; }.title-block span.stage-text { color: #000; font-size: 1.6em; font-weight: bold; margin-right: 5px; }.title-block p.semester-text { font-size: 1.2em; font-weight: bold; color: #0093B5; margin: 2px 0 0 0; }.print-table { width: 94%; margin: 5mm auto; border-collapse: collapse; table-layout: fixed; font-size: 0.85em; }.print-table th, .print-table td { border: 1px solid #777; padding: 3px; text-align: center; vertical-align: middle; word-wrap: break-word; }.print-table th { background-color: #f2f2f2; font-weight: bold; font-size: 10pt; }.print-table td.week-label { background-color: #e6f7ff; font-weight: bold; color: #005f99; width: 8%; font-size: 10pt; }.print-table td.program-label { background-color: #f0f0f0; font-weight: bold; width: 8%; font-size: 10pt; }.print-table .week-header { background-color: #e6f7ff; font-weight: bold; color: #005f99; width: 13.14%; font-size: 11px !important; } .holiday-details { font-weight: bold; color: #d32f2f; font-size: 0.85em; line-height: 1.4; padding: 5px; } .program-entry { margin-bottom: 4px; border-bottom: 1px dashed #eee; padding-bottom: 2px; font-size: 0.85em; } .program-entry:last-child { border-bottom: none; } .session-details { display: block; font-size: 0.9em; color: #555; margin-top: 1px; } .page-break { page-break-before: always; display: block; height: 1px; width: 100%; }.second-table-wrapper { width: 94%; margin: 0 auto; margin-top: 40mm; display: block; }.print-second-table { width: 100%; border-collapse: collapse; page-break-inside: auto; font-size: 0.9em; }.print-second-table th, .print-second-table td { border: 1px solid #ccc; padding: 4px; }.print-second-table th:nth-child(1) { width: 4%; }.print-second-table th:nth-child(2) { width: 10%; }.print-second-table th:nth-child(3) { width: 26%; }.print-second-table th:nth-child(4) { width: 40%; white-space: normal; }.print-second-table th:nth-child(5) { width: 15%; }.print-second-table th:nth-child(6) { width: 5%; }.print-signatures { display: flex; justify-content: space-around; align-items: center; height: 100%; font-size: 1.1em; font-weight: bold; padding-bottom: 5px; }</style></head><body>
             <div class="print-fixed-header"><div class="print-header-line"></div><div class="print-header-content"><div><img src="https://salogos.org/wp-content/uploads/2021/11/UntiTtled-1-1300x988.png" alt="شعار الوزارة"></div><div class="title-block"><h1>خطة النشاط الطلابي</h1><span class="stage-text">${stageTitleText}</span><p class="semester-text">${semesterTitle} للعام الدراسي 1447هـ</p></div><div style="text-align:left"><p>${state.educationAdmin}</p><p>${state.educationRegion}</p><p>${state.schoolName}</p></div></div></div>
             
             <table class="print-table"><thead><tr><td class="week-label">الأسابيع</td>${row1Data.weekHtml}</tr><tr><td class="program-label">البرامج</td>${row1Data.programHtml}</tr><tr><td class="week-label">الأسابيع</td>${row2Data.weekHtml}</tr><tr><td class="program-label">البرامج</td>${row2Data.programHtml}</tr><tr><td class="week-label">الأسابيع</td>${row3Data.weekHtml}</tr><tr><td class="program-label">البرامج</td>${row3Data.programHtml}</tr></thead><tbody></tbody></table>
@@ -517,8 +556,8 @@
                             <th style="padding: 4px; border: 1px solid #ccc; width: 10%;">المجال</th>
                             <th style="padding: 4px; border: 1px solid #ccc; text-align: right; width: 25%;">البرنامج وعدد حصصه لكل مرحلة</th>
                             <th style="padding: 4px; border: 1px solid #ccc; text-align: right; width: 30%;">تاريخ التنفيذ من - إلى</th>
-                            <th style="padding: 4px; border: 1px solid #ccc; width: 10%;">حالة التنفيذ</th>
-                            <th style="padding: 4px; border: 1px solid #ccc; width: 14%;">ملاحظات</th>
+                            <th style="padding: 4px; border: 1px solid #ccc; width: 12%;">حالة التنفيذ</th>
+                            <th style="padding: 4px; border: 1px solid #ccc; width: 12%;">ملاحظات</th>
                         </tr>
                     </thead>
                     <tbody>${secondTableRows}</tbody>
