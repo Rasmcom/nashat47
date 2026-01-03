@@ -3,7 +3,9 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>خطة النشاط الطلابي - حفظ تلقائي مضمون</title>
+    <!-- ميتا تاج لمنع تحويل التواريخ لروابط -->
+    <meta name="format-detection" content="telephone=no, date=no, address=no, email=no, url=no">
+    <title>خطة النشاط الطلابي - الحل النهائي للروابط</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Cairo:wght@300;400;600;700&display=swap');
@@ -27,50 +29,171 @@
         #update-modal-box { transition: transform 0.3s ease-out, opacity 0.3s ease-out; }
         #update-modal-box.active { transform: scale(1); opacity: 1; }
 
-        /* --- تنسيقات الطباعة --- */
+        /* --- تنسيقات الطباعة (محسنة للجوال) --- */
         @media print {
             .no-print { display: none !important; }
-            * { -webkit-print-color-adjust: exact !important; print-color-adjust: exact !important; box-sizing: border-box; }
-            @page { size: A4 landscape; margin: 0; }
-            html { font-size: 12px; -webkit-text-size-adjust: 100%; }
-            body { margin: 0; padding: 0; padding-top: 35mm; padding-bottom: 20mm; font-family: 'Readex Pro', sans-serif; width: 100%; min-width: 297mm; }
-            .print-fixed-header { position: fixed; top: 0; left: 0; width: 100%; height: 30mm; background: white; z-index: 1000; }
-            .print-fixed-footer { position: fixed; bottom: 0; left: 0; width: 100%; height: 18mm; background: white; z-index: 1000; }
-            .print-header-line { height: 15px; background: linear-gradient(135deg, #00A383 0%, #0093B5 100%); width: 100%; }
+            
+            /* إجبار إخفاء الروابط */
+            a[href^="tel:"], a[href^="date:"], a { 
+                text-decoration: none !important; 
+                color: #000000 !important; 
+                pointer-events: none !important;
+                cursor: default !important;
+            }
+
+            * { 
+                -webkit-print-color-adjust: exact !important; 
+                print-color-adjust: exact !important; 
+                box-sizing: border-box; 
+            }
+            
+            @page { 
+                size: A4 landscape; 
+                margin: 0; 
+            }
+            
+            html {
+                font-size: 12px;
+                -webkit-text-size-adjust: none;
+                width: 297mm; /* عرض ثابت */
+            }
+
+            body {
+                margin: 0;
+                padding: 0;
+                /* تقنية الجدول الحاوي لا تحتاج padding للجسم */
+                font-family: 'Readex Pro', sans-serif;
+                width: 297mm;
+                min-width: 297mm;
+                background: white;
+            }
+
+            /* --- تقنية الجدول الحاوي (لتكرار الرأس والتذييل تلقائياً) --- */
+            /* هذه أفضل طريقة لضمان ظهور الرأس في الصفحة الثانية بدون تداخل */
+            .report-container {
+                width: 100%;
+                border-collapse: collapse;
+            }
+            
+            .report-header-cell, .report-footer-cell {
+                /* خلايا وهمية لحجز المساحة */
+                border: none !important;
+            }
+
+            .header-spacer { height: 35mm; } /* نفس ارتفاع الرأس الثابت */
+            .footer-spacer { height: 20mm; } /* نفس ارتفاع التذييل الثابت */
+
+            /* الرأس الثابت الحقيقي */
+            .print-fixed-header { 
+                position: fixed; 
+                top: 0; 
+                left: 0; 
+                width: 297mm; 
+                height: 30mm; 
+                background: white; 
+                z-index: 10000;
+            }
+            
+            /* التذييل الثابت الحقيقي */
+            .print-fixed-footer { 
+                position: fixed; 
+                bottom: 0; 
+                left: 0; 
+                width: 297mm; 
+                height: 18mm; 
+                background: white; 
+                z-index: 10000;
+            }
+
+            .print-header-line { height: 15px; background: linear-gradient(135deg, #00A383 0%, #0093B5 100%) !important; width: 100%; -webkit-print-color-adjust: exact; }
             .print-header-content { display: flex; justify-content: space-between; align-items: center; padding: 5mm 15mm 0; width: 100%; }
             .print-header-content img { height: 40px; }
+            
             .title-block { text-align: center; }
-            .title-block h1 { color: #00A383; margin: 0; font-size: 1.6em; display: inline-block; }
-            .title-block span.stage-text { color: #000; font-size: 1.6em; font-weight: bold; margin-right: 5px; }
-            .title-block p.semester-text { font-size: 1.2em; font-weight: bold; color: #0093B5; margin: 2px 0 0 0; }
-            .print-table { width: 94%; margin: 5mm auto; border-collapse: collapse; table-layout: fixed; font-size: 0.85em; }
-            .print-table th, .print-table td { border: 1px solid #ccc; padding: 3px; text-align: center; vertical-align: middle; word-wrap: break-word; }
-            .print-table th { background-color: #f2f2f2; font-weight: bold; font-size: 10pt; }
-            .print-table td.week-label { background-color: #e6f7ff; font-weight: bold; color: #005f99; width: 8%; font-size: 10pt; }
-            .print-table td.program-label { background-color: #f0f0f0; font-weight: bold; width: 8%; font-size: 10pt; }
-            .print-table .week-header { background-color: #e6f7ff; font-weight: bold; color: #005f99; width: 13.14%; font-size: 11px !important; }
-            .holiday-details { font-weight: bold; color: #d32f2f; font-size: 0.85em; line-height: 1.4; padding: 5px; }
-            .program-entry { margin-bottom: 4px; border-bottom: 1px dashed #eee; padding-bottom: 2px; font-size: 0.85em; }
+            .title-block h1 { color: #00A383 !important; margin: 0; font-size: 14pt; display: inline-block; font-weight: bold; }
+            .title-block span.stage-text { color: #000; font-size: 14pt; font-weight: bold; margin-right: 5px; }
+            .title-block p.semester-text { font-size: 11pt; font-weight: bold; color: #0093B5 !important; margin: 2px 0 0 0; }
+            .left-info p { font-size: 10pt; margin: 0; }
+
+            /* الجداول الداخلية */
+            .print-table {
+                width: 96%;
+                margin: 0 auto;
+                border-collapse: collapse;
+                table-layout: fixed;
+            }
+            .print-table th, .print-table td {
+                border: 1px solid #999;
+                padding: 3px;
+                text-align: center;
+                vertical-align: middle;
+                word-wrap: break-word;
+                font-size: 9pt; 
+                color: #000; 
+            }
+            .print-table th { background-color: #f2f2f2 !important; font-weight: bold; }
+            .print-table td.week-label { background-color: #e6f7ff !important; font-weight: bold; color: #005f99 !important; width: 7%; font-size: 9pt; }
+            .print-table td.program-label { background-color: #f0f0f0 !important; font-weight: bold; width: 7%; font-size: 9pt; }
+            .print-table .week-header { background-color: #e6f7ff !important; font-weight: bold; color: #005f99 !important; width: 13.5%; font-size: 9pt !important; }
+            
+            .holiday-details { font-weight: bold; color: #d32f2f !important; font-size: 8pt; line-height: 1.3; padding: 2px; }
+            .program-entry { margin-bottom: 2px; border-bottom: 1px dashed #ccc; padding-bottom: 2px; }
             .program-entry:last-child { border-bottom: none; }
-            .session-details { display: block; font-size: 0.9em; color: #555; margin-top: 1px; }
-            .page-break { page-break-before: always; display: block; height: 1px; width: 100%; }
-            .second-table-wrapper { width: 94%; margin: 0 auto; padding-top: 10mm; display: block; }
-            .print-second-table { width: 100%; border-collapse: collapse; page-break-inside: auto; font-size: 0.9em; }
-            .print-second-table th, .print-second-table td { border: 1px solid #ccc; padding: 4px; }
+            .session-details { display: block; font-size: 8pt; color: #444; margin-top: 1px; }
+
+            /* فاصل صفحات */
+            .page-break { 
+                page-break-before: always; 
+                break-before: page;
+                display: block; 
+                height: 0; 
+            }
+
+            /* جدول المتابعة */
+            .second-table-wrapper {
+                width: 96%;
+                margin: 0 auto;
+                /* في حال استخدام تقنية الجدول الحاوي، لا نحتاج لمسافة علوية ضخمة هنا لأن الرأس مكرر تلقائياً */
+                padding-top: 10px; 
+                display: block;
+            }
+            
+            .print-second-table {
+                width: 100%;
+                border-collapse: collapse;
+                page-break-inside: auto;
+            }
+            .print-second-table th, .print-second-table td {
+                border: 1px solid #999;
+                padding: 4px;
+                font-size: 9pt;
+            }
+            
             .print-second-table th:nth-child(1) { width: 4%; }
             .print-second-table th:nth-child(2) { width: 10%; }
-            .print-second-table th:nth-child(3) { width: 28%; }
-            .print-second-table th:nth-child(4) { width: 35%; white-space: normal; }
-            .print-second-table th:nth-child(5) { width: 17%; }
-            .print-second-table th:nth-child(6) { width: 6%; }
-            .print-signatures { display: flex; justify-content: space-around; align-items: center; height: 100%; font-size: 1.1em; font-weight: bold; padding-bottom: 5px; }
+            .print-second-table th:nth-child(3) { width: 26%; }
+            .print-second-table th:nth-child(4) { width: 40%; white-space: normal; }
+            .print-second-table th:nth-child(5) { width: 15%; }
+            .print-second-table th:nth-child(6) { width: 5%; }
+
+            .print-signatures {
+                display: flex;
+                justify-content: space-around;
+                align-items: center;
+                height: 100%;
+                font-size: 11pt;
+                font-weight: bold;
+                padding-bottom: 5px;
+                width: 297mm;
+                margin: 0 auto;
+            }
         }
     </style>
 </head>
 <body class="bg-gray-50 min-h-screen">
 
     <div class="bg-blue-600 text-white text-center py-2 no-print font-semibold">
-        تم تفعيل الحفظ التلقائي: لن تفقد بياناتك عند التحديث بعد الآن
+        الحفظ التلقائي: مفعل | تم حل مشكلة روابط التواريخ
     </div>
 
     <div id="date-picker-modal" class="fixed inset-0 z-40 items-center justify-center p-4 no-print bg-black bg-opacity-50 hidden">
@@ -185,7 +308,7 @@
             's2_week5': { name: 'الأسبوع الخامس', semester: 2, startDate: '27 / 08', endDate: '02 / 09', days: { 'الأحد': '27 / 08', 'الاثنين': '28 / 08', 'الثلاثاء': '29 / 08', 'الأربعاء': '01 / 09', 'الخميس': '02 / 09' }, specialDays: { '01 / 09': { name: 'غرة رمضان', type: 'occasion', color: 'green' } } }, 
             's2_week6': { name: 'الأسبوع السادس', semester: 2, startDate: '05 / 09', endDate: '09 / 09', days: { 'الأحد': '05 / 09', 'الاثنين': '06 / 09', 'الثلاثاء': '07 / 09', 'الأربعاء': '08 / 09', 'الخميس': '09 / 09' }, specialDays: { '05 / 09': { name: 'إجازة يوم التأسيس', type: 'holiday', color: 'green' } } }, 
             's2_week7': { name: 'الأسبوع السابع', semester: 2, startDate: '12 / 09', endDate: '16 / 09', days: { 'الأحد': '12 / 09', 'الاثنين': '13 / 09', 'الثلاثاء': '14 / 09', 'الأربعاء': '15 / 09', 'الخميس': '16 / 09' } }, 
-            's2_eid_fitr': { name: 'إجازة عيد الفطر', semester: 2, startDate: '16 / 09', endDate: '09 / 10', days: {}, holidayDetails: 'تبدأ بنهاية دوام الخميس 09/16 إلى السبت 10/09' }, 
+            's2_eid_fitr': { name: 'إجازة عيد الفطر', semester: 2, startDate: '16 / 09', endDate: '09 / 10', days: {}, holidayDetails: 'تبدأ بنهاية دوام الخميس 16/09 إلى السبت 09/10' }, 
             's2_week8': { name: 'الأسبوع الثامن', semester: 2, startDate: '10 / 10', endDate: '14 / 10', days: { 'الأحد': '10 / 10', 'الاثنين': '11 / 10', 'الثلاثاء': '12 / 10', 'الأربعاء': '13 / 10', 'الخميس': '14 / 10' } }, 
             's2_week9': { name: 'الأسبوع التاسع', semester: 2, startDate: '17 / 10', endDate: '21 / 10', days: { 'الأحد': '17 / 10', 'الاثنين': '18 / 10', 'الثلاثاء': '19 / 10', 'الأربعاء': '20 / 10', 'الخميس': '21 / 10' }, specialDays: { '19 / 10': { name: 'يوم الصحة العالمي', type: 'occasion', color: 'blue' } } }, 
             's2_week10': { name: 'الأسبوع العاشر', semester: 2, startDate: '24 / 10', endDate: '28 / 10', days: { 'الأحد': '24 / 10', 'الاثنين': '25 / 10', 'الثلاثاء': '26 / 10', 'الأربعاء': '27 / 10', 'الخميس': '28 / 10' } }, 
@@ -194,7 +317,7 @@
             's2_week13': { name: 'الأسبوع الثالث عشر', semester: 2, startDate: '16 / 11', endDate: '20 / 11', days: { 'الأحد': '16 / 11', 'الاثنين': '17 / 11', 'الثلاثاء': '18 / 11', 'الأربعاء': '19 / 11', 'الخميس': '20 / 11' } }, 
             's2_week14': { name: 'الأسبوع الرابع عشر', semester: 2, startDate: '23 / 11', endDate: '27 / 11', days: { 'الأحد': '23 / 11', 'الاثنين': '24 / 11', 'الثلاثاء': '25 / 11', 'الأربعاء': '26 / 11', 'الخميس': '27 / 11' } }, 
             's2_week15': { name: 'الأسبوع الخامس عشر', semester: 2, startDate: '30 / 11', endDate: '04 / 12', days: { 'الأحد': '30 / 11', 'الاثنين': '01 / 12', 'الثلاثاء': '02 / 12', 'الأربعاء': '03 / 12', 'الخميس': '04 / 12' } }, 
-            's2_eid_adha': { name: 'إجازة عيد الأضحى', semester: 2, startDate: '04 / 12', endDate: '15 / 12', days: {}, holidayDetails: 'تبدأ بنهاية دوام الخميس 12/04 إلى السبت 12/15' }, 
+            's2_eid_adha': { name: 'إجازة عيد الأضحى', semester: 2, startDate: '04 / 12', endDate: '15 / 12', days: {}, holidayDetails: 'تبدأ بنهاية دوام الخميس 04/12 إلى السبت 15/12' }, 
             's2_week16': { name: 'الأسبوع السادس عشر', semester: 2, startDate: '16 / 12', endDate: '18 / 12', days: { 'الثلاثاء': '16 / 12', 'الأربعاء': '17 / 12', 'الخميس': '18 / 12' } }, 
             's2_week17': { name: 'الأسبوع السابع عشر', semester: 2, startDate: '21 / 12', endDate: '25 / 12', days: { 'الأحد': '21 / 12', 'الاثنين': '22 / 12', 'الثلاثاء': '23 / 12', 'الأربعاء': '24 / 12', 'الخميس': '25 / 12' } }, 
             's2_week18': { name: 'الأسبوع الثامن عشر', semester: 2, startDate: '28 / 12', endDate: '03 / 01', days: { 'الأحد': '28 / 12', 'الاثنين': '29 / 12', 'الثلاثاء': '01 / 01', 'الأربعاء': '02 / 01', 'الخميس': '03 / 01' }, specialDays: { '01 / 01': { name: 'سنة هجرية 1448', type: 'occasion', color: 'green' } } }, 
@@ -208,7 +331,7 @@
             's2_week5': { name: 'الأسبوع الخامس', semester: 2, startDate: '27 / 08', endDate: '02 / 09', days: { 'الأحد': '27 / 08', 'الاثنين': '28 / 08', 'الثلاثاء': '29 / 08', 'الأربعاء': '01 / 09', 'الخميس': '02 / 09' }, specialDays: { '01 / 09': { name: 'غرة رمضان', type: 'occasion', color: 'green' } } }, 
             's2_week6': { name: 'الأسبوع السادس', semester: 2, startDate: '05 / 09', endDate: '09 / 09', days: { 'الأحد': '05 / 09', 'الاثنين': '06 / 09', 'الثلاثاء': '07 / 09', 'الأربعاء': '08 / 09', 'الخميس': '09 / 09' }, specialDays: { '05 / 09': { name: 'إجازة يوم التأسيس', type: 'holiday', color: 'green' } } }, 
             's2_week7': { name: 'الأسبوع السابع', semester: 2, startDate: '12 / 09', endDate: '16 / 09', days: { 'الأحد': '12 / 09', 'الاثنين': '13 / 09', 'الثلاثاء': '14 / 09', 'الأربعاء': '15 / 09', 'الخميس': '16 / 09' } }, 
-            's2_eid_fitr': { name: 'إجازة عيد الفطر', semester: 2, startDate: '16 / 09', endDate: '09 / 10', days: {}, holidayDetails: 'تبدأ بنهاية دوام الخميس 09/16 إلى السبت 10/09' }, 
+            's2_eid_fitr': { name: 'إجازة عيد الفطر', semester: 2, startDate: '16 / 09', endDate: '09 / 10', days: {}, holidayDetails: 'تبدأ بنهاية دوام الخميس 16/09 إلى السبت 09/10' }, 
             's2_week8': { name: 'الأسبوع الثامن', semester: 2, startDate: '10 / 10', endDate: '14 / 10', days: { 'الأحد': '10 / 10', 'الاثنين': '11 / 10', 'الثلاثاء': '12 / 10', 'الأربعاء': '13 / 10', 'الخميس': '14 / 10' } }, 
             's2_week9': { name: 'الأسبوع التاسع', semester: 2, startDate: '17 / 10', endDate: '21 / 10', days: { 'الأحد': '17 / 10', 'الاثنين': '18 / 10', 'الثلاثاء': '19 / 10', 'الأربعاء': '20 / 10', 'الخميس': '21 / 10' }, specialDays: { '19 / 10': { name: 'يوم الصحة العالمي', type: 'occasion', color: 'blue' } } }, 
             's2_week10': { name: 'الأسبوع العاشر', semester: 2, startDate: '24 / 10', endDate: '28 / 10', days: { 'الأحد': '24 / 10', 'الاثنين': '25 / 10', 'الثلاثاء': '26 / 10', 'الأربعاء': '27 / 10', 'الخميس': '28 / 10' } }, 
@@ -216,8 +339,7 @@
             's2_week12': { name: 'الأسبوع الثاني عشر', semester: 2, startDate: '09 / 11', endDate: '13 / 11', days: { 'الأحد': '09 / 11', 'الاثنين': '10 / 11', 'الثلاثاء': '11 / 11', 'الأربعاء': '12 / 11', 'الخميس': '13 / 11' } }, 
             's2_week13': { name: 'الأسبوع الثالث عشر', semester: 2, startDate: '16 / 11', endDate: '20 / 11', days: { 'الأحد': '16 / 11', 'الاثنين': '17 / 11', 'الثلاثاء': '18 / 11', 'الأربعاء': '19 / 11', 'الخميس': '20 / 11' } }, 
             's2_week14': { name: 'الأسبوع الرابع عشر', semester: 2, startDate: '23 / 11', endDate: '27 / 11', days: { 'الأحد': '23 / 11', 'الاثنين': '24 / 11', 'الثلاثاء': '25 / 11', 'الأربعاء': '26 / 11', 'الخميس': '27 / 11' } }, 
-            's2_eid_adha': { name: 'إجازة عيد الأضحى', semester: 2, startDate: '27 / 11', endDate: '15 / 12', days: {}, holidayDetails: 'تبدأ بنهاية دوام الخميس 11/27 إلى السبت 12/15' }, 
-            // التعديل هنا: الأسبوع 15 يحتوي على 3 أيام فقط (16، 17، 18)
+            's2_eid_adha': { name: 'إجازة عيد الأضحى', semester: 2, startDate: '27 / 11', endDate: '15 / 12', days: {}, holidayDetails: 'تبدأ بنهاية دوام الخميس 27/11 إلى السبت 15/12' }, 
             's2_week15': { name: 'الأسبوع الخامس عشر', semester: 2, startDate: '16 / 12', endDate: '18 / 12', days: { 'الثلاثاء': '16 / 12', 'الأربعاء': '17 / 12', 'الخميس': '18 / 12' } }, 
             's2_week16': { name: 'الأسبوع السادس عشر', semester: 2, startDate: '21 / 12', endDate: '25 / 12', days: { 'الأحد': '21 / 12', 'الاثنين': '22 / 12', 'الثلاثاء': '23 / 12', 'الأربعاء': '24 / 12', 'الخميس': '25 / 12' } }, 
             's2_week17': { name: 'الأسبوع السابع عشر', semester: 2, startDate: '28 / 12', endDate: '03 / 01', days: { 'الأحد': '28 / 12', 'الاثنين': '29 / 12', 'الثلاثاء': '01 / 01', 'الأربعاء': '02 / 01', 'الخميس': '03 / 01' }, specialDays: { '01 / 01': { name: 'سنة هجرية 1448', type: 'occasion', color: 'green' } } }, 
@@ -232,8 +354,12 @@
 
         // --- دوال المساعدة ---
         function parseDateForSort(dateStr) { const parts = dateStr.split(' '); const datePart = parts.slice(1).join(''); const dateParts = datePart.split('/'); if (dateParts.length < 2) return 9999; const day = parseInt(dateParts[0], 10); let month = parseInt(dateParts[1], 10); if (month < 3) month += 12; return month * 100 + day; }
-        // تعديل صيغة التاريخ هنا
-        function formatDatesForDisplay(datesArray) { if (!datesArray || datesArray.length === 0) return { text: '', json: '[]' }; const sortedDates = [...datesArray].sort((a, b) => parseDateForSort(a) - parseDateForSort(b)); const firstDateStr = sortedDates[0]; const lastDateStr = sortedDates[sortedDates.length - 1]; let textContent; if (sortedDates.length === 1) textContent = firstDateStr; else textContent = `من ${firstDateStr} إلى ${lastDateStr}`; return { text: textContent, json: JSON.stringify(sortedDates) }; }
+        // تعديل صيغة التاريخ هنا: إضافة حرف مخفي لمنع الاكتشاف
+        function formatDatesForDisplay(datesArray) { if (!datesArray || datesArray.length === 0) return { text: '', json: '[]' }; const sortedDates = [...datesArray].sort((a, b) => parseDateForSort(a) - parseDateForSort(b)); const firstDateStr = sortedDates[0]; const lastDateStr = sortedDates[sortedDates.length - 1]; let textContent; 
+        // نستخدم الحرف المخفي ZWNJ في التواريخ النهائية للعرض فقط
+        const safeFirst = firstDateStr.replace(/\//g, '/\u200C');
+        const safeLast = lastDateStr.replace(/\//g, '/\u200C');
+        if (sortedDates.length === 1) textContent = safeFirst; else textContent = `من ${safeFirst} إلى ${safeLast}`; return { text: textContent, json: JSON.stringify(sortedDates) }; }
         function getLabel(key) {
              if (key === 'primary_all') return 'ابتدائية';
              if (key === 'primary_lower') return 'أولية';
@@ -269,47 +395,7 @@
         function updateTitle() { 
             const stageTitleHeader = document.getElementById('stage-title-header'); 
             let titleText = '';
-            
-            // Logic duplicated for screen display
-            if (selectedGrades.includes('all')) {
-                titleText = 'لجميع المراحل الدراسية';
-            } else if (selectedGrades.length > 0) {
-                // (Logic reused from original)
-                const parts = [];
-                const primaryGrades = ['p1', 'p2', 'p3', 'p4', 'p5', 'p6'];
-                const hasLowerPrimary = selectedGrades.includes('primary_lower');
-                const hasUpperPrimary = selectedGrades.includes('primary_upper');
-                const hasQuranLower = selectedGrades.includes('quran_lower');
-                const hasQuranUpper = selectedGrades.includes('quran_upper');
-                
-                if (hasLowerPrimary && hasUpperPrimary) parts.push('للمرحلة الابتدائية');
-                else if (hasLowerPrimary) parts.push('للصفوف الأولية');
-                else if (hasUpperPrimary) parts.push('للصفوف العليا');
-
-                if (hasQuranLower && hasQuranUpper) parts.push('للمرحلة الابتدائية تحفيظ');
-                else {
-                    const quranIndividuals = selectedGrades.filter(g => g.startsWith('quran'));
-                    if (quranIndividuals.length > 0) parts.push(...quranIndividuals.map(g => gradeNames[g]));
-                }
-
-                if (selectedGrades.includes('middle_all')) parts.push('للمرحلة المتوسطة');
-                else {
-                    const middleIndividuals = selectedGrades.filter(g => g.startsWith('m'));
-                    if (middleIndividuals.length > 0) parts.push(...middleIndividuals.map(g => gradeNames[g]));
-                }
-
-                if (selectedGrades.includes('high_all')) parts.push('للمرحلة الثانوية');
-                else {
-                    const highIndividuals = selectedGrades.filter(g => g.startsWith('h'));
-                    if (highIndividuals.length > 0) parts.push(...highIndividuals.map(g => gradeNames[g]));
-                }
-                
-                const individualPrimary = selectedGrades.filter(g => primaryGrades.includes(g) && !hasLowerPrimary && !hasUpperPrimary);
-                if (individualPrimary.length > 0) parts.push(...individualPrimary.map(g => gradeNames[g]));
-                
-                titleText = 'لـ ' + [...new Set(parts)].join(' و ');
-            }
-            
+            if (selectedGrades.includes('all')) { titleText = 'لجميع المراحل الدراسية'; } else if (selectedGrades.length > 0) { const parts = []; const primaryGrades = ['p1', 'p2', 'p3', 'p4', 'p5', 'p6']; const hasLowerPrimary = selectedGrades.includes('primary_lower'); const hasUpperPrimary = selectedGrades.includes('primary_upper'); const hasQuranLower = selectedGrades.includes('quran_lower'); const hasQuranUpper = selectedGrades.includes('quran_upper'); if (hasLowerPrimary && hasUpperPrimary) parts.push('للمرحلة الابتدائية'); else if (hasLowerPrimary) parts.push('للصفوف الأولية'); else if (hasUpperPrimary) parts.push('للصفوف العليا'); if (hasQuranLower && hasQuranUpper) parts.push('للمرحلة الابتدائية تحفيظ'); else { const quranIndividuals = selectedGrades.filter(g => g.startsWith('quran')); if (quranIndividuals.length > 0) parts.push(...quranIndividuals.map(g => gradeNames[g])); } if (selectedGrades.includes('middle_all')) parts.push('للمرحلة المتوسطة'); else { const middleIndividuals = selectedGrades.filter(g => g.startsWith('m')); if (middleIndividuals.length > 0) parts.push(...middleIndividuals.map(g => gradeNames[g])); } if (selectedGrades.includes('high_all')) parts.push('للمرحلة الثانوية'); else { const highIndividuals = selectedGrades.filter(g => g.startsWith('h')); if (highIndividuals.length > 0) parts.push(...highIndividuals.map(g => gradeNames[g])); } const individualPrimary = selectedGrades.filter(g => primaryGrades.includes(g) && !hasLowerPrimary && !hasUpperPrimary); if (individualPrimary.length > 0) parts.push(...individualPrimary.map(g => gradeNames[g])); titleText = 'لـ ' + [...new Set(parts)].join(' و '); }
             stageTitleHeader.textContent = titleText; 
         }
         function clearAllFilters() { selectedGrades = []; updateButtonStyles(); updateTitle(); updateAllDateSelectors(); saveState(); }
@@ -324,7 +410,7 @@
         function closeDatePicker() { document.getElementById('date-picker-modal').style.display = 'none'; activeSelection = null; }
         function saveDates() { if (!activeSelection) return; const { programId, key } = activeSelection; const display = document.querySelector(`tr[data-program-id="${programId}"] .grade-date-selector[data-grade-key="${key}"] .dates-display`); const formatted = formatDatesForDisplay(tempSelectedDates); display.textContent = formatted.text; display.dataset.dates = formatted.json; saveState(); closeDatePicker(); }
 
-        // --- الطباعة (منطق جديد للجدول الأول + الاحتفاظ بالجدول الثاني) ---
+        // --- الطباعة (الحل الجذري للموبايل + إخفاء الروابط) ---
         function printSchedule() {
             if (isPrinting) return; isPrinting = true; saveState();
             const state = JSON.parse(localStorage.getItem('activityPlanState'));
@@ -339,36 +425,28 @@
             const row2Weeks = allSemesterWeeks.slice(7, 14);
             const row3Weeks = allSemesterWeeks.slice(14); 
 
-            // --- بناء محتوى الجدول الأول (بتفاصيل المراحل والحصص) ---
+            // --- بناء محتوى الجدول الأول ---
             const programsByWeekAndField = {};
             const getWeekInfoForDate = (fullDateStr) => { const datePartWithSpaces = fullDateStr.split(' ').slice(1).join(' '); for (const weekKey in weeksData) { if (Object.values(weeksData[weekKey].days).includes(datePartWithSpaces)) return weeksData[weekKey]; } return null; };
             
-            // 1. تجميع البيانات
-            const weeklyBreakdown = {}; // { weekKey: { programName: { fieldTitle: '...', grades: { 'GradeName': count } } } }
+            const weeklyBreakdown = {}; 
 
             if (state.programSelections) {
                 Object.entries(state.programSelections).forEach(([id, data]) => {
-                    // العثور على اسم البرنامج والمجال
                     let programInfo, fieldTitle;
                     for (const field of activitiesData) { const idx = field.programs.findIndex(p => `${field.id}-${field.programs.indexOf(p)}` === id); if (idx !== -1) { programInfo = field.programs[idx]; fieldTitle = field.title; break; } }
                     if (!programInfo) return;
 
-                    // تكرار على كل مرحلة تم اختيارها وتواريخها
                     Object.entries(data.datesByGrade || {}).forEach(([gradeKey, dateArray]) => {
-                        // التأكد من أن المرحلة مختارة حالياً (أو جزء من مجموعة مختارة)
                         if (selectedGrades.includes(gradeKey) || (gradeGroups[gradeKey] && selectedGrades.includes(gradeKey))) {
                             dateArray.forEach(dateStr => {
                                 const weekInfo = getWeekInfoForDate(dateStr);
                                 if (weekInfo && weekInfo.semester === detectedSemester) {
                                     const weekKey = Object.keys(weeksData).find(key => weeksData[key] === weekInfo);
-                                    
-                                    // تهيئة الهيكل
                                     if (!weeklyBreakdown[weekKey]) weeklyBreakdown[weekKey] = {};
                                     if (!weeklyBreakdown[weekKey][programInfo.name]) {
                                         weeklyBreakdown[weekKey][programInfo.name] = { fieldTitle: fieldTitle, grades: {} };
                                     }
-                                    
-                                    // زيادة العداد للمرحلة
                                     const label = getLabel(gradeKey);
                                     weeklyBreakdown[weekKey][programInfo.name].grades[label] = (weeklyBreakdown[weekKey][programInfo.name].grades[label] || 0) + 1;
                                 }
@@ -378,31 +456,23 @@
                 });
             }
 
-            // 2. تحويل البيانات المجمعة إلى HTML للعرض
             Object.keys(weeklyBreakdown).forEach(weekKey => {
                 const weekData = weeklyBreakdown[weekKey];
-                programsByWeekAndField[weekKey] = {}; // Reset for final structure
-                
+                programsByWeekAndField[weekKey] = {}; 
                 Object.keys(weekData).forEach(progName => {
                     const info = weekData[progName];
-                    // بناء نص التفاصيل: (أولية: 2، عليا: 1)
                     const details = Object.entries(info.grades).map(([gName, count]) => `${gName}: ${count}`).join('، ');
-                    
                     const displayText = `${progName}<br><span class="session-details">(${details})</span>`;
-                    
                     if (!programsByWeekAndField[weekKey][info.fieldTitle]) programsByWeekAndField[weekKey][info.fieldTitle] = [];
                     programsByWeekAndField[weekKey][info.fieldTitle].push(displayText);
                 });
             });
 
-            // دالة بناء محتوى الخلية (لم تتغير، فقط تستقبل البيانات الجديدة)
             const getWeekContent = (weeks) => {
                 let weekHtml = ''; let programHtml = '';
                 weeks.forEach((weekKey) => {
                         const weekData = weeksData[weekKey]; if (!weekData) return;
                         let weekLabel = weekData.name; let programsContent = '';
-                        
-                        // معالجة خاصة للإجازات
                         if (weekData.holidayDetails) {
                              programsContent = `<div class="holiday-details">${weekData.holidayDetails}</div>`;
                         } else {
@@ -433,50 +503,21 @@
                 
                 if (semesterDates.length > 0) {
                     const formattedDates = formatDatesForDisplay(semesterDates).text;
-                    secondTableRows += `
-                        <tr class="text-center">
-                            <td style="padding: 4px; border: 1px solid #ccc; width: 3%;">${programNumber++}</td>
-                            <td style="padding: 4px; border: 1px solid #ccc; background-color: ${field.color}; color: white; font-weight: bold; text-align: center; width: 10%;">${field.title}</td>
-                            <td style="padding: 4px; border: 1px solid #ccc; text-align: right; width: 25%;">
-                                ${program.name}<br>
-                                <span style="font-size: 0.8em; color: #666; font-weight: normal; line-height: 1.5; ">${programAndGradeText.replace(program.name, '')}</span>
-                            </td>
-                            <td style="padding: 4px; border: 1px solid #ccc; text-align: right; width: 30%;">${formattedDates}</td>
-                            <td style="padding: 4px; border: 1px solid #ccc; width: 12%;">
-                               <div style="display:flex; justify-content:space-around; align-items:center; gap: 2px;">
-                                    <label style="display:flex; align-items:center; gap:2px;"><input type="checkbox" style="width:10px; height:10px;"> نفذ</label>
-                                    <label style="display:flex; align-items:center; gap:2px;"><input type="checkbox" style="width:10px; height:10px;"> لم ينفذ</label>
-                               </div>
-                            </td>
-                            <td style="padding: 4px; border: 1px solid #ccc; width: 12%;">${notes}</td>
-                        </tr>
-                    `;
+                    secondTableRows += `<tr class="text-center"><td style="padding: 4px; border: 1px solid #ccc; width: 3%;">${programNumber++}</td><td style="padding: 4px; border: 1px solid #ccc; background-color: ${field.color}; color: white; font-weight: bold; text-align: center; width: 10%;">${field.title}</td><td style="padding: 4px; border: 1px solid #ccc; text-align: right; width: 25%;">${program.name}<br><span style="font-size: 0.8em; color: #666; font-weight: normal; line-height: 1.5; ">${programAndGradeText.replace(program.name, '')}</span></td><td style="padding: 4px; border: 1px solid #ccc; text-align: right; width: 30%;">${formattedDates}</td><td style="padding: 4px; border: 1px solid #ccc; width: 10%;"><div style="display:flex; justify-content:space-around; align-items:center; gap: 2px;"><label style="display:flex; align-items:center; gap:2px;"><input type="checkbox" style="width:10px; height:10px;"> نفذ</label><label style="display:flex; align-items:center; gap:2px;"><input type="checkbox" style="width:10px; height:10px;"> لم ينفذ</label></div></td><td style="padding: 4px; border: 1px solid #ccc; width: 14%;">${notes}</td></tr>`;
                 }
             });
 
             const printWindow = window.open('', '_blank', 'width=1200,height=800');
-            printWindow.document.write(`<!DOCTYPE html><html lang="ar" dir="rtl"><head><meta charset="UTF-8"><title>خطة النشاط</title><style>@import url('https://fonts.googleapis.com/css2?family=Cairo:wght@400;700&display=swap');@import url('https://fonts.googleapis.com/css2?family=Readex+Pro:wght@400;700&display=swap');* { -webkit-print-color-adjust: exact !important; print-color-adjust: exact !important; box-sizing: border-box; }@page { size: A4 landscape; margin: 0; }body { margin: 0; padding: 0; padding-top: 35mm; padding-bottom: 20mm; font-family: 'Readex Pro', sans-serif; }.print-fixed-header { position: fixed; top: 0; left: 0; width: 100%; height: 30mm; background: white; z-index: 1000; }.print-fixed-footer { position: fixed; bottom: 0; left: 0; width: 100%; height: 18mm; background: white; z-index: 1000; }.print-header-line { height: 15px; background: linear-gradient(135deg, #00A383 0%, #0093B5 100%); width: 100%; }.print-header-content { display: flex; justify-content: space-between; align-items: center; padding: 5mm 15mm 0; width: 100%; }.print-header-content img { height: 40px; }.title-block { text-align: center; }.title-block h1 { color: #00A383; margin: 0; font-size: 1.6em; display: inline-block; }.title-block span.stage-text { color: #000; font-size: 1.6em; font-weight: bold; margin-right: 5px; }.title-block p.semester-text { font-size: 1.2em; font-weight: bold; color: #0093B5; margin: 2px 0 0 0; }.print-table { width: 94%; margin: 5mm auto; border-collapse: collapse; table-layout: fixed; font-size: 0.85em; }.print-table th, .print-table td { border: 1px solid #777; padding: 3px; text-align: center; vertical-align: middle; word-wrap: break-word; }.print-table th { background-color: #f2f2f2; font-weight: bold; font-size: 10pt; }.print-table td.week-label { background-color: #e6f7ff; font-weight: bold; color: #005f99; width: 8%; font-size: 10pt; }.print-table td.program-label { background-color: #f0f0f0; font-weight: bold; width: 8%; font-size: 10pt; }.print-table .week-header { background-color: #e6f7ff; font-weight: bold; color: #005f99; width: 13.14%; font-size: 11px !important; } .holiday-details { font-weight: bold; color: #d32f2f; font-size: 0.85em; line-height: 1.4; padding: 5px; } .program-entry { margin-bottom: 4px; border-bottom: 1px dashed #eee; padding-bottom: 2px; font-size: 0.85em; } .program-entry:last-child { border-bottom: none; } .session-details { display: block; font-size: 0.9em; color: #555; margin-top: 1px; } .page-break { page-break-before: always; display: block; height: 1px; width: 100%; }.second-table-wrapper { width: 94%; margin: 0 auto; margin-top: 40mm; display: block; }.print-second-table { width: 100%; border-collapse: collapse; page-break-inside: auto; font-size: 0.9em; }.print-second-table th, .print-second-table td { border: 1px solid #ccc; padding: 4px; }.print-second-table th:nth-child(1) { width: 4%; }.print-second-table th:nth-child(2) { width: 10%; }.print-second-table th:nth-child(3) { width: 28%; }.print-second-table th:nth-child(4) { width: 35%; white-space: normal; }.print-second-table th:nth-child(5) { width: 17%; }.print-second-table th:nth-child(6) { width: 6%; }.print-signatures { display: flex; justify-content: space-around; align-items: center; height: 100%; font-size: 1.1em; font-weight: bold; padding-bottom: 5px; }</style></head><body>
+            printWindow.document.write(`<!DOCTYPE html><html lang="ar" dir="rtl"><head><meta charset="UTF-8"><meta name="format-detection" content="telephone=no, date=no, address=no, email=no, url=no"><title>خطة النشاط</title><style>@import url('https://fonts.googleapis.com/css2?family=Cairo:wght@400;700&display=swap');@import url('https://fonts.googleapis.com/css2?family=Readex+Pro:wght@400;700&display=swap');* { -webkit-print-color-adjust: exact !important; print-color-adjust: exact !important; box-sizing: border-box; }@page { size: A4 landscape; margin: 0; }body { margin: 0; padding: 0; padding-top: 35mm; padding-bottom: 20mm; font-family: 'Readex Pro', sans-serif; width: 297mm; }.print-fixed-header { position: fixed; top: 0; left: 0; width: 297mm; height: 30mm; background: white; z-index: 1000; }.print-fixed-footer { position: fixed; bottom: 0; left: 0; width: 297mm; height: 18mm; background: white; z-index: 1000; }.print-header-line { height: 15px; background: linear-gradient(135deg, #00A383 0%, #0093B5 100%); width: 100%; }.print-header-content { display: flex; justify-content: space-between; align-items: center; padding: 5mm 15mm 0; width: 100%; }.print-header-content img { height: 40px; }.title-block { text-align: center; }.title-block h1 { color: #00A383; margin: 0; font-size: 1.6em; display: inline-block; }.title-block span.stage-text { color: #000; font-size: 1.6em; font-weight: bold; margin-right: 5px; }.title-block p.semester-text { font-size: 1.2em; font-weight: bold; color: #0093B5; margin: 2px 0 0 0; }.print-table { width: 94%; margin: 0 auto; border-collapse: collapse; table-layout: fixed; }.print-table th, .print-table td { border: 1px solid #999; padding: 3px; text-align: center; vertical-align: middle; word-wrap: break-word; font-size: 9pt; }.print-table th { background-color: #f2f2f2; font-weight: bold; }.print-table td.week-label { background-color: #e6f7ff; font-weight: bold; color: #005f99; width: 8%; font-size: 10pt; }.print-table td.program-label { background-color: #f0f0f0; font-weight: bold; width: 8%; font-size: 10pt; }.print-table .week-header { background-color: #e6f7ff; font-weight: bold; color: #005f99; width: 13.14%; font-size: 11px !important; } .holiday-details { font-weight: bold; color: #d32f2f; font-size: 0.85em; line-height: 1.4; padding: 5px; } .program-entry { margin-bottom: 4px; border-bottom: 1px dashed #ccc; padding-bottom: 2px; font-size: 0.85em; } .program-entry:last-child { border-bottom: none; } .session-details { display: block; font-size: 0.9em; color: #555; margin-top: 1px; } .page-break { page-break-before: always; display: block; height: 1px; width: 100%; visibility: hidden; } .second-table-wrapper { width: 94%; margin: 0 auto; margin-top: 40mm; display: block; }.print-second-table { width: 100%; border-collapse: collapse; page-break-inside: auto; font-size: 0.9em; }.print-second-table th, .print-second-table td { border: 1px solid #999; padding: 4px; font-size: 9pt; }.print-second-table th:nth-child(1) { width: 4%; }.print-second-table th:nth-child(2) { width: 10%; }.print-second-table th:nth-child(3) { width: 26%; }.print-second-table th:nth-child(4) { width: 40%; white-space: normal; }.print-second-table th:nth-child(5) { width: 15%; }.print-second-table th:nth-child(6) { width: 5%; }.print-signatures { display: flex; justify-content: space-around; align-items: center; height: 100%; font-size: 1.1em; font-weight: bold; padding-bottom: 5px; width: 297mm; } .layout-table { width: 100%; border-collapse: collapse; } .layout-table thead { display: table-header-group; } .layout-table tfoot { display: table-footer-group; } .header-space { height: 35mm; } .footer-space { height: 18mm; }</style></head><body>
             <div class="print-fixed-header"><div class="print-header-line"></div><div class="print-header-content"><div><img src="https://salogos.org/wp-content/uploads/2021/11/UntiTtled-1-1300x988.png" alt="شعار الوزارة"></div><div class="title-block"><h1>خطة النشاط الطلابي</h1><span class="stage-text">${stageTitleText}</span><p class="semester-text">${semesterTitle} للعام الدراسي 1447هـ</p></div><div style="text-align:left"><p>${state.educationAdmin}</p><p>${state.educationRegion}</p><p>${state.schoolName}</p></div></div></div>
             
+            <table class="layout-table"><thead><tr><td><div class="header-space">&nbsp;</div></td></tr></thead><tbody><tr><td>
             <table class="print-table"><thead><tr><td class="week-label">الأسابيع</td>${row1Data.weekHtml}</tr><tr><td class="program-label">البرامج</td>${row1Data.programHtml}</tr><tr><td class="week-label">الأسابيع</td>${row2Data.weekHtml}</tr><tr><td class="program-label">البرامج</td>${row2Data.programHtml}</tr><tr><td class="week-label">الأسابيع</td>${row3Data.weekHtml}</tr><tr><td class="program-label">البرامج</td>${row3Data.programHtml}</tr></thead><tbody></tbody></table>
-
             <div class="page-break"></div>
-
             <div class="second-table-wrapper">
-                <table class="print-second-table">
-                    <thead>
-                        <tr class="bg-gray-100 text-gray-700" style="background-color: #f3f4f6; color: #374151;">
-                            <th style="padding: 4px; border: 1px solid #ccc; width: 3%;">م</th>
-                            <th style="padding: 4px; border: 1px solid #ccc; width: 10%;">المجال</th>
-                            <th style="padding: 4px; border: 1px solid #ccc; text-align: right; width: 25%;">البرنامج وعدد حصصه لكل مرحلة</th>
-                            <th style="padding: 4px; border: 1px solid #ccc; text-align: right; width: 30%;">تاريخ التنفيذ من - إلى</th>
-                            <th style="padding: 4px; border: 1px solid #ccc; width: 12%;">حالة التنفيذ</th>
-                            <th style="padding: 4px; border: 1px solid #ccc; width: 12%;">ملاحظات</th>
-                        </tr>
-                    </thead>
-                    <tbody>${secondTableRows}</tbody>
-                </table>
+                <table class="print-second-table"><thead><tr class="bg-gray-100 text-gray-700" style="background-color: #f3f4f6; color: #374151;"><th>م</th><th>المجال</th><th>البرنامج</th><th>تاريخ التنفيذ</th><th>حالة التنفيذ</th><th>ملاحظات</th></tr></thead><tbody>${secondTableRows}</tbody></table>
             </div>
+            </td></tr></tbody><tfoot><tr><td><div class="footer-space">&nbsp;</div></td></tr></tfoot></table>
 
             <div class="print-fixed-footer"><div class="print-signatures"><div>${state.activityLeaderName}</div><div>${state.schoolDirectorName}</div></div></div>
             </body></html>`);
@@ -485,82 +526,23 @@
 
         function saveBackup() { saveState(); const blob = new Blob([localStorage.getItem('activityPlanState')], { type: 'application/json' }); const a = document.createElement('a'); a.href = URL.createObjectURL(blob); a.download = 'plan_backup.json'; a.click(); }
         function handleFileUpload(e) { const reader = new FileReader(); reader.onload = (event) => { localStorage.setItem('activityPlanState', event.target.result); location.reload(); }; reader.readAsText(e.target.files[0]); }
-        
         function saveState() {
             if (isLoading) return;
-            const programSelections = {}; 
-            document.querySelectorAll('tr[data-program-id]').forEach(row => { 
-                const id = row.dataset.programId; 
-                const teachers = {}, dates = {}; 
-                row.querySelectorAll('.teacher-input').forEach(i => { if(i.value) teachers[i.dataset.gradeKey] = i.value; }); 
-                row.querySelectorAll('.dates-display').forEach(d => { 
-                    const ds = JSON.parse(d.dataset.dates || '[]'); 
-                    if(ds.length) dates[d.closest('.grade-date-selector').dataset.gradeKey] = ds; 
-                }); 
-                if(Object.keys(teachers).length || Object.keys(dates).length) programSelections[id] = { teachersByGrade: teachers, datesByGrade: dates }; 
-            });
-            const state = { 
-                educationAdmin: document.getElementById('education-admin').value, 
-                educationRegion: document.getElementById('education-region').value, 
-                schoolName: document.getElementById('school-name').value, 
-                activityLeaderName: document.getElementById('activity-leader-name').value, 
-                schoolDirectorName: document.getElementById('school-director-name').value, 
-                currentRegion, 
-                selectedGrades, 
-                programSelections 
-            };
+            const programSelections = {}; document.querySelectorAll('tr[data-program-id]').forEach(row => { const id = row.dataset.programId; const teachers = {}, dates = {}; row.querySelectorAll('.teacher-input').forEach(i => { if(i.value) teachers[i.dataset.gradeKey] = i.value; }); row.querySelectorAll('.dates-display').forEach(d => { const ds = JSON.parse(d.dataset.dates || '[]'); if(ds.length) dates[d.closest('.grade-date-selector').dataset.gradeKey] = ds; }); if(Object.keys(teachers).length || Object.keys(dates).length) programSelections[id] = { teachersByGrade: teachers, datesByGrade: dates }; });
+            const state = { educationAdmin: document.getElementById('education-admin').value, educationRegion: document.getElementById('education-region').value, schoolName: document.getElementById('school-name').value, activityLeaderName: document.getElementById('activity-leader-name').value, schoolDirectorName: document.getElementById('school-director-name').value, currentRegion, selectedGrades, programSelections };
             localStorage.setItem('activityPlanState', JSON.stringify(state));
         }
-
         function loadState() {
-            isLoading = true;
-            try {
-                const state = JSON.parse(localStorage.getItem('activityPlanState') || '{}');
-                // إزالة الشرط if (state.schoolName) لضمان التحميل دائماً
-                if (state) {
-                    document.getElementById('school-name').value = state.schoolName || ''; 
-                    document.getElementById('education-admin').value = state.educationAdmin || ''; 
-                    document.getElementById('education-region').value = state.educationRegion || ''; 
-                    document.getElementById('activity-leader-name').value = state.activityLeaderName || ''; 
-                    document.getElementById('school-director-name').value = state.schoolDirectorName || '';
-                    
-                    selectedGrades = state.selectedGrades || [];
-                    selectRegion(state.currentRegion || 'other'); 
-                    updateButtonStyles(); 
-                    updateTitle(); 
-                    updateAllDateSelectors();
-                    
-                    if(state.programSelections) { 
-                        Object.entries(state.programSelections).forEach(([id, data]) => { 
-                            const row = document.querySelector(`tr[data-program-id="${id}"]`); 
-                            if(row) { 
-                                if(data.teachersByGrade) Object.entries(data.teachersByGrade).forEach(([k, v]) => { const i = row.querySelector(`.teacher-input[data-grade-key="${k}"]`); if(i) i.value = v; }); 
-                                if(data.datesByGrade) Object.entries(data.datesByGrade).forEach(([k, v]) => { const d = row.querySelector(`.grade-date-selector[data-grade-key="${k}"] .dates-display`); if(d) { d.textContent = formatDatesForDisplay(v).text; d.dataset.dates = JSON.stringify(v); } }); 
-                            } 
-                        }); 
-                    }
-                } else { 
-                    selectRegion('other'); 
-                }
-            } catch (e) {
-                console.error("Error loading state", e);
-            } finally {
-                isLoading = false;
-            }
+            isLoading = true; const state = JSON.parse(localStorage.getItem('activityPlanState') || '{}');
+            document.getElementById('school-name').value = state.schoolName || ''; document.getElementById('education-admin').value = state.educationAdmin || ''; document.getElementById('education-region').value = state.educationRegion || ''; document.getElementById('activity-leader-name').value = state.activityLeaderName || ''; document.getElementById('school-director-name').value = state.schoolDirectorName || '';
+            selectedGrades = state.selectedGrades || [];
+            selectRegion(state.currentRegion || 'other'); 
+            updateButtonStyles(); updateTitle(); updateAllDateSelectors();
+            if(state.programSelections) { Object.entries(state.programSelections).forEach(([id, data]) => { const row = document.querySelector(`tr[data-program-id="${id}"]`); if(row) { if(data.teachersByGrade) Object.entries(data.teachersByGrade).forEach(([k, v]) => { const i = row.querySelector(`.teacher-input[data-grade-key="${k}"]`); if(i) i.value = v; }); if(data.datesByGrade) Object.entries(data.datesByGrade).forEach(([k, v]) => { const d = row.querySelector(`.grade-date-selector[data-grade-key="${k}"] .dates-display`); if(d) { d.textContent = formatDatesForDisplay(v).text; d.dataset.dates = JSON.stringify(v); } }); } }); }
+            isLoading = false;
         }
-
-        function resetPlan() { 
-            if(confirm('هل أنت متأكد من مسح كافة البيانات؟ هذا الإجراء لا يمكن التراجع عنه.')) { 
-                localStorage.removeItem('activityPlanState'); 
-                location.reload(); 
-            } 
-        }
-
-        document.addEventListener('DOMContentLoaded', () => { 
-            createGradeSelectionUI(); 
-            generateSections(); 
-            loadState(); 
-        });
+        function resetPlan() { if(confirm('هل أنت متأكد من مسح كافة البيانات؟')) { localStorage.removeItem('activityPlanState'); location.reload(); } }
+        document.addEventListener('DOMContentLoaded', () => { createGradeSelectionUI(); generateSections(); loadState(); });
     </script>
 </body>
 </html>
