@@ -57,8 +57,6 @@
             body {
                 margin: 0;
                 padding: 0;
-                padding-top: 35mm; 
-                padding-bottom: 20mm;
                 font-family: 'Readex Pro', sans-serif;
                 width: 297mm; 
                 min-width: 297mm;
@@ -172,7 +170,8 @@
             .second-table-wrapper {
                 width: 96%;
                 margin: 0 auto;
-                padding-top: 40mm; 
+                margin-top: 0 !important; /* تعديل هام لإزالة الهامش في الصفحة الثانية */
+                padding-top: 5mm; 
                 display: block;
             }
             
@@ -211,7 +210,7 @@
 <body class="bg-gray-50 min-h-screen">
 
     <div class="bg-blue-600 text-white text-center py-2 no-print font-semibold">
-        تم تفعيل يوم الصحة للاختيار + حفظ تلقائي + تنسيق طباعة مثالي
+        تم إصلاح هامش الصفحة الثانية (المسافة بين الرأس والجدول)
     </div>
 
     <div id="date-picker-modal" class="fixed inset-0 z-40 items-center justify-center p-4 no-print bg-black bg-opacity-50 hidden">
@@ -566,7 +565,56 @@
             });
 
             const printWindow = window.open('', '_blank', 'width=1200,height=800');
-            printWindow.document.write(`<!DOCTYPE html><html lang="ar" dir="rtl"><head><meta charset="UTF-8"><meta name="format-detection" content="telephone=no, date=no, address=no, email=no, url=no"><title>خطة النشاط</title><style>@import url('https://fonts.googleapis.com/css2?family=Cairo:wght@400;700&display=swap');@import url('https://fonts.googleapis.com/css2?family=Readex+Pro:wght@400;700&display=swap');* { -webkit-print-color-adjust: exact !important; print-color-adjust: exact !important; box-sizing: border-box; }@page { size: A4 landscape; margin: 0; }body { margin: 0; padding: 0; padding-top: 35mm; padding-bottom: 20mm; font-family: 'Readex Pro', sans-serif; width: 297mm; }.print-fixed-header { position: fixed; top: 0; left: 0; width: 297mm; height: 30mm; background: white; z-index: 1000; }.print-fixed-footer { position: fixed; bottom: 0; left: 0; width: 297mm; height: 18mm; background: white; z-index: 1000; }.print-header-line { height: 15px; background: linear-gradient(135deg, #00A383 0%, #0093B5 100%); width: 100%; }.print-header-content { display: flex; justify-content: space-between; align-items: center; padding: 5mm 15mm 0; width: 100%; }.header-right-group { display: flex; align-items: center; gap: 15px; flex: 1; text-align: right; } .header-right-group img { height: 45px; } .school-info-text { display: flex; flex-direction: column; gap: 2px; } .school-info-text p { margin: 0; font-size: 10pt; font-weight: bold; line-height: 1.2; color: #000; } .title-block { text-align: center; flex: 2; }.title-block h1 { color: #00A383; margin: 0; font-size: 1.6em; display: inline-block; }.title-block span.stage-text { color: #000; font-size: 1.6em; font-weight: bold; margin-right: 5px; }.title-block p.semester-text { font-size: 1.2em; font-weight: bold; color: #0093B5; margin: 2px 0 0 0; } .header-left-spacer { flex: 1; } .print-table { width: 94%; margin: 0 auto; border-collapse: collapse; table-layout: fixed; }.print-table th, .print-table td { border: 1px solid #999; padding: 3px; text-align: center; vertical-align: middle; word-wrap: break-word; font-size: 9pt; }.print-table th { background-color: #f2f2f2; font-weight: bold; }.print-table td.week-label { background-color: #e6f7ff; font-weight: bold; color: #005f99; width: 8%; font-size: 10pt; }.print-table td.program-label { background-color: #f0f0f0; font-weight: bold; width: 8%; font-size: 10pt; }.print-table .week-header { background-color: #e6f7ff; font-weight: bold; color: #005f99; width: 13.14%; font-size: 11px !important; } .holiday-details { font-weight: bold; color: #d32f2f; font-size: 0.85em; line-height: 1.4; padding: 5px; } .program-entry { margin-bottom: 4px; border-bottom: 1px dashed #ccc; padding-bottom: 2px; font-size: 0.85em; } .program-entry:last-child { border-bottom: none; } .session-details { display: block; font-size: 0.9em; color: #555; margin-top: 1px; } .page-break { page-break-before: always; display: block; height: 1px; width: 100%; visibility: hidden; } .second-table-wrapper { width: 94%; margin: 0 auto; margin-top: 40mm; display: block; }.print-second-table { width: 100%; border-collapse: collapse; page-break-inside: auto; font-size: 0.9em; }.print-second-table th, .print-second-table td { border: 1px solid #999; padding: 4px; font-size: 9pt; }.print-second-table th:nth-child(1) { width: 4%; }.print-second-table th:nth-child(2) { width: 10%; }.print-second-table th:nth-child(3) { width: 28%; }.print-second-table th:nth-child(4) { width: 35%; white-space: normal; }.print-second-table th:nth-child(5) { width: 17%; }.print-second-table th:nth-child(6) { width: 6%; }.print-signatures { display: flex; justify-content: space-around; align-items: center; height: 100%; font-size: 1.1em; font-weight: bold; padding-bottom: 5px; width: 297mm; } .layout-table { width: 100%; border-collapse: collapse; } .layout-table thead { display: table-header-group; } .layout-table tfoot { display: table-footer-group; } .header-space { height: 35mm; } .footer-space { height: 18mm; }</style></head><body>
+            printWindow.document.write(`<!DOCTYPE html><html lang="ar" dir="rtl"><head><meta charset="UTF-8"><meta name="format-detection" content="telephone=no, date=no, address=no, email=no, url=no"><title>خطة النشاط</title><style>
+            @import url('https://fonts.googleapis.com/css2?family=Cairo:wght@400;700&display=swap');
+            @import url('https://fonts.googleapis.com/css2?family=Readex+Pro:wght@400;700&display=swap');
+            * { -webkit-print-color-adjust: exact !important; print-color-adjust: exact !important; box-sizing: border-box; }
+            @page { size: A4 landscape; margin: 0; }
+            
+            body { margin: 0; padding: 0; font-family: 'Readex Pro', sans-serif; width: 297mm; }
+
+            .print-fixed-header { position: fixed; top: 0; left: 0; width: 297mm; height: 30mm; background: white; z-index: 1000; }
+            .print-fixed-footer { position: fixed; bottom: 0; left: 0; width: 297mm; height: 18mm; background: white; z-index: 1000; }
+            .print-header-line { height: 15px; background: linear-gradient(135deg, #00A383 0%, #0093B5 100%); width: 100%; }
+            .print-header-content { display: flex; justify-content: space-between; align-items: center; padding: 5mm 15mm 0; width: 100%; }
+            .header-right-group { display: flex; align-items: center; gap: 15px; flex: 1; text-align: right; } 
+            .header-right-group img { height: 45px; } 
+            .school-info-text { display: flex; flex-direction: column; gap: 2px; } 
+            .school-info-text p { margin: 0; font-size: 10pt; font-weight: bold; line-height: 1.2; color: #000; } 
+            .title-block { text-align: center; flex: 2; }
+            .title-block h1 { color: #00A383; margin: 0; font-size: 1.6em; display: inline-block; }
+            .title-block span.stage-text { color: #000; font-size: 1.6em; font-weight: bold; margin-right: 5px; }
+            .title-block p.semester-text { font-size: 1.2em; font-weight: bold; color: #0093B5; margin: 2px 0 0 0; } 
+            .header-left-spacer { flex: 1; } 
+            .print-table { width: 94%; margin: 0 auto; border-collapse: collapse; table-layout: fixed; }
+            .print-table th, .print-table td { border: 1px solid #999; padding: 3px; text-align: center; vertical-align: middle; word-wrap: break-word; font-size: 9pt; }
+            .print-table th { background-color: #f2f2f2; font-weight: bold; }
+            .print-table td.week-label { background-color: #e6f7ff; font-weight: bold; color: #005f99; width: 8%; font-size: 10pt; }
+            .print-table td.program-label { background-color: #f0f0f0; font-weight: bold; width: 8%; font-size: 10pt; }
+            .print-table .week-header { background-color: #e6f7ff; font-weight: bold; color: #005f99; width: 13.14%; font-size: 11px !important; } 
+            .holiday-details { font-weight: bold; color: #d32f2f; font-size: 0.85em; line-height: 1.4; padding: 5px; } 
+            .program-entry { margin-bottom: 4px; border-bottom: 1px dashed #ccc; padding-bottom: 2px; font-size: 0.85em; } 
+            .program-entry:last-child { border-bottom: none; } 
+            .session-details { display: block; font-size: 0.9em; color: #555; margin-top: 1px; } 
+            .page-break { page-break-before: always; display: block; height: 1px; width: 100%; visibility: hidden; } 
+            
+            /* --- هام: تم إزالة هامش 40 ملم هنا لجعله 0 --- */
+            .second-table-wrapper { width: 94%; margin: 0 auto; margin-top: 0; display: block; }
+            
+            .print-second-table { width: 100%; border-collapse: collapse; page-break-inside: auto; font-size: 0.9em; }
+            .print-second-table th, .print-second-table td { border: 1px solid #999; padding: 4px; font-size: 9pt; }
+            .print-second-table th:nth-child(1) { width: 4%; }
+            .print-second-table th:nth-child(2) { width: 10%; }
+            .print-second-table th:nth-child(3) { width: 28%; }
+            .print-second-table th:nth-child(4) { width: 35%; white-space: normal; }
+            .print-second-table th:nth-child(5) { width: 17%; }
+            .print-second-table th:nth-child(6) { width: 6%; }
+            .print-signatures { display: flex; justify-content: space-around; align-items: center; height: 100%; font-size: 1.1em; font-weight: bold; padding-bottom: 5px; width: 297mm; } 
+            .layout-table { width: 100%; border-collapse: collapse; } 
+            .layout-table thead { display: table-header-group; } 
+            .layout-table tfoot { display: table-footer-group; } 
+            .header-space { height: 32mm; } 
+            .footer-space { height: 18mm; }</style></head><body>
             <div class="print-fixed-header"><div class="print-header-line"></div><div class="print-header-content"><div class="header-right-group"><div><img src="https://salogos.org/wp-content/uploads/2021/11/UntiTtled-1-1300x988.png" alt="شعار الوزارة"></div><div class="school-info-text"><p>${state.educationAdmin}</p><p>${state.educationRegion}</p><p>${state.schoolName}</p></div></div><div class="title-block"><h1>خطة النشاط الطلابي</h1><span class="stage-text">${stageTitleText}</span><p class="semester-text">${semesterTitle} للعام الدراسي 1447هـ</p></div><div class="header-left-spacer"></div></div></div>
             
             <table class="layout-table"><thead><tr><td><div class="header-space">&nbsp;</div></td></tr></thead><tbody><tr><td>
