@@ -57,6 +57,8 @@
             body {
                 margin: 0;
                 padding: 0;
+                padding-top: 35mm; 
+                padding-bottom: 20mm;
                 font-family: 'Readex Pro', sans-serif;
                 width: 297mm; 
                 min-width: 297mm;
@@ -170,8 +172,7 @@
             .second-table-wrapper {
                 width: 96%;
                 margin: 0 auto;
-                margin-top: 0 !important; /* تعديل هام لإزالة الهامش في الصفحة الثانية */
-                padding-top: 5mm; 
+                padding-top: 40mm; 
                 display: block;
             }
             
@@ -186,12 +187,14 @@
                 font-size: 9pt;
             }
             
-            .print-second-table th:nth-child(1) { width: 4%; }
-            .print-second-table th:nth-child(2) { width: 10%; }
-            .print-second-table th:nth-child(3) { width: 28%; }
-            .print-second-table th:nth-child(4) { width: 35%; white-space: normal; }
-            .print-second-table th:nth-child(5) { width: 17%; }
-            .print-second-table th:nth-child(6) { width: 6%; }
+            /* تعديل نسب الأعمدة في الجدول الثاني */
+            .print-second-table th:nth-child(1) { width: 3%; } /* م */
+            .print-second-table th:nth-child(2) { width: 9%; } /* المجال */
+            .print-second-table th:nth-child(3) { width: 15%; } /* المعلم (جديد) */
+            .print-second-table th:nth-child(4) { width: 23%; white-space: normal; } /* البرنامج */
+            .print-second-table th:nth-child(5) { width: 30%; } /* التاريخ */
+            .print-second-table th:nth-child(6) { width: 10%; } /* الحالة (مصغرة) */
+            .print-second-table th:nth-child(7) { width: 10%; } /* ملاحظات */
 
             .print-signatures {
                 display: flex;
@@ -210,8 +213,7 @@
 <body class="bg-gray-50 min-h-screen">
 
     <div class="bg-blue-600 text-white text-center py-2 no-print font-semibold">
-        تم إصلاح هامش الصفحة الثانية (المسافة بين الرأس والجدول)
-    </div>
+تم التحديث بتاريخ ٣٠ / ٧ / ١٤٤٧ هـ    </div>
 
     <div id="date-picker-modal" class="fixed inset-0 z-40 items-center justify-center p-4 no-print bg-black bg-opacity-50 hidden">
         <div class="bg-white rounded-lg shadow-xl p-6 max-w-4xl w-full h-[85vh] flex flex-col">
@@ -553,75 +555,41 @@
             const getProgramAndGradeLabels = (program, sessionsByGrade) => { const programLabels = []; const effectiveSelection = state.selectedGrades; const handledGrades = new Set(); effectiveSelection.forEach(key => { let label; let sessionsCount; if (gradeGroups[key]) { label = getLabel(key); sessionsCount = Math.max(0, ...gradeGroups[key].map(g => program.sessions[g] || 0)); if (sessionsCount > 0) { programLabels.push(`${label} ${sessionsCount} حصة`); gradeGroups[key].forEach(g => handledGrades.add(g)); } } else if (!handledGrades.has(key)) { label = getLabel(key); sessionsCount = program.sessions[key] || 0; if (sessionsCount > 0) { programLabels.push(`${label} ${sessionsCount} حصة`); handledGrades.add(key); } } }); return `${program.name} (${programLabels.join(' و ')})`; };
             const selectedPrograms = [];
             activitiesData.forEach(field => { field.programs.forEach((program, programIndex) => { const programId = `${field.id}-${programIndex}`; if (state.programSelections && state.programSelections[programId]) { selectedPrograms.push({ field, program, programId, selectionData: state.programSelections[programId] }); } }); });
+            
             selectedPrograms.forEach(item => {
-                const { field, program, programId, selectionData } = item; const datesByGrade = selectionData?.datesByGrade || {}; const notes = selectionData?.notes || '';
+                const { field, program, programId, selectionData } = item; 
+                const datesByGrade = selectionData?.datesByGrade || {}; 
+                const notes = selectionData?.notes || '';
+                
+                // --- استخراج أسماء المعلمين ---
+                const teachersByGrade = selectionData?.teachersByGrade || {};
+                const teacherNamesSet = new Set();
+                Object.values(teachersByGrade).forEach(name => {
+                    if (name && name.trim() !== "") teacherNamesSet.add(name.trim());
+                });
+                const teacherNamesText = teacherNamesSet.size > 0 ? [...teacherNamesSet].join('، ') : '';
+                // -----------------------------
+
                 const programAndGradeText = getProgramAndGradeLabels(program, program.sessions); const allDates = Object.values(datesByGrade).flat();
                 const semesterDates = allDates.filter(d => { const dateOnly = d.split(' ').slice(1).join(' '); const weekKey = Object.keys(weeksData).find(wk => Object.values(weeksData[wk].days).includes(dateOnly)); return weekKey && weeksData[weekKey].semester === detectedSemester; });
                 
                 if (semesterDates.length > 0) {
                     const formattedDates = formatDatesForDisplay(semesterDates).text;
-                    secondTableRows += `<tr class="text-center"><td style="padding: 4px; border: 1px solid #ccc; width: 3%;">${programNumber++}</td><td style="padding: 4px; border: 1px solid #ccc; background-color: ${field.color}; color: white; font-weight: bold; text-align: center; width: 10%;">${field.title}</td><td style="padding: 4px; border: 1px solid #ccc; text-align: right; width: 25%;">${program.name}<br><span style="font-size: 0.8em; color: #666; font-weight: normal; line-height: 1.5; ">${programAndGradeText.replace(program.name, '')}</span></td><td style="padding: 4px; border: 1px solid #ccc; text-align: right; width: 30%;">${formattedDates}</td><td style="padding: 4px; border: 1px solid #ccc; width: 10%;"><div style="display:flex; justify-content:space-around; align-items:center; gap: 2px;"><label style="display:flex; align-items:center; gap:2px;"><input type="checkbox" style="width:10px; height:10px;"> نفذ</label><label style="display:flex; align-items:center; gap:2px;"><input type="checkbox" style="width:10px; height:10px;"> لم ينفذ</label></div></td><td style="padding: 4px; border: 1px solid #ccc; width: 14%;">${notes}</td></tr>`;
+                    // تم تعديل السطر التالي لإضافة عمود المعلم وتقليل حجم عمود الحالة
+                    secondTableRows += `<tr class="text-center"><td style="padding: 4px; border: 1px solid #ccc; width: 3%;">${programNumber++}</td><td style="padding: 4px; border: 1px solid #ccc; background-color: ${field.color}; color: white; font-weight: bold; text-align: center; width: 9%;">${field.title}</td><td style="padding: 4px; border: 1px solid #ccc; width: 15%;">${teacherNamesText}</td><td style="padding: 4px; border: 1px solid #ccc; text-align: right; width: 23%;">${program.name}<br><span style="font-size: 0.8em; color: #666; font-weight: normal; line-height: 1.5; ">${programAndGradeText.replace(program.name, '')}</span></td><td style="padding: 4px; border: 1px solid #ccc; text-align: right; width: 30%;">${formattedDates}</td><td style="padding: 4px; border: 1px solid #ccc; width: 10%;"><div style="display:flex; justify-content:space-around; align-items:center; gap: 2px;"><label style="display:flex; align-items:center; gap:2px;"><input type="checkbox" style="width:10px; height:10px;"> نفذ</label><label style="display:flex; align-items:center; gap:2px;"><input type="checkbox" style="width:10px; height:10px;"> لم ينفذ</label></div></td><td style="padding: 4px; border: 1px solid #ccc; width: 10%;">${notes}</td></tr>`;
                 }
             });
 
             const printWindow = window.open('', '_blank', 'width=1200,height=800');
-            printWindow.document.write(`<!DOCTYPE html><html lang="ar" dir="rtl"><head><meta charset="UTF-8"><meta name="format-detection" content="telephone=no, date=no, address=no, email=no, url=no"><title>خطة النشاط</title><style>
-            @import url('https://fonts.googleapis.com/css2?family=Cairo:wght@400;700&display=swap');
-            @import url('https://fonts.googleapis.com/css2?family=Readex+Pro:wght@400;700&display=swap');
-            * { -webkit-print-color-adjust: exact !important; print-color-adjust: exact !important; box-sizing: border-box; }
-            @page { size: A4 landscape; margin: 0; }
-            
-            body { margin: 0; padding: 0; font-family: 'Readex Pro', sans-serif; width: 297mm; }
-
-            .print-fixed-header { position: fixed; top: 0; left: 0; width: 297mm; height: 30mm; background: white; z-index: 1000; }
-            .print-fixed-footer { position: fixed; bottom: 0; left: 0; width: 297mm; height: 18mm; background: white; z-index: 1000; }
-            .print-header-line { height: 15px; background: linear-gradient(135deg, #00A383 0%, #0093B5 100%); width: 100%; }
-            .print-header-content { display: flex; justify-content: space-between; align-items: center; padding: 5mm 15mm 0; width: 100%; }
-            .header-right-group { display: flex; align-items: center; gap: 15px; flex: 1; text-align: right; } 
-            .header-right-group img { height: 45px; } 
-            .school-info-text { display: flex; flex-direction: column; gap: 2px; } 
-            .school-info-text p { margin: 0; font-size: 10pt; font-weight: bold; line-height: 1.2; color: #000; } 
-            .title-block { text-align: center; flex: 2; }
-            .title-block h1 { color: #00A383; margin: 0; font-size: 1.6em; display: inline-block; }
-            .title-block span.stage-text { color: #000; font-size: 1.6em; font-weight: bold; margin-right: 5px; }
-            .title-block p.semester-text { font-size: 1.2em; font-weight: bold; color: #0093B5; margin: 2px 0 0 0; } 
-            .header-left-spacer { flex: 1; } 
-            .print-table { width: 94%; margin: 0 auto; border-collapse: collapse; table-layout: fixed; }
-            .print-table th, .print-table td { border: 1px solid #999; padding: 3px; text-align: center; vertical-align: middle; word-wrap: break-word; font-size: 9pt; }
-            .print-table th { background-color: #f2f2f2; font-weight: bold; }
-            .print-table td.week-label { background-color: #e6f7ff; font-weight: bold; color: #005f99; width: 8%; font-size: 10pt; }
-            .print-table td.program-label { background-color: #f0f0f0; font-weight: bold; width: 8%; font-size: 10pt; }
-            .print-table .week-header { background-color: #e6f7ff; font-weight: bold; color: #005f99; width: 13.14%; font-size: 11px !important; } 
-            .holiday-details { font-weight: bold; color: #d32f2f; font-size: 0.85em; line-height: 1.4; padding: 5px; } 
-            .program-entry { margin-bottom: 4px; border-bottom: 1px dashed #ccc; padding-bottom: 2px; font-size: 0.85em; } 
-            .program-entry:last-child { border-bottom: none; } 
-            .session-details { display: block; font-size: 0.9em; color: #555; margin-top: 1px; } 
-            .page-break { page-break-before: always; display: block; height: 1px; width: 100%; visibility: hidden; } 
-            
-            /* --- هام: تم إزالة هامش 40 ملم هنا لجعله 0 --- */
-            .second-table-wrapper { width: 94%; margin: 0 auto; margin-top: 0; display: block; }
-            
-            .print-second-table { width: 100%; border-collapse: collapse; page-break-inside: auto; font-size: 0.9em; }
-            .print-second-table th, .print-second-table td { border: 1px solid #999; padding: 4px; font-size: 9pt; }
-            .print-second-table th:nth-child(1) { width: 4%; }
-            .print-second-table th:nth-child(2) { width: 10%; }
-            .print-second-table th:nth-child(3) { width: 28%; }
-            .print-second-table th:nth-child(4) { width: 35%; white-space: normal; }
-            .print-second-table th:nth-child(5) { width: 17%; }
-            .print-second-table th:nth-child(6) { width: 6%; }
-            .print-signatures { display: flex; justify-content: space-around; align-items: center; height: 100%; font-size: 1.1em; font-weight: bold; padding-bottom: 5px; width: 297mm; } 
-            .layout-table { width: 100%; border-collapse: collapse; } 
-            .layout-table thead { display: table-header-group; } 
-            .layout-table tfoot { display: table-footer-group; } 
-            .header-space { height: 32mm; } 
-            .footer-space { height: 18mm; }</style></head><body>
+            // تم تحديث تنسيق الجدول الثاني في CSS الداخلي أدناه
+            printWindow.document.write(`<!DOCTYPE html><html lang="ar" dir="rtl"><head><meta charset="UTF-8"><meta name="format-detection" content="telephone=no, date=no, address=no, email=no, url=no"><title>خطة النشاط</title><style>@import url('https://fonts.googleapis.com/css2?family=Cairo:wght@400;700&display=swap');@import url('https://fonts.googleapis.com/css2?family=Readex+Pro:wght@400;700&display=swap');* { -webkit-print-color-adjust: exact !important; print-color-adjust: exact !important; box-sizing: border-box; }@page { size: A4 landscape; margin: 0; }body { margin: 0; padding: 0; padding-top: 35mm; padding-bottom: 20mm; font-family: 'Readex Pro', sans-serif; width: 297mm; }.print-fixed-header { position: fixed; top: 0; left: 0; width: 297mm; height: 30mm; background: white; z-index: 1000; }.print-fixed-footer { position: fixed; bottom: 0; left: 0; width: 297mm; height: 18mm; background: white; z-index: 1000; }.print-header-line { height: 15px; background: linear-gradient(135deg, #00A383 0%, #0093B5 100%); width: 100%; }.print-header-content { display: flex; justify-content: space-between; align-items: center; padding: 5mm 15mm 0; width: 100%; }.header-right-group { display: flex; align-items: center; gap: 15px; flex: 1; text-align: right; } .header-right-group img { height: 45px; } .school-info-text { display: flex; flex-direction: column; gap: 2px; } .school-info-text p { margin: 0; font-size: 10pt; font-weight: bold; line-height: 1.2; color: #000; } .title-block { text-align: center; flex: 2; }.title-block h1 { color: #00A383; margin: 0; font-size: 1.6em; display: inline-block; }.title-block span.stage-text { color: #000; font-size: 1.6em; font-weight: bold; margin-right: 5px; }.title-block p.semester-text { font-size: 1.2em; font-weight: bold; color: #0093B5; margin: 2px 0 0 0; } .header-left-spacer { flex: 1; } .print-table { width: 94%; margin: 0 auto; border-collapse: collapse; table-layout: fixed; }.print-table th, .print-table td { border: 1px solid #999; padding: 3px; text-align: center; vertical-align: middle; word-wrap: break-word; font-size: 9pt; }.print-table th { background-color: #f2f2f2; font-weight: bold; }.print-table td.week-label { background-color: #e6f7ff; font-weight: bold; color: #005f99; width: 8%; font-size: 10pt; }.print-table td.program-label { background-color: #f0f0f0; font-weight: bold; width: 8%; font-size: 10pt; }.print-table .week-header { background-color: #e6f7ff; font-weight: bold; color: #005f99; width: 13.14%; font-size: 11px !important; } .holiday-details { font-weight: bold; color: #d32f2f; font-size: 0.85em; line-height: 1.4; padding: 5px; } .program-entry { margin-bottom: 4px; border-bottom: 1px dashed #ccc; padding-bottom: 2px; font-size: 0.85em; } .program-entry:last-child { border-bottom: none; } .session-details { display: block; font-size: 0.9em; color: #555; margin-top: 1px; } .page-break { page-break-before: always; display: block; height: 1px; width: 100%; visibility: hidden; } .second-table-wrapper { width: 94%; margin: 0 auto; margin-top: 40mm; display: block; }.print-second-table { width: 100%; border-collapse: collapse; page-break-inside: auto; font-size: 0.9em; }.print-second-table th, .print-second-table td { border: 1px solid #999; padding: 4px; font-size: 9pt; }.print-second-table th:nth-child(1) { width: 3%; }.print-second-table th:nth-child(2) { width: 9%; }.print-second-table th:nth-child(3) { width: 15%; }.print-second-table th:nth-child(4) { width: 23%; white-space: normal; }.print-second-table th:nth-child(5) { width: 30%; }.print-second-table th:nth-child(6) { width: 10%; }.print-second-table th:nth-child(7) { width: 10%; }.print-signatures { display: flex; justify-content: space-around; align-items: center; height: 100%; font-size: 1.1em; font-weight: bold; padding-bottom: 5px; width: 297mm; } .layout-table { width: 100%; border-collapse: collapse; } .layout-table thead { display: table-header-group; } .layout-table tfoot { display: table-footer-group; } .header-space { height: 35mm; } .footer-space { height: 18mm; }</style></head><body>
             <div class="print-fixed-header"><div class="print-header-line"></div><div class="print-header-content"><div class="header-right-group"><div><img src="https://salogos.org/wp-content/uploads/2021/11/UntiTtled-1-1300x988.png" alt="شعار الوزارة"></div><div class="school-info-text"><p>${state.educationAdmin}</p><p>${state.educationRegion}</p><p>${state.schoolName}</p></div></div><div class="title-block"><h1>خطة النشاط الطلابي</h1><span class="stage-text">${stageTitleText}</span><p class="semester-text">${semesterTitle} للعام الدراسي 1447هـ</p></div><div class="header-left-spacer"></div></div></div>
             
             <table class="layout-table"><thead><tr><td><div class="header-space">&nbsp;</div></td></tr></thead><tbody><tr><td>
             <table class="print-table"><thead><tr><td class="week-label">الأسابيع</td>${row1Data.weekHtml}</tr><tr><td class="program-label">البرامج</td>${row1Data.programHtml}</tr><tr><td class="week-label">الأسابيع</td>${row2Data.weekHtml}</tr><tr><td class="program-label">البرامج</td>${row2Data.programHtml}</tr><tr><td class="week-label">الأسابيع</td>${row3Data.weekHtml}</tr><tr><td class="program-label">البرامج</td>${row3Data.programHtml}</tr></thead><tbody></tbody></table>
             <div class="page-break"></div>
             <div class="second-table-wrapper">
-                <table class="print-second-table"><thead><tr class="bg-gray-100 text-gray-700" style="background-color: #f3f4f6; color: #374151;"><th>م</th><th>المجال</th><th>البرنامج</th><th>تاريخ التنفيذ</th><th>حالة التنفيذ</th><th>ملاحظات</th></tr></thead><tbody>${secondTableRows}</tbody></table>
+                <table class="print-second-table"><thead><tr class="bg-gray-100 text-gray-700" style="background-color: #f3f4f6; color: #374151;"><th>م</th><th>المجال</th><th>المعلم المنفذ</th><th>البرنامج</th><th>تاريخ التنفيذ</th><th>حالة التنفيذ</th><th>ملاحظات</th></tr></thead><tbody>${secondTableRows}</tbody></table>
             </div>
             </td></tr></tbody><tfoot><tr><td><div class="footer-space">&nbsp;</div></td></tr></tfoot></table>
 
