@@ -3,9 +3,8 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <!-- منع تحويل الأرقام والتواريخ لروابط في الجوال -->
     <meta name="format-detection" content="telephone=no, date=no, address=no, email=no, url=no">
-    <title>خطة النشاط الطلابي - النسخة المثالية</title>
+    <title>خطة النشاط الطلابي - النسخة القابلة للتعديل والطباعة</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Cairo:wght@300;400;600;700&display=swap');
@@ -19,201 +18,50 @@
         .dropdown-content { max-height: 0; overflow: hidden; transition: max-height 0.3s ease-out; }
         .dropdown-content.active { max-height: 5000px; transition: max-height 0.5s ease-in; }
         .rotate-arrow { transform: rotate(180deg); transition: transform 0.3s ease; }
-        .header-input { background-color: transparent; border: none; color: white; width: 100%; text-align: right; }
+        
+        /* تنسيق حقول الإدخال في الرأس */
+        .header-input { background-color: transparent; border: none; color: white; width: 100%; text-align: right; outline: none; }
         .header-input::placeholder { color: rgba(255, 255, 255, 0.8); opacity: 1; }
+        
+        /* تنسيق العنوان الرئيسي القابل للتعديل */
+        .editable-title {
+            background: transparent;
+            border: none;
+            color: white;
+            text-align: center;
+            width: 100%;
+            outline: none;
+            font-family: 'Cairo', sans-serif;
+            font-weight: 700;
+        }
+        
+        #main-title-input {
+            font-size: 1.5rem;
+            margin-bottom: 0.2rem;
+        }
+        
+        #stage-title-input {
+            font-size: 1.2rem;
+            margin-bottom: 0.2rem;
+            opacity: 0.9;
+        }
+        #stage-title-input::placeholder { color: rgba(255, 255, 255, 0.7); }
+
+        @media (min-width: 640px) {
+            #main-title-input { font-size: 1.875rem; } /* sm:text-3xl */
+            #stage-title-input { font-size: 1.5rem; } /* sm:text-2xl */
+        }
 
         #date-picker-modal .week-grid .day.selected { background-color: #10B981; color: white; border-color: #059669; }
         #date-picker-modal .week-grid .day.disabled { background-color: #F3F4F6; color: #9CA3AF; cursor: not-allowed; }
         .tab-btn { padding: 10px; width: 50%; text-align: center; font-weight: bold; cursor: pointer; border-bottom: 3px solid transparent; background-color: #f9fafb; transition: all 0.3s ease; }
         .tab-btn.active { border-bottom-color: #00A383; color: #00A383; background-color: #fff; }
-        #update-modal-box { transition: transform 0.3s ease-out, opacity 0.3s ease-out; }
-        #update-modal-box.active { transform: scale(1); opacity: 1; }
-
-        /* --- تنسيقات الطباعة --- */
-        @media print {
-            .no-print { display: none !important; }
-            
-            /* إجبار الروابط على الظهور كنص عادي أسود */
-            a { text-decoration: none !important; color: #000000 !important; pointer-events: none !important; cursor: default !important; }
-            a[href^="tel:"], a[href^="date:"] { color: #000000 !important; text-decoration: none !important; }
-
-            * { 
-                -webkit-print-color-adjust: exact !important; 
-                print-color-adjust: exact !important; 
-                box-sizing: border-box; 
-            }
-            
-            @page { 
-                size: A4 landscape; 
-                margin: 0; 
-            }
-            
-            html {
-                font-size: 12px;
-                -webkit-text-size-adjust: none; /* منع التكبير التلقائي */
-                width: 297mm;
-            }
-
-            body {
-                margin: 0;
-                padding: 0;
-                padding-top: 35mm; 
-                padding-bottom: 20mm;
-                font-family: 'Readex Pro', sans-serif;
-                width: 297mm; 
-                min-width: 297mm;
-                max-width: 297mm;
-                background: white;
-            }
-
-            /* الرأس الثابت */
-            .print-fixed-header { 
-                position: fixed; 
-                top: 0; 
-                left: 0; 
-                width: 297mm; 
-                height: 30mm; 
-                background: white; 
-                z-index: 9999;
-            }
-            
-            /* التذييل الثابت */
-            .print-fixed-footer { 
-                position: fixed; 
-                bottom: 0; 
-                left: 0; 
-                width: 297mm; 
-                height: 18mm; 
-                background: white; 
-                z-index: 9999;
-            }
-
-            .print-header-line { height: 15px; background: linear-gradient(135deg, #00A383 0%, #0093B5 100%) !important; width: 100%; -webkit-print-color-adjust: exact; }
-            
-            /* تنسيق محتوى الرأس */
-            .print-header-content { 
-                display: flex; 
-                justify-content: space-between; 
-                align-items: center; 
-                padding: 5mm 15mm 0; 
-                width: 100%; 
-            }
-            
-            .header-right-group {
-                display: flex;
-                align-items: center;
-                gap: 15px; 
-                flex: 1; 
-                text-align: right;
-            }
-
-            .header-right-group img { height: 45px; }
-            
-            .school-info-text {
-                display: flex;
-                flex-direction: column;
-                gap: 2px;
-            }
-
-            .school-info-text p {
-                margin: 0;
-                font-size: 10pt;
-                font-weight: bold;
-                line-height: 1.2;
-                color: #000;
-            }
-            
-            .title-block { 
-                text-align: center; 
-                flex: 2; 
-            }
-            .title-block h1 { color: #00A383 !important; margin: 0; font-size: 16pt; display: inline-block; font-weight: bold; }
-            .title-block span.stage-text { color: #000; font-size: 16pt; font-weight: bold; margin-right: 5px; }
-            .title-block p.semester-text { font-size: 12pt; font-weight: bold; color: #0093B5 !important; margin: 2px 0 0 0; }
-            
-            .header-left-spacer { flex: 1; }
-
-            /* الجداول */
-            .print-table {
-                width: 96%;
-                margin: 0 auto;
-                border-collapse: collapse;
-                table-layout: fixed;
-            }
-            .print-table th, .print-table td {
-                border: 1px solid #999;
-                padding: 3px;
-                text-align: center;
-                vertical-align: middle;
-                word-wrap: break-word;
-                font-size: 9pt; 
-                color: #000; 
-            }
-            .print-table th { background-color: #f2f2f2 !important; font-weight: bold; font-size: 10pt; -webkit-print-color-adjust: exact; }
-            .print-table td.week-label { background-color: #e6f7ff !important; font-weight: bold; color: #005f99 !important; width: 7%; font-size: 10pt; -webkit-print-color-adjust: exact; }
-            .print-table td.program-label { background-color: #f0f0f0 !important; font-weight: bold; width: 7%; font-size: 10pt; -webkit-print-color-adjust: exact; }
-            .print-table .week-header { background-color: #e6f7ff !important; font-weight: bold; color: #005f99 !important; width: 13.5%; font-size: 10pt !important; -webkit-print-color-adjust: exact; }
-            
-            .holiday-details { font-weight: bold; color: #d32f2f !important; font-size: 8pt; line-height: 1.3; padding: 2px; -webkit-print-color-adjust: exact; }
-            .program-entry { margin-bottom: 2px; border-bottom: 1px dashed #ccc; padding-bottom: 2px; font-size: 0.85em; }
-            .program-entry:last-child { border-bottom: none; }
-            .session-details { display: block; font-size: 8pt; color: #444; margin-top: 1px; }
-
-            /* فاصل صفحات */
-            .page-break { 
-                page-break-before: always; 
-                break-before: page;
-                display: block; 
-                height: 0; 
-                clear: both;
-            }
-
-            /* حاوية الجدول الثاني */
-            .second-table-wrapper {
-                width: 96%;
-                margin: 0 auto;
-                padding-top: 40mm; 
-                display: block;
-            }
-            
-            .print-second-table {
-                width: 100%;
-                border-collapse: collapse;
-                page-break-inside: auto;
-            }
-            .print-second-table th, .print-second-table td {
-                border: 1px solid #999;
-                padding: 4px;
-                font-size: 9pt;
-            }
-            
-            /* تعديل نسب الأعمدة في الجدول الثاني */
-            .print-second-table th:nth-child(1) { width: 3%; } /* م */
-            .print-second-table th:nth-child(2) { width: 9%; } /* المجال */
-            .print-second-table th:nth-child(3) { width: 15%; } /* المعلم (جديد) */
-            .print-second-table th:nth-child(4) { width: 23%; white-space: normal; } /* البرنامج */
-            .print-second-table th:nth-child(5) { width: 30%; } /* التاريخ */
-            .print-second-table th:nth-child(6) { width: 10%; } /* الحالة (مصغرة) */
-            .print-second-table th:nth-child(7) { width: 10%; } /* ملاحظات */
-
-            .print-signatures {
-                display: flex;
-                justify-content: space-around;
-                align-items: center;
-                height: 100%;
-                font-size: 11pt;
-                font-weight: bold;
-                padding-bottom: 5px;
-                width: 297mm;
-                margin: 0 auto;
-            }
-        }
     </style>
 </head>
 <body class="bg-gray-50 min-h-screen">
 
     <div class="bg-blue-600 text-white text-center py-2 no-print font-semibold">
-تم التحديث بتاريخ ٣٠ / ٧ / ١٤٤٧ هـ    </div>
+تم التحديث بتاريخ ١ / ٨ / ١٤٤٧ هـ - الان يمكنكم كتابة العنوان للخطة المناسب لكم    </div>
 
     <div id="date-picker-modal" class="fixed inset-0 z-40 items-center justify-center p-4 no-print bg-black bg-opacity-50 hidden">
         <div class="bg-white rounded-lg shadow-xl p-6 max-w-4xl w-full h-[85vh] flex flex-col">
@@ -242,10 +90,13 @@
                         <input type="text" id="school-name" placeholder="أدخل اسم المدرسة" class="header-input text-sm font-semibold" oninput="saveState()">
                     </div>
                 </div>
-                <div class="text-center">
-                    <h1 id="main-title" class="text-xl sm:text-3xl font-bold">خطة النشاط الطلابي</h1>
-                    <p id="stage-title-header" class="text-lg sm:text-2xl font-bold text-white h-8"></p>
-                    <p id="subtitle" class="text-md sm:text-lg opacity-90">العام الدراسي 1447هـ</p>
+                <div class="text-center flex flex-col items-center w-full max-w-lg">
+                    <!-- العنوان الرئيسي قابل للتعديل -->
+                    <input type="text" id="main-title-input" value="خطة النشاط الطلابي" class="editable-title" oninput="saveState()">
+                    <!-- عنوان المرحلة قابل للتعديل -->
+                    <input type="text" id="stage-title-input" placeholder="اكتب اسم المرحلة هنا (مثال: للقسم الثانوي)" class="editable-title" oninput="saveState()">
+                    
+                    <p id="subtitle" class="text-md sm:text-lg opacity-90 mt-1">العام الدراسي 1447هـ</p>
                 </div>
             </div>
         </header>
@@ -411,8 +262,9 @@
         function updateButtonStyles() { document.querySelectorAll('[id^="btn-"]').forEach(btn => { if (!btn.id.includes('region')) { btn.classList.remove('bg-blue-600', 'text-white', 'shadow-lg'); btn.classList.add('bg-gray-200', 'text-gray-700'); } }); selectedGrades.forEach(key => { const btn = document.getElementById(`btn-${key}`); if(btn) { btn.classList.add('bg-blue-600', 'text-white', 'shadow-lg'); btn.classList.remove('bg-gray-200', 'text-gray-700'); } }); if (selectedGrades.includes('all')) { document.getElementById('btn-all').classList.add('bg-blue-600', 'text-white'); } }
         function selectRegion(region) { currentRegion = region; const s1 = region === 'western' ? weeksS1_Western : weeksS1_Default; const s2 = region === 'western' ? weeksS2_Western : weeksS2_Default; weeksData = { ...s1, ...s2 }; const btnWestern = document.getElementById('btn-western-region'); const btnOther = document.getElementById('btn-other-region'); if (region === 'western') { btnWestern.className = 'px-4 py-2 rounded-full font-medium transition-all duration-300 bg-blue-600 text-white shadow-lg'; btnOther.className = 'px-4 py-2 rounded-full font-medium transition-all duration-300 bg-gray-200 text-gray-700'; } else { btnOther.className = 'px-4 py-2 rounded-full font-medium transition-all duration-300 bg-blue-600 text-white shadow-lg'; btnWestern.className = 'px-4 py-2 rounded-full font-medium transition-all duration-300 bg-gray-200 text-gray-700'; } saveState(); }
         function toggleDropdown(id) { document.getElementById(id).classList.toggle('active'); document.getElementById(id.replace('-dropdown', '-arrow')).classList.toggle('rotate-arrow'); }
+        
         function updateTitle() { 
-            const stageTitleHeader = document.getElementById('stage-title-header'); 
+            const stageTitleInput = document.getElementById('stage-title-input'); 
             let titleText = '';
             
             // Logic duplicated for screen display
@@ -455,8 +307,19 @@
                 titleText = 'لـ ' + [...new Set(parts)].join(' و ');
             }
             
-            stageTitleHeader.textContent = titleText; 
+            // نحدث القيمة فقط إذا لم يقم المستخدم بتعديلها يدوياً (أو نعطيه اقتراحاً)
+            // هنا نجعلها مجرد تحديث، والمستخدم يستطيع التغيير بعدها
+            // stageTitleInput.value = titleText; 
+            
+            // لكي لا نمسح ما كتبه المستخدم، يمكننا فقط تحديثه إذا كان الحقل فارغاً
+            // أو يمكننا تركه للمستخدم بالكامل. سأقوم بتحديثه كـ "اقتراح"
+            // إذا أراد المستخدم تغييره، فليغيره.
+            if(titleText) {
+                // نخزن العنوان المقترح في خاصية مؤقتة للمقارنة
+               stageTitleInput.value = titleText;
+            }
         }
+
         function clearAllFilters() { selectedGrades = []; updateButtonStyles(); updateTitle(); updateAllDateSelectors(); saveState(); }
         function clearGradeDates(programId, key) { const display = document.querySelector(`tr[data-program-id="${programId}"] .grade-date-selector[data-grade-key="${key}"] .dates-display`); if (display) { display.textContent = ''; display.dataset.dates = '[]'; saveState(); } }
 
@@ -549,41 +412,91 @@
             const row3Data = getWeekContent(row3Weeks);
             
             const semesterTitle = detectedSemester === 1 ? 'الفصل الدراسي الأول' : 'الفصل الدراسي الثاني';
-            const stageTitleText = document.getElementById('stage-title-header').textContent;
+            
+            // 🔥🔥 التعديل هنا: جلب العنوان المخصص من المدخلات 🔥🔥
+            const mainTitleText = document.getElementById('main-title-input').value;
+            const stageTitleText = document.getElementById('stage-title-input').value;
             
             let secondTableRows = ''; let programNumber = 1;
             const getProgramAndGradeLabels = (program, sessionsByGrade) => { const programLabels = []; const effectiveSelection = state.selectedGrades; const handledGrades = new Set(); effectiveSelection.forEach(key => { let label; let sessionsCount; if (gradeGroups[key]) { label = getLabel(key); sessionsCount = Math.max(0, ...gradeGroups[key].map(g => program.sessions[g] || 0)); if (sessionsCount > 0) { programLabels.push(`${label} ${sessionsCount} حصة`); gradeGroups[key].forEach(g => handledGrades.add(g)); } } else if (!handledGrades.has(key)) { label = getLabel(key); sessionsCount = program.sessions[key] || 0; if (sessionsCount > 0) { programLabels.push(`${label} ${sessionsCount} حصة`); handledGrades.add(key); } } }); return `${program.name} (${programLabels.join(' و ')})`; };
             const selectedPrograms = [];
             activitiesData.forEach(field => { field.programs.forEach((program, programIndex) => { const programId = `${field.id}-${programIndex}`; if (state.programSelections && state.programSelections[programId]) { selectedPrograms.push({ field, program, programId, selectionData: state.programSelections[programId] }); } }); });
-            
             selectedPrograms.forEach(item => {
-                const { field, program, programId, selectionData } = item; 
-                const datesByGrade = selectionData?.datesByGrade || {}; 
-                const notes = selectionData?.notes || '';
+                const { field, program, programId, selectionData } = item; const datesByGrade = selectionData?.datesByGrade || {}; const notes = selectionData?.notes || '';
                 
-                // --- استخراج أسماء المعلمين ---
+                // استخراج المعلمين
                 const teachersByGrade = selectionData?.teachersByGrade || {};
                 const teacherNamesSet = new Set();
                 Object.values(teachersByGrade).forEach(name => {
                     if (name && name.trim() !== "") teacherNamesSet.add(name.trim());
                 });
                 const teacherNamesText = teacherNamesSet.size > 0 ? [...teacherNamesSet].join('، ') : '';
-                // -----------------------------
 
                 const programAndGradeText = getProgramAndGradeLabels(program, program.sessions); const allDates = Object.values(datesByGrade).flat();
                 const semesterDates = allDates.filter(d => { const dateOnly = d.split(' ').slice(1).join(' '); const weekKey = Object.keys(weeksData).find(wk => Object.values(weeksData[wk].days).includes(dateOnly)); return weekKey && weeksData[weekKey].semester === detectedSemester; });
                 
                 if (semesterDates.length > 0) {
                     const formattedDates = formatDatesForDisplay(semesterDates).text;
-                    // تم تعديل السطر التالي لإضافة عمود المعلم وتقليل حجم عمود الحالة
                     secondTableRows += `<tr class="text-center"><td style="padding: 4px; border: 1px solid #ccc; width: 3%;">${programNumber++}</td><td style="padding: 4px; border: 1px solid #ccc; background-color: ${field.color}; color: white; font-weight: bold; text-align: center; width: 9%;">${field.title}</td><td style="padding: 4px; border: 1px solid #ccc; width: 15%;">${teacherNamesText}</td><td style="padding: 4px; border: 1px solid #ccc; text-align: right; width: 23%;">${program.name}<br><span style="font-size: 0.8em; color: #666; font-weight: normal; line-height: 1.5; ">${programAndGradeText.replace(program.name, '')}</span></td><td style="padding: 4px; border: 1px solid #ccc; text-align: right; width: 30%;">${formattedDates}</td><td style="padding: 4px; border: 1px solid #ccc; width: 10%;"><div style="display:flex; justify-content:space-around; align-items:center; gap: 2px;"><label style="display:flex; align-items:center; gap:2px;"><input type="checkbox" style="width:10px; height:10px;"> نفذ</label><label style="display:flex; align-items:center; gap:2px;"><input type="checkbox" style="width:10px; height:10px;"> لم ينفذ</label></div></td><td style="padding: 4px; border: 1px solid #ccc; width: 10%;">${notes}</td></tr>`;
                 }
             });
 
+            // 🔥🔥 تحسين نافذة الطباعة: إضافة روابط الخطوط مباشرة لحل مشكلة التأخير وعدم الظهور 🔥🔥
             const printWindow = window.open('', '_blank', 'width=1200,height=800');
-            // تم تحديث تنسيق الجدول الثاني في CSS الداخلي أدناه
-            printWindow.document.write(`<!DOCTYPE html><html lang="ar" dir="rtl"><head><meta charset="UTF-8"><meta name="format-detection" content="telephone=no, date=no, address=no, email=no, url=no"><title>خطة النشاط</title><style>@import url('https://fonts.googleapis.com/css2?family=Cairo:wght@400;700&display=swap');@import url('https://fonts.googleapis.com/css2?family=Readex+Pro:wght@400;700&display=swap');* { -webkit-print-color-adjust: exact !important; print-color-adjust: exact !important; box-sizing: border-box; }@page { size: A4 landscape; margin: 0; }body { margin: 0; padding: 0; padding-top: 35mm; padding-bottom: 20mm; font-family: 'Readex Pro', sans-serif; width: 297mm; }.print-fixed-header { position: fixed; top: 0; left: 0; width: 297mm; height: 30mm; background: white; z-index: 1000; }.print-fixed-footer { position: fixed; bottom: 0; left: 0; width: 297mm; height: 18mm; background: white; z-index: 1000; }.print-header-line { height: 15px; background: linear-gradient(135deg, #00A383 0%, #0093B5 100%); width: 100%; }.print-header-content { display: flex; justify-content: space-between; align-items: center; padding: 5mm 15mm 0; width: 100%; }.header-right-group { display: flex; align-items: center; gap: 15px; flex: 1; text-align: right; } .header-right-group img { height: 45px; } .school-info-text { display: flex; flex-direction: column; gap: 2px; } .school-info-text p { margin: 0; font-size: 10pt; font-weight: bold; line-height: 1.2; color: #000; } .title-block { text-align: center; flex: 2; }.title-block h1 { color: #00A383; margin: 0; font-size: 1.6em; display: inline-block; }.title-block span.stage-text { color: #000; font-size: 1.6em; font-weight: bold; margin-right: 5px; }.title-block p.semester-text { font-size: 1.2em; font-weight: bold; color: #0093B5; margin: 2px 0 0 0; } .header-left-spacer { flex: 1; } .print-table { width: 94%; margin: 0 auto; border-collapse: collapse; table-layout: fixed; }.print-table th, .print-table td { border: 1px solid #999; padding: 3px; text-align: center; vertical-align: middle; word-wrap: break-word; font-size: 9pt; }.print-table th { background-color: #f2f2f2; font-weight: bold; }.print-table td.week-label { background-color: #e6f7ff; font-weight: bold; color: #005f99; width: 8%; font-size: 10pt; }.print-table td.program-label { background-color: #f0f0f0; font-weight: bold; width: 8%; font-size: 10pt; }.print-table .week-header { background-color: #e6f7ff; font-weight: bold; color: #005f99; width: 13.14%; font-size: 11px !important; } .holiday-details { font-weight: bold; color: #d32f2f; font-size: 0.85em; line-height: 1.4; padding: 5px; } .program-entry { margin-bottom: 4px; border-bottom: 1px dashed #ccc; padding-bottom: 2px; font-size: 0.85em; } .program-entry:last-child { border-bottom: none; } .session-details { display: block; font-size: 0.9em; color: #555; margin-top: 1px; } .page-break { page-break-before: always; display: block; height: 1px; width: 100%; visibility: hidden; } .second-table-wrapper { width: 94%; margin: 0 auto; margin-top: 40mm; display: block; }.print-second-table { width: 100%; border-collapse: collapse; page-break-inside: auto; font-size: 0.9em; }.print-second-table th, .print-second-table td { border: 1px solid #999; padding: 4px; font-size: 9pt; }.print-second-table th:nth-child(1) { width: 3%; }.print-second-table th:nth-child(2) { width: 9%; }.print-second-table th:nth-child(3) { width: 15%; }.print-second-table th:nth-child(4) { width: 23%; white-space: normal; }.print-second-table th:nth-child(5) { width: 30%; }.print-second-table th:nth-child(6) { width: 10%; }.print-second-table th:nth-child(7) { width: 10%; }.print-signatures { display: flex; justify-content: space-around; align-items: center; height: 100%; font-size: 1.1em; font-weight: bold; padding-bottom: 5px; width: 297mm; } .layout-table { width: 100%; border-collapse: collapse; } .layout-table thead { display: table-header-group; } .layout-table tfoot { display: table-footer-group; } .header-space { height: 35mm; } .footer-space { height: 18mm; }</style></head><body>
-            <div class="print-fixed-header"><div class="print-header-line"></div><div class="print-header-content"><div class="header-right-group"><div><img src="https://salogos.org/wp-content/uploads/2021/11/UntiTtled-1-1300x988.png" alt="شعار الوزارة"></div><div class="school-info-text"><p>${state.educationAdmin}</p><p>${state.educationRegion}</p><p>${state.schoolName}</p></div></div><div class="title-block"><h1>خطة النشاط الطلابي</h1><span class="stage-text">${stageTitleText}</span><p class="semester-text">${semesterTitle} للعام الدراسي 1447هـ</p></div><div class="header-left-spacer"></div></div></div>
+            printWindow.document.write(`<!DOCTYPE html><html lang="ar" dir="rtl"><head><meta charset="UTF-8">
+            <link rel="preconnect" href="https://fonts.googleapis.com">
+            <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+            <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;700&family=Readex+Pro:wght@400;700&display=swap" rel="stylesheet">
+            <title>خطة النشاط</title><style>
+            * { -webkit-print-color-adjust: exact !important; print-color-adjust: exact !important; box-sizing: border-box; }
+            @page { size: A4 landscape; margin: 0; }
+            
+            body { margin: 0; padding: 0; font-family: 'Readex Pro', sans-serif; width: 297mm; }
+
+            .print-fixed-header { position: fixed; top: 0; left: 0; width: 297mm; height: 30mm; background: white; z-index: 1000; }
+            .print-fixed-footer { position: fixed; bottom: 0; left: 0; width: 297mm; height: 18mm; background: white; z-index: 1000; }
+            .print-header-line { height: 15px; background: linear-gradient(135deg, #00A383 0%, #0093B5 100%); width: 100%; }
+            .print-header-content { display: flex; justify-content: space-between; align-items: center; padding: 5mm 15mm 0; width: 100%; }
+            .header-right-group { display: flex; align-items: center; gap: 15px; flex: 1; text-align: right; } 
+            .header-right-group img { height: 45px; } 
+            .school-info-text { display: flex; flex-direction: column; gap: 2px; } 
+            .school-info-text p { margin: 0; font-size: 10pt; font-weight: bold; line-height: 1.2; color: #000; } 
+            .title-block { text-align: center; flex: 2; }
+            .title-block h1 { color: #00A383; margin: 0; font-size: 1.6em; display: inline-block; font-family: 'Cairo', sans-serif; }
+            .title-block span.stage-text { color: #000; font-size: 1.6em; font-weight: bold; margin-right: 5px; font-family: 'Cairo', sans-serif; }
+            .title-block p.semester-text { font-size: 1.2em; font-weight: bold; color: #0093B5; margin: 2px 0 0 0; } 
+            .header-left-spacer { flex: 1; } 
+            .print-table { width: 94%; margin: 0 auto; border-collapse: collapse; table-layout: fixed; }
+            .print-table th, .print-table td { border: 1px solid #999; padding: 3px; text-align: center; vertical-align: middle; word-wrap: break-word; font-size: 9pt; }
+            .print-table th { background-color: #f2f2f2; font-weight: bold; }
+            .print-table td.week-label { background-color: #e6f7ff; font-weight: bold; color: #005f99; width: 8%; font-size: 10pt; }
+            .print-table td.program-label { background-color: #f0f0f0; font-weight: bold; width: 8%; font-size: 10pt; }
+            .print-table .week-header { background-color: #e6f7ff; font-weight: bold; color: #005f99; width: 13.14%; font-size: 11px !important; } 
+            .holiday-details { font-weight: bold; color: #d32f2f; font-size: 0.85em; line-height: 1.4; padding: 5px; } 
+            .program-entry { margin-bottom: 4px; border-bottom: 1px dashed #ccc; padding-bottom: 2px; font-size: 0.85em; } 
+            .program-entry:last-child { border-bottom: none; } 
+            .session-details { display: block; font-size: 0.9em; color: #555; margin-top: 1px; } 
+            .page-break { page-break-before: always; display: block; height: 1px; width: 100%; visibility: hidden; } 
+            
+            /* هام: إزالة الهوامش من الجدول الثاني */
+            .second-table-wrapper { width: 94%; margin: 0 auto; margin-top: 0; display: block; }
+            
+            .print-second-table { width: 100%; border-collapse: collapse; page-break-inside: auto; font-size: 0.9em; }
+            .print-second-table th, .print-second-table td { border: 1px solid #999; padding: 4px; font-size: 9pt; }
+            .print-second-table th:nth-child(1) { width: 3%; }
+            .print-second-table th:nth-child(2) { width: 9%; }
+            .print-second-table th:nth-child(3) { width: 15%; }
+            .print-second-table th:nth-child(4) { width: 23%; white-space: normal; }
+            .print-second-table th:nth-child(5) { width: 30%; }
+            .print-second-table th:nth-child(6) { width: 10%; }
+            .print-second-table th:nth-child(7) { width: 10%; }
+            .print-signatures { display: flex; justify-content: space-around; align-items: center; height: 100%; font-size: 1.1em; font-weight: bold; padding-bottom: 5px; width: 297mm; } 
+            .layout-table { width: 100%; border-collapse: collapse; } 
+            .layout-table thead { display: table-header-group; } 
+            .layout-table tfoot { display: table-footer-group; } 
+            .header-space { height: 30mm; } 
+            .footer-space { height: 18mm; }</style></head><body>
+            <div class="print-fixed-header"><div class="print-header-line"></div><div class="print-header-content"><div class="header-right-group"><div><img src="https://salogos.org/wp-content/uploads/2021/11/UntiTtled-1-1300x988.png" alt="شعار الوزارة"></div><div class="school-info-text"><p>${state.educationAdmin}</p><p>${state.educationRegion}</p><p>${state.schoolName}</p></div></div><div class="title-block"><h1>${mainTitleText}</h1><span class="stage-text">${stageTitleText}</span><p class="semester-text">${semesterTitle} للعام الدراسي 1447هـ</p></div><div class="header-left-spacer"></div></div></div>
             
             <table class="layout-table"><thead><tr><td><div class="header-space">&nbsp;</div></td></tr></thead><tbody><tr><td>
             <table class="print-table"><thead><tr><td class="week-label">الأسابيع</td>${row1Data.weekHtml}</tr><tr><td class="program-label">البرامج</td>${row1Data.programHtml}</tr><tr><td class="week-label">الأسابيع</td>${row2Data.weekHtml}</tr><tr><td class="program-label">البرامج</td>${row2Data.programHtml}</tr><tr><td class="week-label">الأسابيع</td>${row3Data.weekHtml}</tr><tr><td class="program-label">البرامج</td>${row3Data.programHtml}</tr></thead><tbody></tbody></table>
@@ -595,23 +508,60 @@
 
             <div class="print-fixed-footer"><div class="print-signatures"><div>${state.activityLeaderName}</div><div>${state.schoolDirectorName}</div></div></div>
             </body></html>`);
-            printWindow.document.close(); printWindow.focus(); printWindow.onload = () => { printWindow.print(); isPrinting = false; printWindow.close(); };
+            printWindow.document.close();
+            
+            // 🔥🔥 تأخير بسيط لضمان تحميل الخطوط قبل الطباعة 🔥🔥
+            setTimeout(() => {
+                printWindow.focus();
+                printWindow.print();
+                isPrinting = false; 
+                printWindow.close();
+            }, 500);
         }
 
         function saveBackup() { saveState(); const blob = new Blob([localStorage.getItem('activityPlanState')], { type: 'application/json' }); const a = document.createElement('a'); a.href = URL.createObjectURL(blob); a.download = 'plan_backup.json'; a.click(); }
         function handleFileUpload(e) { const reader = new FileReader(); reader.onload = (event) => { localStorage.setItem('activityPlanState', event.target.result); location.reload(); }; reader.readAsText(e.target.files[0]); }
+        
         function saveState() {
             if (isLoading) return;
             const programSelections = {}; document.querySelectorAll('tr[data-program-id]').forEach(row => { const id = row.dataset.programId; const teachers = {}, dates = {}; row.querySelectorAll('.teacher-input').forEach(i => { if(i.value) teachers[i.dataset.gradeKey] = i.value; }); row.querySelectorAll('.dates-display').forEach(d => { const ds = JSON.parse(d.dataset.dates || '[]'); if(ds.length) dates[d.closest('.grade-date-selector').dataset.gradeKey] = ds; }); if(Object.keys(teachers).length || Object.keys(dates).length) programSelections[id] = { teachersByGrade: teachers, datesByGrade: dates }; });
-            const state = { educationAdmin: document.getElementById('education-admin').value, educationRegion: document.getElementById('education-region').value, schoolName: document.getElementById('school-name').value, activityLeaderName: document.getElementById('activity-leader-name').value, schoolDirectorName: document.getElementById('school-director-name').value, currentRegion, selectedGrades, programSelections };
+            
+            // 🔥🔥 حفظ العناوين المخصصة 🔥🔥
+            const customMainTitle = document.getElementById('main-title-input').value;
+            const customStageTitle = document.getElementById('stage-title-input').value;
+
+            const state = { 
+                educationAdmin: document.getElementById('education-admin').value, 
+                educationRegion: document.getElementById('education-region').value, 
+                schoolName: document.getElementById('school-name').value, 
+                activityLeaderName: document.getElementById('activity-leader-name').value, 
+                schoolDirectorName: document.getElementById('school-director-name').value, 
+                currentRegion, 
+                selectedGrades, 
+                programSelections,
+                customMainTitle,
+                customStageTitle
+            };
             localStorage.setItem('activityPlanState', JSON.stringify(state));
         }
+        
         function loadState() {
             isLoading = true; const state = JSON.parse(localStorage.getItem('activityPlanState') || '{}');
             document.getElementById('school-name').value = state.schoolName || ''; document.getElementById('education-admin').value = state.educationAdmin || ''; document.getElementById('education-region').value = state.educationRegion || ''; document.getElementById('activity-leader-name').value = state.activityLeaderName || ''; document.getElementById('school-director-name').value = state.schoolDirectorName || '';
+            
+            // 🔥🔥 تحميل العناوين المخصصة 🔥🔥
+            if (state.customMainTitle) {
+                document.getElementById('main-title-input').value = state.customMainTitle;
+            }
+            if (state.customStageTitle) {
+                document.getElementById('stage-title-input').value = state.customStageTitle;
+            }
+
             selectedGrades = state.selectedGrades || [];
             selectRegion(state.currentRegion || 'other'); 
-            updateButtonStyles(); updateTitle(); updateAllDateSelectors();
+            updateButtonStyles(); 
+            // لا نستدعي updateTitle هنا لكي لا نلغي ما كتبه المستخدم، بل نتركه لما هو محفوظ
+            updateAllDateSelectors();
             if(state.programSelections) { Object.entries(state.programSelections).forEach(([id, data]) => { const row = document.querySelector(`tr[data-program-id="${id}"]`); if(row) { if(data.teachersByGrade) Object.entries(data.teachersByGrade).forEach(([k, v]) => { const i = row.querySelector(`.teacher-input[data-grade-key="${k}"]`); if(i) i.value = v; }); if(data.datesByGrade) Object.entries(data.datesByGrade).forEach(([k, v]) => { const d = row.querySelector(`.grade-date-selector[data-grade-key="${k}"] .dates-display`); if(d) { d.textContent = formatDatesForDisplay(v).text; d.dataset.dates = JSON.stringify(v); } }); } }); }
             isLoading = false;
         }
