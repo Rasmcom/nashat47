@@ -5,7 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <!-- منع تحويل الأرقام والتواريخ لروابط في الجوال (مهم جداً للايفون) -->
     <meta name="format-detection" content="telephone=no, date=no, address=no, email=no, url=no">
-    <title>خطة النشاط الطلابي - الإصدار النهائي</title>
+    <title>خطة النشاط الطلابي - الإصدار الشامل</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Cairo:wght@300;400;600;700&display=swap');
@@ -19,11 +19,9 @@
         .dropdown-content { max-height: 0; overflow: hidden; transition: max-height 0.3s ease-out; }
         .dropdown-content.active { max-height: 5000px; transition: max-height 0.5s ease-in; }
         .rotate-arrow { transform: rotate(180deg); transition: transform 0.3s ease; }
-        
-        /* تنسيق حقول الإدخال في الرأس */
         .header-input { background-color: transparent; border: none; color: white; width: 100%; text-align: right; outline: none; }
         .header-input::placeholder { color: rgba(255, 255, 255, 0.8); opacity: 1; }
-        
+
         /* تنسيق العناوين القابلة للتعديل */
         .editable-title {
             background: transparent;
@@ -56,7 +54,7 @@
 <body class="bg-gray-50 min-h-screen">
 
     <div class="bg-blue-600 text-white text-center py-2 no-print font-semibold">
-تم تحديث الموقع بتاريخ ٦ / ٨ / ١٤٤٧ هـ
+تم التحديث بتاريخ ٦ / ٨ / ١٤٤٧ هـ
     </div>
 
     <div id="date-picker-modal" class="fixed inset-0 z-40 items-center justify-center p-4 no-print bg-black bg-opacity-50 hidden">
@@ -79,7 +77,8 @@
         <header class="gradient-header text-white py-4 shadow-lg no-print">
             <div class="container mx-auto px-6 flex justify-between items-center">
                 <div class="flex items-center gap-4">
-                    <img src="https://upload.wikimedia.org/wikipedia/ar/thumb/1/17/Saudi_Ministry_of_Education_Logo_2025.png/250px-Saudi_Ministry_of_Education_Logo_2025.png" alt="شعار الوزارة" class="h-16 sm:h-20">
+                    <!-- تم استخدام رابط ويكيبيديا لضمان الظهور -->
+                    <img src="https://upload.wikimedia.org/wikipedia/ar/thumb/9/98/Ministry_of_Education_%28Saudi_Arabia%29_logo.svg/1200px-Ministry_of_Education_%28Saudi_Arabia%29_logo.svg.png" alt="شعار الوزارة" class="h-16 sm:h-20">
                     <div class="flex flex-col gap-0 w-full max-w-xs sm:max-w-sm">
                         <input type="text" id="education-admin" placeholder="أدخل الإدارة التعليمية" class="header-input text-sm font-semibold" oninput="saveState()">
                         <input type="text" id="education-region" placeholder="أدخل المنطقة التعليمية" class="header-input text-sm font-semibold" oninput="saveState()">
@@ -89,7 +88,7 @@
                 <div class="text-center flex flex-col items-center w-full max-w-lg">
                     <!-- العناوين القابلة للتعديل -->
                     <input type="text" id="main-title-input" value="خطة النشاط الطلابي" class="editable-title" oninput="saveState()">
-                    <input type="text" id="stage-title-input" placeholder="حدد المراحل ثم عدل العنوان هنا حسب رغبتك" class="editable-title" oninput="saveState()">
+                    <input type="text" id="stage-title-input" placeholder="اكتب اسم المرحلة هنا (مثال: للقسم الثانوي)" class="editable-title" oninput="saveState()">
                     <p id="subtitle" class="text-md sm:text-lg opacity-90 mt-1">العام الدراسي 1447هـ</p>
                 </div>
             </div>
@@ -125,6 +124,12 @@
                     <div class="mt-8 flex gap-4 justify-center flex-wrap">
                         <button onclick="clearAllFilters()" class="text-sm text-gray-500 hover:text-gray-700 underline">إلغاء اختيار الفصول</button>
                         <button onclick="printSchedule()" class="px-4 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700 transition-colors text-sm">🖨️ طباعة الجدول</button>
+                        
+                        <!-- زر تصدير وورد الجديد -->
+                        <button onclick="exportToWord()" class="px-4 py-2 bg-blue-800 text-white rounded-lg hover:bg-blue-900 transition-colors text-sm font-bold flex items-center gap-2">
+                            <span>📝</span> تصدير إلى Word
+                        </button>
+
                         <button onclick="saveBackup()" class="px-4 py-2 bg-sky-600 text-white rounded-lg hover:bg-sky-700 transition-colors text-sm">💾 حفظ نسخة احتياطية</button>
                         <button onclick="document.getElementById('backup-input').click()" class="px-4 py-2 bg-orange-500 text-white rounded-lg hover:bg-orange-600 transition-colors text-sm">📂 استعادة نسخة</button>
                         <input type="file" id="backup-input" class="hidden" accept=".json" onchange="handleFileUpload(event)">
@@ -161,11 +166,12 @@
         const teacherInputGroups = { 'primary_lower': { label: 'أولية', grades: ['p1', 'p2', 'p3'] }, 'primary_upper': { label: 'عليا', grades: ['p4', 'p5', 'p6'] }, 'quran_lower': { label: 'أولية تحفيظ', grades: ['quran_lower'] }, 'quran_upper': { label: 'عليا تحفيظ', grades: ['quran_upper'] }, 'quran_all': { label: 'ابتدائية تحفيظ', grades: ['quran_lower', 'quran_upper'] }, 'middle_all': { label: 'متوسطة', grades: ['m1', 'm2', 'm3'] }, 'high_all': { label: 'ثانوية', grades: ['h1', 'h2', 'h3'] }, 'all': { label: 'كل المراحل', grades: Object.keys(gradeNames) } };
         const allGradeKeys = Object.keys(gradeNames);
 
-        // --- بيانات الأسابيع (محدثة حسب الطلب) ---
+        // --- بيانات الأسابيع (الفصل الأول) ---
         const weeksS1_Default = { 'week1': { name: 'الأسبوع الأول', semester: 1, startDate: '1 / 3', endDate: '5 / 3', days: { 'الأحد': '1 / 3', 'الاثنين': '2 / 3', 'الثلاثاء': '3 / 3', 'الأربعاء': '4 / 3', 'الخميس': '5 / 3' } }, 'week2': { name: 'الأسبوع الثاني', semester: 1, startDate: '8 / 3', endDate: '12 / 3', days: { 'الأحد': '8 / 3', 'الاثنين': '9 / 3', 'الثلاثاء': '10 / 3', 'الأربعاء': '11 / 3', 'الخميس': '12 / 3' } }, 'week3': { name: 'الأسبوع الثالث', semester: 1, startDate: '15 / 3', endDate: '19 / 3', days: { 'الأحد': '15 / 3', 'الاثنين': '16 / 3', 'الثلاثاء': '17 / 3', 'الأربعاء': '18 / 3', 'الخميس': '19 / 3' } }, 'week4': { name: 'الأسبوع الرابع', semester: 1, startDate: '22 / 3', endDate: '26 / 3', days: { 'الأحد': '22 / 3', 'الاثنين': '23 / 3', 'الثلاثاء': '24 / 3', 'الأربعاء': '25 / 3', 'الخميس': '26 / 3' } }, 'week5': { name: 'الأسبوع الخامس', semester: 1, startDate: '29 / 3', endDate: '3 / 4', days: { 'الأحد': '29 / 3', 'الاثنين': '30 / 3', 'الثلاثاء': '1 / 4', 'الأربعاء': '2 / 4', 'الخميس': '3 / 4' }, specialDays: { '1 / 4': { name: 'إجازة اليوم الوطني', type: 'occasion', color: 'green' } } }, 'week6': { name: 'الأسبوع السادس', semester: 1, startDate: '6 / 4', endDate: '10 / 4', days: { 'الأحد': '6 / 4', 'الاثنين': '7 / 4', 'الثلاثاء': '8 / 4', 'الأربعاء': '9 / 4', 'الخميس': '10 / 4' } }, 'week7': { name: 'الأسبوع السابع', semester: 1, startDate: '13 / 4', endDate: '17 / 4', days: { 'الأحد': '13 / 4', 'الاثنين': '14 / 4', 'الثلاثاء': '15 / 4', 'الأربعاء': '16 / 4', 'الخميس': '17 / 4' } }, 'week8': { name: 'الأسبوع الثامن', semester: 1, startDate: '20 / 4', endDate: '24 / 4', days: { 'الأحد': '20 / 4', 'الاثنين': '21 / 4', 'الثلاثاء': '22 / 4', 'الأربعاء': '23 / 4', 'الخميس': '24 / 4' }, specialDays: { '20 / 4': { name: 'إجازة إضافية', type: 'holiday', color: 'red' } } }, 'week9': { name: 'الأسبوع التاسع', semester: 1, startDate: '27 / 4', endDate: '1 / 5', days: { 'الأحد': '27 / 4', 'الاثنين': '28 / 4', 'الثلاثاء': '29 / 4', 'الأربعاء': '30 / 4', 'الخميس': '1 / 5' } }, 'week10': { name: 'الأسبوع العاشر', semester: 1, startDate: '4 / 5', endDate: '8 / 5', days: { 'الأحد': '4 / 5', 'الاثنين': '5 / 5', 'الثلاثاء': '6 / 5', 'الأربعاء': '7 / 5', 'الخميس': '8 / 5' } }, 'week11': { name: 'الأسبوع الحادي عشر', semester: 1, startDate: '11 / 5', endDate: '15 / 5', days: { 'الأحد': '11 / 5', 'الاثنين': '12 / 5', 'الثلاثاء': '13 / 5', 'الأربعاء': '14 / 5', 'الخميس': '15 / 5' } }, 'week12': { name: 'الأسبوع الثاني عشر', semester: 1, startDate: '18 / 5', endDate: '22 / 5', days: { 'الأحد': '18 / 5', 'الاثنين': '19 / 5', 'الثلاثاء': '20 / 5', 'الأربعاء': '21 / 5', 'الخميس': '22 / 5' } }, 'week13': { name: 'الأسبوع الثالث عشر', semester: 1, startDate: '25 / 5', endDate: '29 / 5', days: { 'الأحد': '25 / 5', 'الاثنين': '26 / 5', 'الثلاثاء': '27 / 5', 'الأربعاء': '28 / 5', 'الخميس': '29 / 5' } }, 'autumn_break': { name: 'إجازة الخريف', semester: 1, startDate: '30 / 5', endDate: '8 / 6', days: {} }, 'week14': { name: 'الأسبوع الرابع عشر', semester: 1, startDate: '9 / 6', endDate: '13 / 6', days: { 'الأحد': '9 / 6', 'الاثنين': '10 / 6', 'الثلاثاء': '11 / 6', 'الأربعاء': '12 / 6', 'الخميس': '13 / 6' } }, 'week15': { name: 'الأسبوع الخامس عشر', semester: 1, startDate: '16 / 6', endDate: '20 / 6', days: { 'الأحد': '16 / 6', 'الاثنين': '17 / 6', 'الثلاثاء': '18 / 6', 'الأربعاء': '19 / 6', 'الخميس': '20 / 6' }, specialDays: { '20 / 6': { name: 'إجازة إضافية', type: 'holiday', color: 'red' } } }, 'week16': { name: 'الأسبوع السادس عشر', semester: 1, startDate: '23 / 6', endDate: '27 / 6', days: { 'الأحد': '23 / 6', 'الاثنين': '24 / 6', 'الثلاثاء': '25 / 6', 'الأربعاء': '26 / 6', 'الخميس': '27 / 6' }, specialDays: { '23 / 6': { name: 'إجازة إضافية', type: 'holiday', color: 'red' } } }, 'week17': { name: 'الأسبوع السابع عشر', semester: 1, startDate: '1 / 7', endDate: '5 / 7', days: { 'الأحد': '1 / 7', 'الاثنين': '2 / 7', 'الثلاثاء': '3 / 7', 'الأربعاء': '4 / 7', 'الخميس': '5 / 7' } }, 'week18': { name: 'الأسبوع الثامن عشر', semester: 1, startDate: '8 / 7', endDate: '12 / 7', days: { 'الأحد': '8 / 7', 'الاثنين': '9 / 7', 'الثلاثاء': '10 / 7', 'الأربعاء': '11 / 7', 'الخميس': '12 / 7' } }, 'exams': { name: 'الاختبارات', semester: 1, startDate: '15 / 7', endDate: '19 / 7', days: {} } };
         const weeksS1_Western = { 'week1': { name: 'الأسبوع الأول', semester: 1, startDate: '8 / 3', endDate: '12 / 3', days: { 'الأحد': '8 / 3', 'الاثنين': '9 / 3', 'الثلاثاء': '10 / 3', 'الأربعاء': '11 / 3', 'الخميس': '12 / 3' } }, 'week2': { name: 'الأسبوع الثاني', semester: 1, startDate: '15 / 3', endDate: '19 / 3', days: { 'الأحد': '15 / 3', 'الاثنين': '16 / 3', 'الثلاثاء': '17 / 3', 'الأربعاء': '18 / 3', 'الخميس': '19 / 3' } }, 'week3': { name: 'الأسبوع الثالث', semester: 1, startDate: '22 / 3', endDate: '26 / 3', days: { 'الأحد': '22 / 3', 'الاثنين': '23 / 3', 'الثلاثاء': '24 / 3', 'الأربعاء': '25 / 3', 'الخميس': '26 / 3' } }, 'week4': { name: 'الأسبوع الرابع', semester: 1, startDate: '29 / 3', endDate: '3 / 4', days: { 'الأحد': '29 / 3', 'الاثنين': '30 / 3', 'الثلاثاء': '1 / 4', 'الأربعاء': '2 / 4', 'الخميس': '3 / 4' }, specialDays: { '1 / 4': { name: 'إجازة اليوم الوطني', type: 'occasion', color: 'green' } } }, 'week5': { name: 'الأسبوع الخامس', semester: 1, startDate: '6 / 4', endDate: '10 / 4', days: { 'الأحد': '6 / 4', 'الاثنين': '7 / 4', 'الثلاثاء': '8 / 4', 'الأربعاء': '9 / 4', 'الخميس': '10 / 4' } }, 'week6': { name: 'الأسبوع السادس', semester: 1, startDate: '13 / 4', endDate: '17 / 4', days: { 'الأحد': '13 / 4', 'الاثنين': '14 / 4', 'الثلاثاء': '15 / 4', 'الأربعاء': '16 / 4', 'الخميس': '17 / 4' } }, 'week7': { name: 'الأسبوع السابع', semester: 1, startDate: '20 / 4', endDate: '24 / 4', days: { 'الأحد': '20 / 4', 'الاثنين': '21 / 4', 'الثلاثاء': '22 / 4', 'الأربعاء': '23 / 4', 'الخميس': '24 / 4' }, specialDays: { '20 / 4': { name: 'إجازة إضافية', type: 'holiday', color: 'red' } } }, 'week8': { name: 'الأسبوع الثامن', semester: 1, startDate: '27 / 4', endDate: '1 / 5', days: { 'الأحد': '27 / 4', 'الاثنين': '28 / 4', 'الثلاثاء': '29 / 4', 'الأربعاء': '30 / 4', 'الخميس': '1 / 5' } }, 'week9': { name: 'الأسبوع التاسع', semester: 1, startDate: '4 / 5', endDate: '8 / 5', days: { 'الأحد': '4 / 5', 'الاثنين': '5 / 5', 'الثلاثاء': '6 / 5', 'الأربعاء': '7 / 5', 'الخميس': '8 / 5' } }, 'week10': { name: 'الأسبوع العاشر', semester: 1, startDate: '11 / 5', endDate: '15 / 5', days: { 'الأحد': '11 / 5', 'الاثنين': '12 / 5', 'الثلاثاء': '13 / 5', 'الأربعاء': '14 / 5', 'الخميس': '15 / 5' } }, 'week11': { name: 'الأسبوع الحادي عشر', semester: 1, startDate: '18 / 5', endDate: '22 / 5', days: { 'الأحد': '18 / 5', 'الاثنين': '19 / 5', 'الثلاثاء': '20 / 5', 'الأربعاء': '21 / 5', 'الخميس': '22 / 5' } }, 'week12': { name: 'الأسبوع الثاني عشر', semester: 1, startDate: '25 / 5', endDate: '29 / 5', days: { 'الأحد': '25 / 5', 'الاثنين': '26 / 5', 'الثلاثاء': '27 / 5', 'الأربعاء': '28 / 5', 'الخميس': '29 / 5' } }, 'autumn_break': { name: 'إجازة الخريف', semester: 1, startDate: '30 / 5', endDate: '8 / 6', days: {} }, 'week13': { name: 'الأسبوع الثالث عشر', semester: 1, startDate: '9 / 6', endDate: '13 / 6', days: { 'الأحد': '9 / 6', 'الاثنين': '10 / 6', 'الثلاثاء': '11 / 6', 'الأربعاء': '12 / 6', 'الخميس': '13 / 6' } }, 'week14': { name: 'الأسبوع الرابع عشر', semester: 1, startDate: '16 / 6', endDate: '20 / 6', days: { 'الأحد': '16 / 6', 'الاثنين': '17 / 6', 'الثلاثاء': '18 / 6', 'الأربعاء': '19 / 6', 'الخميس': '20 / 6' }, specialDays: { '20 / 6': { name: 'إجازة إضافية', type: 'holiday', color: 'red' } } }, 'week15': { name: 'الأسبوع الخامس عشر', semester: 1, startDate: '23 / 6', endDate: '27 / 6', days: { 'الأحد': '23 / 6', 'الاثنين': '24 / 6', 'الثلاثاء': '25 / 6', 'الأربعاء': '26 / 6', 'الخميس': '27 / 6' }, specialDays: { '23 / 6': { name: 'إجازة إضافية', type: 'holiday', color: 'red' } } }, 'week16': { name: 'الأسبوع السادس عشر', semester: 1, startDate: '1 / 7', endDate: '5 / 7', days: { 'الأحد': '1 / 7', 'الاثنين': '2 / 7', 'الثلاثاء': '3 / 7', 'الأربعاء': '4 / 7', 'الخميس': '5 / 7' } }, 'week17': { name: 'الأسبوع السابع عشر', semester: 1, startDate: '8 / 7', endDate: '12 / 7', days: { 'الأحد': '8 / 7', 'الاثنين': '9 / 7', 'الثلاثاء': '10 / 7', 'الأربعاء': '11 / 7', 'الخميس': '12 / 7' } }, 'exams': { name: 'الاختبارات', semester: 1, startDate: '15 / 7', endDate: '19 / 7', days: {} } };
         
-        // --- تحديث بيانات الفصل الثاني لباقي المناطق (إجازة 4/12 - نهاية 10/1) ---
+        // --- بيانات الأسابيع (الفصل الثاني) ---
+        // 1. باقي المناطق: إجازة 4/12 - نهاية 10/1
         const weeksS2_Default_Fixed = { 
             's2_week1': { name: 'الأسبوع الأول', semester: 2, startDate: '29 / 07', endDate: '03 / 08', days: { 'الأحد': '29 / 07', 'الاثنين': '30 / 07', 'الثلاثاء': '01 / 08', 'الأربعاء': '02 / 08', 'الخميس': '03 / 08' } }, 
             's2_week2': { name: 'الأسبوع الثاني', semester: 2, startDate: '06 / 08', endDate: '10 / 08', days: { 'الأحد': '06 / 08', 'الاثنين': '07 / 08', 'الثلاثاء': '08 / 08', 'الأربعاء': '09 / 08', 'الخميس': '10 / 08' } }, 
@@ -191,7 +197,7 @@
             's2_week19': { name: 'الأسبوع التاسع عشر', semester: 2, startDate: '06 / 01', endDate: '10 / 01', days: { 'الأحد': '06 / 01', 'الاثنين': '07 / 01', 'الثلاثاء': '08 / 01', 'الأربعاء': '09 / 01', 'الخميس': '10 / 01' } } 
         };
 
-        // --- تحديث بيانات الفصل الثاني للمنطقة الغربية (إجازة 27/11 - نهاية 17/1) ---
+        // 2. المنطقة الغربية: إجازة 27/11 - نهاية 17/1
         const weeksS2_Western_Fixed = { 
             's2_week1': { name: 'الأسبوع الأول', semester: 2, startDate: '29 / 07', endDate: '03 / 08', days: { 'الأحد': '29 / 07', 'الاثنين': '30 / 07', 'الثلاثاء': '01 / 08', 'الأربعاء': '02 / 08', 'الخميس': '03 / 08' } }, 
             's2_week2': { name: 'الأسبوع الثاني', semester: 2, startDate: '06 / 08', endDate: '10 / 08', days: { 'الأحد': '06 / 08', 'الاثنين': '07 / 08', 'الثلاثاء': '08 / 08', 'الأربعاء': '09 / 08', 'الخميس': '10 / 08' } }, 
@@ -218,9 +224,7 @@
             's2_week19': { name: 'الأسبوع التاسع عشر', semester: 2, startDate: '13 / 01', endDate: '17 / 01', days: { 'الأحد': '13 / 01', 'الاثنين': '14 / 01', 'الثلاثاء': '15 / 01', 'الأربعاء': '16 / 01', 'الخميس': '17 / 01' } } 
         };
 
-        // التعيين المبدئي
-        weeksData = { ...weeksS1_Default, ...weeksS2_Default_Fixed };
-
+        let weeksData = { ...weeksS1_Default, ...weeksS2_Default_Fixed };
         const activitiesData = [ { id: 'citizenship', title: 'المواطنة والحياة', color: '#981E47',icon: 'https://k.top4top.io/p_3472ccl2l0.gif', programs: [{ name: 'التطوع الطلابي', sessions: { p1:4, p2:4, p3:4, p4:6, p5:6, p6:6, quran_lower: 4, quran_upper: 6, m1:5, m2:5, m3:5, h1: 5, h2:5, h3:5 } }, { name: 'مهارات طموحة', sessions: { p1:6, p2:6, p3:6, p4:4, p5:4, p6:4, quran_lower: 6, quran_upper: 4, m1:3, m2:3, m3:3, h1: 2, h2:2, h3:2 } }, { name: 'قيمنا حياة', sessions: { p4:12, p5:12, p6:12, quran_upper: 12, m1:12, m2:12, m3:12, h1: 12, h2:12, h3:12 } }] }, { id: 'culture', title: 'الثقافة والفنون', color: '#FF7145', icon: 'https://a.top4top.io/p_3472miame2.gif', programs: [{ name: 'الفن السابع (السينما)', sessions: { p1:8, p2:8, p3:8, p4:8, p5:8, p6:8, quran_lower: 8, quran_upper: 8, m1:8, m2:8, m3:8, h1: 8, h2:8, h3:8 } }, { name: 'حدائق الفن', sessions: { p1:6, p2:6, p3:6, p4:6, p5:6, p6:6, quran_lower: 6, quran_upper: 6, m1:6, m2:6, m3:6, h1: 6, h2:6, h3:6 } }, { name: 'الأزياء السعودية', sessions: { p1:4, p2:4, p3:4, p4:4, p5:4, p6:4, quran_lower: 4, quran_upper: 4, m1:6, m2:6, m3:6, h1: 6, h2:6, h3:6 } }, { name: 'الثقافة الإعلامية', sessions: { p1:4, p2:4, p3:4, p4:4, p5:4, p6:4, quran_lower: 4, quran_upper: 4, m1:6, m2:6, m3:6, h1: 8, h2:8, h3:8 } }, { name: 'تصاميم تراثية معاصرة', sessions: { p1:5, p2:5, p3:5, p4:5, p5:5, p6:5, quran_lower: 5, quran_upper: 5, m1:5, m2:5, m3:5, h1: 5, h2:5, h3:5 } }, { name: 'الفنون المسرحية', sessions: { p1:8, p2:8, p3:8, p4:8, p5:8, p6:8, quran_lower: 8, quran_upper: 8, m1:8, m2:8, m3:8, h1: 8, h2:8, h3:8 } }, { name: 'البرنامج الموسيقي (الأناشيد الوطنية)', sessions: { p1:8, p2:8, p3:8, p4:8, p5:8, p6:8, quran_lower: 8, quran_upper: 8, m1:8, m2:8, m3:8, h1: 8, h2:8, h3:8 } }, { name: 'حكايات مرئية', sessions: { p1:6, p2:6, p3:6, p4:6, p5:6, p6:6, quran_lower: 6, quran_upper: 6, m1:11, m2:11, m3:11, h1: 11, h2:11, h3:11 } }] }, { id: 'sports', title: 'الرياضة والصحة', color: '#2FB7BD', icon: 'https://c.top4top.io/p_3472urwbn4.gif', programs: [{ name: 'مهارات الرياضات الجماعية', sessions: { p1:6, p2:6, p3:6, p4:8, p5:8, p6:8, quran_lower: 6, quran_upper: 8, m1:8, m2:8, m3:8, h1: 8, h2:8, h3:8 } }, { name: 'مهارات الرياضات الفردية', sessions: { p1:8, p2:8, p3:8, p4:8, p5:8, p6:8, quran_lower: 8, quran_upper: 8, m1:8, m2:8, m3:8, h1: 6, h2:6, h3:6 } }, { name: 'مهارات رياضات الدفاع عن النفس', sessions: { p1:8, p2:8, p3:8, p4:8, p5:8, p6:8, quran_lower: 8, quran_upper: 8, m1:8, m2:8, m3:8, h1: 6, h2:6, h3:6 } }, { name: 'مهارات الرياضات الإلكترونية والترفيه', sessions: { p1:8, p2:8, p3:8, p4:8, p5:8, p6:8, quran_lower: 8, quran_upper: 8, m1:6, m2:6, m3:6, h1: 8, h2:8, h3:8 } }, { name: 'مهارات الرياضات الذهنية', sessions: { p1:6, p2:6, p3:6, p4:8, p5:8, p6:8, quran_lower: 6, quran_upper: 8, m1:8, m2:8, m3:8, h1: 8, h2:8, h3:8 } }, { name: 'مهارات الأولمبياد الرياضي', sessions: { p1:6, p2:6, p3:6, p4:8, p5:8, p6:8, quran_lower: 6, quran_upper: 8, m1:8, m2:8, m3:8, h1: 8, h2:8, h3:8 } }] }, { id: 'science', title: 'العلوم والتقنية', color: '#24344D', icon: 'https://l.top4top.io/p_3472daolv1.gif', programs: [{ name: 'برنامج تطبيقات STEM', sessions: { p1:3, p2:3, p3:3, p4:5, p5:5, p6:5, quran_lower: 3, quran_upper: 5, m1:7, m2:7, m3:7, h1: 7, h2:7, h3:7 } }, { name: 'برنامج التصاميم العلمية التقنية', sessions: { p1:2, p2:2, p3:2, p4:5, p5:5, p6:5, quran_lower: 2, quran_upper: 5, m1:7, m2:7, m3:7, h1: 7, h2:7, h3:7 } }, { name: 'برنامج رواد فضاء المستقبل', sessions: { p1:3, p2:3, p3:3, p4:5, p5:5, p6:5, quran_lower: 3, quran_upper: 5, m1:7, m2:7, m3:7, h1: 9, h2:9, h3:9 } }, { name: 'برنامج مدن المستقبل', sessions: { p1:3, p2:3, p3:3, p4:4, p5:4, p6:4, quran_lower: 3, quran_upper: 4, m1:7, m2:7, m3:7, h1: 9, h2:9, h3:9 } }, { name: 'برنامج الذكاء الاصطناعي', sessions: { p1:10, p2:10, p3:10, p4:10, p5:10, p6:10, quran_lower: 10, quran_upper: 10, m1:10, m2:10, m3:10, h1: 10, h2:10, h3:10 } }, { name: 'برنامج تحدي إنترنت الأشياء', sessions: { p1:3, p2:3, p3:3, p4:4, p5:4, p6:4, quran_lower: 3, quran_upper: 4, m1:7, m2:7, m3:7, h1: 9, h2:9, h3:9 } }] }, { id: 'events', title: 'الأيام والمناسبات', color: '#583C71', icon: 'https://e.top4top.io/p_34729xucx5.gif', programs: [{ name: 'اليوم الوطني', date: 'يوافق ١ / ٤ / ١٤٤٧ هـ', sessions: { p1:4, p2:4, p3:4, p4:4, p5:4, p6:4, quran_lower: 4, quran_upper: 4, m1:4, m2:4, m3:4, h1: 4, h2:4, h3:4 } }, { name: 'يوم التسامح العالمي', date: 'يوافق ٢٥ / ٥ / ١٤٤٧ هـ', sessions: { p1:2, p2:2, p3:2, p4:2, p5:2, p6:2, quran_lower: 2, quran_upper: 2, m1:1, m2:1, m3:1, h1: 1, h2:1, h3:1 } }, { name: 'اليوم العالمي للطفل', date: 'يوافق ٢٩ / ٥ / ١٤٤٧ هـ', sessions: { p1:2, p2:2, p3:2, p4:2, p5:2, p6:2, quran_lower: 2, quran_upper: 2 } }, { name: 'اليوم العالمي لذوي الإعاقة', date: 'يوافق ١٢ / ٦ / ١٤٤٧ هـ', sessions: { p1:2, p2:2, p3:2, p4:2, p5:2, p6:2, quran_lower: 2, quran_upper: 2, m1:2, m2:2, m3:2, h1: 2, h2:2, h3:2 } }, { name: 'اليوم العالمي لللغة العربية', date: 'يوافق ٢٧ / ٦ / ١٤٤٧ هـ', sessions: { p1:2, p2:2, p3:2, p4:2, p5:2, p6:2, quran_lower: 2, quran_upper: 2, m1:1, m2:1, m3:1, h1: 1, h2:1, h3:1 } }, { name: 'اليوم العالمي للتعليم', date: 'يوافق ٧ / ٨ / ١٤٤٧ هـ', sessions: { p1:2, p2:2, p3:2, p4:2, p5:2, p6:2, quran_lower: 2, quran_upper: 2, m1:2, m2:2, m3:2, h1: 2, h2:2, h3:2 } }, { name: 'يوم التأسيس', date: 'يوافق ٥ / ٩ / ١٤٤٧ هـ', sessions: { p1:4, p2:4, p3:4, p4:4, p5:4, p6:4, quran_lower: 4, quran_upper: 4, m1:4, m2:4, m3:4, h1: 4, h2:4, h3:4 } }, { name: 'يوم العلم السعودي', date: 'يوافق ٢٢ / ٩ / ١٤٤٧ هـ', sessions: { p1:3, p2:3, p3:3, p4:3, p5:3, p6:3, quran_lower: 3, quran_upper: 3, m1:2, m2:2, m3:2, h1: 2, h2:2, h3:2 } }, { name: 'يوم السعودية الخضراء', date: 'يوافق ٨ / ١٠ / ١٤٤٧ هـ', sessions: { p1:3, p2:3, p3:3, p4:3, p5:3, p6:3, quran_lower: 3, quran_upper: 3, m1:2, m2:2, m3:2, h1: 2, h2:2, h3:2 } }, { name: 'يوم الصحة العالمي', date: 'يوافق ١٩ / ١٠ / ١٤٤٧ هـ', sessions: { p1:2, p2:2, p3:2, p4:2, p5:2, p6:2, quran_lower: 2, quran_upper: 2, m1:2, m2:2, m3:2, h1: 2, h2:2, h3:2 } }] },
             { id: 'scouting', title: 'النشاط الكشفي', color: '#018083', icon: 'https://b.top4top.io/p_3472h0ngk3.gif', programs: [{ name: 'خيمتي الجميلة', sessions: { p1:3, p2:3, p3:3, quran_lower: 3 } }, { name: 'خشبة وحبل', sessions: { p4:12, p5:12, p6:12, quran_upper: 12 } }, { name: 'الملاحة على اليابس', sessions: { m1:3, m2:3, m3:3 } }, { name: 'أغامر وأكتشف', sessions: { h1: 5, h2:5, h3:5 } }, { name: 'براعم البيئة والمجتمع', sessions: { p1:2, p2:2, p3:2, quran_lower: 2 } }, { name: 'أشارك مجتمعي وأزرع شجرة', sessions: { p4:3, p5:3, p6:3, quran_upper: 3 } }, { name: 'مجتمعي وبيئتي مسؤوليتي', sessions: { m1:6, m2:6, m3:6 } }, { name: 'سفير البيئة والمجتمع', sessions: { h1: 5, h2:5, h3:5 } }, { name: 'بصمتي الكشفية', sessions: { p1:3, p2:2, p3:3, quran_lower: 3 } }, { name: 'وطني في قلبي', sessions: { p4:3, p5:3, p6:3, quran_upper: 3 } }, { name: 'صناع التغيير', sessions: { m1:3, m2:3, m3:3 } }, { name: 'سواعد الكشفية', sessions: { h1: 6, h2:6, h3:6 } }, { name: 'براعم النور', sessions: { p1:2, p2:2, p3:2, quran_lower: 2 } }, { name: 'كنوز الصغار', sessions: { p4:2, p5:2, p6:2, quran_upper: 2 } }, { name: 'من هدي القرآن والسنة', sessions: { m1:3, m2:3, m3:3 } }, { name: 'درب الإحسان', sessions: { h1: 3, h2:3, h3:3 } }, { name: 'بوصلة الاكتشاف', sessions: { p1:3, p2:3, p3:3, quran_lower: 3 } }, { name: 'خيمة التجارب المسلية', sessions: { p4:6, p5:6, p6:6, quran_upper: 6 } }, { name: 'مخيمي التقني', sessions: { m1:10, m2:10, m3:10 } }, { name: 'واحة الإبداع الكشفي', sessions: { h1: 4, h2:4, h3:4 } }, { name: 'عاداتي الصحية الكشفية', sessions: { p1:3, p2:3, p3:3, quran_lower: 3 } }, { name: 'طبقي الكشفي', sessions: { p4:3, p5:3, p6:3, quran_upper: 3 } }, { name: 'خطواتي الكشفية الصحية', sessions: { m1:3, m2:3, m3:3 } }, { name: 'مهرجان الأفلام الكشفية الصحية', sessions: { h1: 5, h2:5, h3:5 } }, { name: 'مهاراتي وكشفيتي', sessions: { p1:2, p2:2, p3:2, quran_lower: 2 } }, { name: 'صافرة واصطفاف', sessions: { p4:2, p5:2, p6:2, quran_upper: 2 } }, { name: 'مهاراتي الكشفية من الاستعداد إلى الإنجاز', sessions: { m1:4, m2:4, m3:4 } }, { name: 'أفقي الكشفي الواسع', sessions: { h1: 6, h2:6, h3:6 } }] },
         ];
@@ -494,7 +498,7 @@
             .layout-table tfoot { display: table-footer-group; } 
             .header-space { height: 30mm; } 
             .footer-space { height: 18mm; }</style></head><body>
-            <div class="print-fixed-header"><div class="print-header-line"></div><div class="print-header-content"><div class="header-right-group"><div><img src="https://upload.wikimedia.org/wikipedia/ar/thumb/1/17/Saudi_Ministry_of_Education_Logo_2025.png/250px-Saudi_Ministry_of_Education_Logo_2025.png" alt="شعار الوزارة"></div><div class="school-info-text"><p>${state.educationAdmin}</p><p>${state.educationRegion}</p><p>${state.schoolName}</p></div></div><div class="title-block"><h1>${mainTitleText}</h1><span class="stage-text">${stageTitleText}</span><p class="semester-text">${semesterTitle} للعام الدراسي 1447هـ</p></div><div class="header-left-spacer"></div></div></div>
+            <div class="print-fixed-header"><div class="print-header-line"></div><div class="print-header-content"><div class="header-right-group"><div><img src="https://upload.wikimedia.org/wikipedia/ar/thumb/9/98/Ministry_of_Education_%28Saudi_Arabia%29_logo.svg/1200px-Ministry_of_Education_%28Saudi_Arabia%29_logo.svg.png" alt="شعار الوزارة"></div><div class="school-info-text"><p>${state.educationAdmin}</p><p>${state.educationRegion}</p><p>${state.schoolName}</p></div></div><div class="title-block"><h1>${mainTitleText}</h1><span class="stage-text">${stageTitleText}</span><p class="semester-text">${semesterTitle} للعام الدراسي 1447هـ</p></div><div class="header-left-spacer"></div></div></div>
             
             <table class="layout-table"><thead><tr><td><div class="header-space">&nbsp;</div></td></tr></thead><tbody><tr><td>
             <table class="print-table"><thead><tr><td class="week-label">الأسابيع</td>${row1Data.weekHtml}</tr><tr><td class="program-label">البرامج</td>${row1Data.programHtml}</tr><tr><td class="week-label">الأسابيع</td>${row2Data.weekHtml}</tr><tr><td class="program-label">البرامج</td>${row2Data.programHtml}</tr><tr><td class="week-label">الأسابيع</td>${row3Data.weekHtml}</tr><tr><td class="program-label">البرامج</td>${row3Data.programHtml}</tr></thead><tbody></tbody></table>
@@ -514,6 +518,214 @@
                 isPrinting = false; 
                 printWindow.close();
             }, 500);
+        }
+
+        // --- دالة التصدير إلى وورد ---
+        function exportToWord() {
+            // 1. تجهيز البيانات (نفس منطق الطباعة)
+            const state = JSON.parse(localStorage.getItem('activityPlanState'));
+            
+            // تحديد الفصل الدراسي
+            let detectedSemester = 1;
+            const allDates = [];
+            if(state.programSelections) { Object.values(state.programSelections).forEach(p => { if(p.datesByGrade) Object.values(p.datesByGrade).forEach(arr => allDates.push(...arr)); }); }
+            const s2WeekKeys = Object.keys(weeksData).filter(k => weeksData[k].semester === 2);
+            for(let date of allDates) { const dateOnly = date.split(' ').slice(1).join(' '); const foundWeek = s2WeekKeys.find(wk => Object.values(weeksData[wk].days).includes(dateOnly)); if(foundWeek) { detectedSemester = 2; break; } }
+
+            const allSemesterWeeks = Object.keys(weeksData).filter(k => weeksData[k].semester === detectedSemester);
+            const row1Weeks = allSemesterWeeks.slice(0, 7);
+            const row2Weeks = allSemesterWeeks.slice(7, 14);
+            const row3Weeks = allSemesterWeeks.slice(14);
+
+            // تجهيز محتوى الجداول
+            const programsByWeekAndField = {};
+            const getWeekInfoForDate = (fullDateStr) => { const datePartWithSpaces = fullDateStr.split(' ').slice(1).join(' '); for (const weekKey in weeksData) { if (Object.values(weeksData[weekKey].days).includes(datePartWithSpaces)) return weeksData[weekKey]; } return null; };
+            const weeklyBreakdown = {}; 
+
+            if (state.programSelections) {
+                Object.entries(state.programSelections).forEach(([id, data]) => {
+                    let programInfo, fieldTitle;
+                    for (const field of activitiesData) { const idx = field.programs.findIndex(p => `${field.id}-${field.programs.indexOf(p)}` === id); if (idx !== -1) { programInfo = field.programs[idx]; fieldTitle = field.title; break; } }
+                    if (!programInfo) return;
+                    Object.entries(data.datesByGrade || {}).forEach(([gradeKey, dateArray]) => {
+                        if (selectedGrades.includes(gradeKey) || (gradeGroups[gradeKey] && selectedGrades.includes(gradeKey))) {
+                            dateArray.forEach(dateStr => {
+                                const weekInfo = getWeekInfoForDate(dateStr);
+                                if (weekInfo && weekInfo.semester === detectedSemester) {
+                                    const weekKey = Object.keys(weeksData).find(key => weeksData[key] === weekInfo);
+                                    if (!weeklyBreakdown[weekKey]) weeklyBreakdown[weekKey] = {};
+                                    if (!weeklyBreakdown[weekKey][programInfo.name]) { weeklyBreakdown[weekKey][programInfo.name] = { fieldTitle: fieldTitle, grades: {} }; }
+                                    const label = getLabel(gradeKey);
+                                    weeklyBreakdown[weekKey][programInfo.name].grades[label] = (weeklyBreakdown[weekKey][programInfo.name].grades[label] || 0) + 1;
+                                }
+                            });
+                        }
+                    });
+                });
+            }
+
+            Object.keys(weeklyBreakdown).forEach(weekKey => {
+                const weekData = weeklyBreakdown[weekKey];
+                programsByWeekAndField[weekKey] = {}; 
+                Object.keys(weekData).forEach(progName => {
+                    const info = weekData[progName];
+                    const details = Object.entries(info.grades).map(([gName, count]) => `${gName}: ${count}`).join('، ');
+                    const displayText = `${progName}<br><span style="font-size:9pt; color:#555;">(${details})</span>`;
+                    if (!programsByWeekAndField[weekKey][info.fieldTitle]) programsByWeekAndField[weekKey][info.fieldTitle] = [];
+                    programsByWeekAndField[weekKey][info.fieldTitle].push(displayText);
+                });
+            });
+
+            const getWeekContent = (weeks) => {
+                let weekHtml = ''; let programHtml = '';
+                weeks.forEach((weekKey) => {
+                        const weekData = weeksData[weekKey]; if (!weekData) return;
+                        let weekLabel = weekData.name; let programsContent = '';
+                        if (weekData.holidayDetails) {
+                             programsContent = `<div style="color:red; font-weight:bold;">${weekData.holidayDetails}</div>`;
+                        } else {
+                            const fieldNames = Object.keys(programsByWeekAndField[weekKey] || {});
+                            if (fieldNames.length > 0) { fieldNames.forEach(fieldName => { const fieldColor = activitiesData.find(a=>a.title===fieldName)?.color || 'black'; programsContent += `<strong style="color: ${fieldColor};">${fieldName}</strong><br>` + (programsByWeekAndField[weekKey][fieldName] || []).map(p => `<div style="border-bottom:1px dashed #ccc; margin-bottom:3px;">${p}</div>`).join(''); }); }
+                        }
+                        weekHtml += `<th style="background:#e6f7ff; color:#005f99; border:1px solid #000; padding:5px;">${weekLabel}<br>(${weekData.startDate} - ${weekData.endDate})</th>`;
+                        programHtml += `<td style="border:1px solid #000; padding:5px; vertical-align:top;">${programsContent}</td>`;
+                });
+                return { weekHtml, programHtml };
+            };
+
+            const row1Data = getWeekContent(row1Weeks);
+            const row2Data = getWeekContent(row2Weeks);
+            const row3Data = getWeekContent(row3Weeks);
+
+            // الجدول الثاني (جدول المتابعة)
+            let secondTableRows = ''; let programNumber = 1;
+            const getProgramAndGradeLabels = (program, sessionsByGrade) => { const programLabels = []; const effectiveSelection = state.selectedGrades; const handledGrades = new Set(); effectiveSelection.forEach(key => { let label; let sessionsCount; if (gradeGroups[key]) { label = getLabel(key); sessionsCount = Math.max(0, ...gradeGroups[key].map(g => program.sessions[g] || 0)); if (sessionsCount > 0) { programLabels.push(`${label} ${sessionsCount} حصة`); gradeGroups[key].forEach(g => handledGrades.add(g)); } } else if (!handledGrades.has(key)) { label = getLabel(key); sessionsCount = program.sessions[key] || 0; if (sessionsCount > 0) { programLabels.push(`${label} ${sessionsCount} حصة`); handledGrades.add(key); } } }); return `${program.name} (${programLabels.join(' و ')})`; };
+            const selectedPrograms = [];
+            activitiesData.forEach(field => { field.programs.forEach((program, programIndex) => { const programId = `${field.id}-${programIndex}`; if (state.programSelections && state.programSelections[programId]) { selectedPrograms.push({ field, program, programId, selectionData: state.programSelections[programId] }); } }); });
+            
+            selectedPrograms.forEach(item => {
+                const { field, program, selectionData } = item; 
+                const datesByGrade = selectionData?.datesByGrade || {}; 
+                const notes = selectionData?.notes || '';
+                const teachersByGrade = selectionData?.teachersByGrade || {};
+                const teacherNamesSet = new Set();
+                Object.values(teachersByGrade).forEach(name => { if (name && name.trim() !== "") teacherNamesSet.add(name.trim()); });
+                const teacherNamesText = teacherNamesSet.size > 0 ? [...teacherNamesSet].join('، ') : '';
+                const programAndGradeText = getProgramAndGradeLabels(program, program.sessions); const allDates = Object.values(datesByGrade).flat();
+                const semesterDates = allDates.filter(d => { const dateOnly = d.split(' ').slice(1).join(' '); const weekKey = Object.keys(weeksData).find(wk => Object.values(weeksData[wk].days).includes(dateOnly)); return weekKey && weeksData[weekKey].semester === detectedSemester; });
+                
+                if (semesterDates.length > 0) {
+                    const formattedDates = formatDatesForDisplay(semesterDates).text;
+                    secondTableRows += `
+                    <tr>
+                        <td style="border:1px solid #000; padding:5px; text-align:center;">${programNumber++}</td>
+                        <td style="border:1px solid #000; padding:5px; text-align:center; background-color:${field.color}; color:white;">${field.title}</td>
+                        <td style="border:1px solid #000; padding:5px; text-align:center;">${teacherNamesText}</td>
+                        <td style="border:1px solid #000; padding:5px; text-align:right;">${program.name}<br><span style="font-size:9pt; color:#666;">${programAndGradeText.replace(program.name, '')}</span></td>
+                        <td style="border:1px solid #000; padding:5px; text-align:right;">${formattedDates}</td>
+                        <td style="border:1px solid #000; padding:5px; text-align:center;">□ نفذ  □ لم ينفذ</td>
+                        <td style="border:1px solid #000; padding:5px;">${notes}</td>
+                    </tr>`;
+                }
+            });
+
+            // العناوين
+            const mainTitle = document.getElementById('main-title-input').value;
+            const stageTitle = document.getElementById('stage-title-input').value;
+            const semesterTitle = detectedSemester === 1 ? 'الفصل الدراسي الأول' : 'الفصل الدراسي الثاني';
+
+            // 2. بناء ملف الوورد (HTML خاص)
+            const wordHTML = `
+            <html xmlns:o='urn:schemas-microsoft-com:office:office' xmlns:w='urn:schemas-microsoft-com:office:word' xmlns='http://www.w3.org/TR/REC-html40'>
+            <head>
+                <meta charset="utf-8">
+                <title>${mainTitle}</title>
+                <style>
+                    body { font-family: 'Arial', sans-serif; direction: rtl; text-align: right; }
+                    table { border-collapse: collapse; width: 100%; margin-bottom: 20px; font-size: 10pt; }
+                    th, td { border: 1px solid #000; padding: 4px; }
+                    .header { text-align: center; margin-bottom: 20px; }
+                    .header h1 { color: #00A383; margin: 5px; font-size: 18pt; }
+                    .header h2 { font-size: 14pt; margin: 5px; }
+                    .info-table { border: none; margin-bottom: 10px; }
+                    .info-table td { border: none; padding: 2px; }
+                </style>
+            </head>
+            <body>
+                <table class="info-table">
+                    <tr>
+                        <td width="33%" style="text-align:right">
+                            <img src="https://upload.wikimedia.org/wikipedia/ar/thumb/9/98/Ministry_of_Education_%28Saudi_Arabia%29_logo.svg/200px-Ministry_of_Education_%28Saudi_Arabia%29_logo.svg.png" width="100">
+                        </td>
+                        <td width="33%" class="header">
+                            <h1>${mainTitle}</h1>
+                            <h2>${stageTitle}</h2>
+                            <p style="color:#0093B5; font-weight:bold;">${semesterTitle} للعام 1447هـ</p>
+                        </td>
+                        <td width="33%" style="text-align:left; font-size:10pt;">
+                            <strong>${state.educationAdmin}</strong><br>
+                            <strong>${state.educationRegion}</strong><br>
+                            <strong>${state.schoolName}</strong>
+                        </td>
+                    </tr>
+                </table>
+
+                <br>
+
+                <!-- الجدول الأول -->
+                <table>
+                    <thead>
+                        <tr><td style="background:#e6f7ff; width:8%;">الأسابيع</td>${row1Data.weekHtml}</tr>
+                    </thead>
+                    <tbody>
+                        <tr><td style="background:#f0f0f0;">البرامج</td>${row1Data.programHtml}</tr>
+                        <tr><td style="background:#e6f7ff;">الأسابيع</td>${row2Data.weekHtml}</tr>
+                        <tr><td style="background:#f0f0f0;">البرامج</td>${row2Data.programHtml}</tr>
+                        <tr><td style="background:#e6f7ff;">الأسابيع</td>${row3Data.weekHtml}</tr>
+                        <tr><td style="background:#f0f0f0;">البرامج</td>${row3Data.programHtml}</tr>
+                    </tbody>
+                </table>
+
+                <br style="page-break-before: always;"> 
+
+                <h2 style="text-align:center;">جدول المتابعة والتنفيذ</h2>
+                <table>
+                    <thead>
+                        <tr style="background-color:#f3f4f6;">
+                            <th width="5%">م</th>
+                            <th width="10%">المجال</th>
+                            <th width="15%">المعلم المنفذ</th>
+                            <th width="25%">البرنامج</th>
+                            <th width="25%">تاريخ التنفيذ</th>
+                            <th width="10%">حالة التنفيذ</th>
+                            <th width="10%">ملاحظات</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        ${secondTableRows}
+                    </tbody>
+                </table>
+
+                <br><br>
+                <table class="info-table" style="width:100%">
+                    <tr>
+                        <td style="text-align:center; font-weight:bold;">رائد/ة النشاط: ${state.activityLeaderName}</td>
+                        <td style="text-align:center; font-weight:bold;">مدير/ة المدرسة: ${state.schoolDirectorName}</td>
+                    </tr>
+                </table>
+            </body>
+            </html>
+            `;
+
+            // 3. إنشاء الملف وتنزيله
+            const blob = new Blob(['\ufeff', wordHTML], { type: 'application/msword' });
+            const url = URL.createObjectURL(blob);
+            const link = document.createElement('a');
+            link.href = url;
+            link.download = `خطة_النشاط_${state.schoolName || 'المدرسة'}.doc`;
+            document.body.appendChild(link);
+            link.click();
+            document.body.removeChild(link);
         }
 
         function saveBackup() { saveState(); const blob = new Blob([localStorage.getItem('activityPlanState')], { type: 'application/json' }); const a = document.createElement('a'); a.href = URL.createObjectURL(blob); a.download = 'plan_backup.json'; a.click(); }
