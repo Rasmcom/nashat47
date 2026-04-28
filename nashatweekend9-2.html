@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>خطة النشاط الطلابي - الفصل الدراسي الأول</title>
+    <title>خطة النشاط الطلابي</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Cairo:wght@300;400;600;700&display=swap');
@@ -23,7 +23,7 @@
         }
 
         .dropdown-content.active {
-            max-height: 5000px; /* Increased max-height for larger content */
+            max-height: 5000px;
             transition: max-height 0.5s ease-in;
         }
 
@@ -65,6 +65,15 @@
             cursor: not-allowed;
         }
 
+        /* تنسيق تبويبات الفصول الدراسية */
+        .tab-btn {
+            padding: 10px; width: 50%; text-align: center; font-weight: bold; cursor: pointer; 
+            border-bottom: 3px solid transparent; background-color: #f9fafb; transition: all 0.3s ease;
+        }
+        .tab-btn.active {
+            border-bottom-color: #00A383; color: #00A383; background-color: #fff;
+        }
+
         #update-modal-box {
             transition: transform 0.3s ease-out, opacity 0.3s ease-out;
         }
@@ -75,42 +84,19 @@
 
         @media print {
             .no-print { display: none !important; }
-            * { -webkit-print-color-adjust: exact !important; print-color-adjust: exact !important; }
+            * { -webkit-print-color-adjust: exact !important; print-color-adjust: exact !important; box-sizing: border-box; }
             @page { 
                 size: A4 landscape; 
-                margin: 10mm 5mm; 
+                margin: 8mm; 
             } 
-            body { 
+            body, html { 
                 -webkit-print-color-adjust: exact !important; 
                 print-color-adjust: exact !important; 
                 margin: 0;
                 padding: 0;
+                height: auto !important;
+                background: white;
             }
-            .page-container { display: flex; flex-direction: column; min-height: 98vh; }
-            .print-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px; flex-shrink: 0; }
-            .print-header .right-side { display: flex; align-items: center; gap: 8px; }
-            .print-header img { height: 40px; }
-            .print-header .header-text p { margin: 0; font-size: 0.9em; line-height: 1.2; }
-            .print-header .title-container { text-align: center; }
-            .print-header h1 { color: #00A383; margin: 0; font-size: 1.8em; }
-            .print-header h2 { font-size: 1.6em; font-weight: bold; color: #0093B5; margin: 1px 0; }
-            .print-header p.subtitle { color: #555; margin-top: 2px; font-size: 1.1em; }
-            .print-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; flex-grow: 1; align-content: start; }
-            .print-column { page-break-inside: avoid; break-inside: avoid; }
-            .print-column h3 { font-size: 1.2em; padding: 3px 5px; border-radius: 4px 4px 0 0; margin: 0; color: white; }
-            table { width: 100%; border-collapse: collapse; font-size: 1em; table-layout: fixed; }
-            th, td { border: 1px solid #ccc; padding: 3px; text-align: right; vertical-align: top; word-wrap: break-word; font-weight: normal; }
-            .stage-entry:not(:last-child) { border-bottom: 1px dashed #ccc; padding-bottom: 3px; margin-bottom: 3px; }
-            strong { font-weight: bold; }
-            th { background-color: #f2f2f2; font-weight: bold; vertical-align: middle; }
-            table th:nth-child(1), table td:nth-child(1) { width: 28%; }
-            table th:nth-child(2), table td:nth-child(2) { width: 18%; }
-            table th:nth-child(3), table td:nth-child(3) { width: 36%; }
-            table th:nth-child(4), table td:nth-child(4),
-            table th:nth-child(5), table td:nth-child(5),
-            table th:nth-child(6), table td:nth-child(6) { width: 6%; text-align: center; }
-            .print-signatures { display: flex; justify-content: space-around; margin-top: auto; padding-top: 15px; font-size: 1.1em; font-weight: bold; flex-shrink: 0; page-break-inside: avoid;}
-            .signature-box { text-align: center; }
         }
     </style>
 </head>
@@ -129,8 +115,10 @@
             <div class="text-right space-y-3 text-gray-600">
                 <p class="font-semibold text-lg">✨ يسعدنا إبلاغك بأننا أضفنا مميزات جديدة:</p>
                 <ul class="list-disc list-inside space-y-2 pr-4">
-                    <li><strong class="text-teal-600">اختيار تفصيلي:</strong> الآن يمكنك اختيار كل فصل على حدة عند تحديد البرامج للمراحل.</li>
-                    <li><strong class="text-teal-600">النسخ الاحتياطي:</strong> أضفنا ميزة حفظ واستعادة البيانات لضمان عدم فقدان معلوماتك.</li>
+                    <li><strong class="text-teal-600">تقويم الفصلين:</strong> تم إضافة تواريخ الفصل الدراسي الأول والثاني.</li>
+                    <li><strong class="text-teal-600">تحسين الطباعة:</strong> حل جذري لمشكلة الصفحات البيضاء عند الطباعة.</li>
+                    <li><strong class="text-teal-600">اختيار تفصيلي:</strong> الآن يمكنك اختيار كل فصل على حدة.</li>
+                    <li><strong class="text-teal-600">النسخ الاحتياطي:</strong> أضفنا ميزة حفظ واستعادة البيانات.</li>
                 </ul>
                 <p class="font-bold text-center pt-4">✅ استمتع بالتجربة الجديدة الآن!</p>
             </div>
@@ -140,12 +128,21 @@
         </div>
     </div>
 
+    <!-- نافذة اختيار التواريخ المعدلة لتدعم الفصلين -->
     <div id="date-picker-modal" class="fixed inset-0 z-40 items-center justify-center p-4 no-print bg-black bg-opacity-50 hidden">
-        <div class="bg-white rounded-lg shadow-xl p-6 max-w-4xl w-full">
-            <h3 id="modal-title" class="text-xl font-bold mb-4">اختر تواريخ التنفيذ</h3>
-            <p id="modal-date-counter" class="text-center text-gray-600 mb-2 font-semibold"></p>
-            <div id="modal-weeks-container" class="space-y-4 max-h-96 overflow-y-auto"></div>
-            <div class="mt-6 flex justify-end gap-3">
+        <div class="bg-white rounded-lg shadow-xl p-6 max-w-4xl w-full h-[85vh] flex flex-col">
+            <h3 id="modal-title" class="text-xl font-bold mb-4 flex-shrink-0">اختر تواريخ التنفيذ</h3>
+            
+            <!-- تبويبات الفصول الدراسية -->
+            <div class="flex gap-0 border-b-2 border-gray-200 mb-4 flex-shrink-0 bg-gray-50 rounded-t-lg overflow-hidden">
+                <div onclick="switchSemesterTab(1)" id="tab-sem-1" class="tab-btn active">الفصل الدراسي الأول</div>
+                <div onclick="switchSemesterTab(2)" id="tab-sem-2" class="tab-btn">الفصل الدراسي الثاني</div>
+            </div>
+
+            <p id="modal-date-counter" class="text-center text-gray-600 mb-2 font-semibold flex-shrink-0"></p>
+            <div id="modal-weeks-container" class="space-y-4 overflow-y-auto flex-grow px-2"></div>
+            
+            <div class="mt-4 flex justify-end gap-3 flex-shrink-0 pt-3 border-t border-gray-200">
                 <button onclick="closeDatePicker()" class="px-4 py-2 bg-gray-300 text-gray-800 rounded-lg hover:bg-gray-400">إلغاء</button>
                 <button onclick="saveDates()" class="px-4 py-2 bg-teal-600 text-white rounded-lg hover:bg-teal-700">حفظ التواريخ</button>
             </div>
@@ -166,7 +163,7 @@
                 <div class="text-center">
                     <h1 id="main-title" class="text-xl sm:text-3xl font-bold">خطة النشاط الطلابي</h1>
                     <p id="stage-title-header" class="text-lg sm:text-2xl font-bold text-white h-8"></p>
-                    <p id="subtitle" class="text-md sm:text-lg opacity-90">الفصل الدراسي الأول للعام الدراسي 1447هـ</p>
+                    <p id="subtitle" class="text-md sm:text-lg opacity-90">للعام الدراسي 1447هـ</p>
                 </div>
             </div>
         </header>
@@ -225,7 +222,7 @@
         <footer class="bg-gray-800 text-white py-4 text-center no-print">
             <div class="container mx-auto flex justify-center items-center">
                 <a href="https://t.me/+SJnY9vPy7yo5YmI1" target="_blank" class="ml-4">
-                    <img src="https://rasmcom.github.io/plan/img/logo.png" alt="شعار قناة رسم" class="h-20 w-auto">
+                    <img src="https://h.top4top.io/p_352355x7b1.png" alt="شعار قناة رسم" class="h-20 w-auto">
                 </a>
                 <span>جميع الحقوق محفوظة لقناة رسم للتصميم والخدمات التعليمية 2025</span>
             </div>
@@ -233,13 +230,14 @@
     </div>
 
     <script>
-        const UPDATE_VERSION_KEY = 'updateModalSeen_v1';
-        let selectedGrades = [];
+        const UPDATE_VERSION_KEY = 'updateModalSeen_v2';
+        let selectedGrades =[];
         let currentRegion = 'other';
         let activeSelection = null;
-        let tempSelectedDates = [];
+        let tempSelectedDates =[];
         let isPrinting = false;
         let isLoading = false;
+        let currentModalSemester = 1;
 
         const gradeNames = {
             'p1': 'أول ابتدائي', 'p2': 'ثاني ابتدائي', 'p3': 'ثالث ابتدائي',
@@ -251,90 +249,116 @@
         const gradeGroups = {
             'primary_lower': ['p1', 'p2', 'p3'],
             'primary_upper': ['p4', 'p5', 'p6'],
-            'primary_all': ['p1', 'p2', 'p3', 'p4', 'p5', 'p6'],
+            'primary_all':['p1', 'p2', 'p3', 'p4', 'p5', 'p6'],
             'middle_all': ['m1', 'm2', 'm3'],
             'high_all': ['h2', 'h3'],
         };
         
         const teacherInputGroups = {
-            'primary_lower': {
-                label: 'الصفوف الأولية',
-                grades: ['p1', 'p2', 'p3'],
-            },
-            'primary_upper': {
-                label: 'الصفوف العليا',
-                grades: ['p4', 'p5', 'p6'],
-            },
-            'middle_all': {
-                label: 'المرحلة المتوسطة',
-                grades: ['m1', 'm2', 'm3'],
-            },
-            'high_all': {
-                label: 'المرحلة الثانوية',
-                grades: ['h2', 'h3'],
-            },
-            'all': {
-                label: 'كل المراحل',
-                grades: Object.keys(gradeNames),
-            },
-            'individual': {
-                label: (grade) => gradeNames[grade],
-                grades: (selectedGrades) => selectedGrades,
-            }
+            'primary_lower': { label: 'الصفوف الأولية', grades:['p1', 'p2', 'p3'] },
+            'primary_upper': { label: 'الصفوف العليا', grades: ['p4', 'p5', 'p6'] },
+            'middle_all': { label: 'المرحلة المتوسطة', grades: ['m1', 'm2', 'm3'] },
+            'high_all': { label: 'المرحلة الثانوية', grades:['h2', 'h3'] },
+            'all': { label: 'كل المراحل', grades: Object.keys(gradeNames) },
+            'individual': { label: (grade) => gradeNames[grade], grades: (selectedGrades) => selectedGrades }
         };
 
         const allGradeKeys = Object.keys(gradeNames);
 
-        const weeksDataDefault = {
-            'week1': { name: 'الأسبوع الأول', startDate: '1 / 3', endDate: '5 / 3', days: { 'الأحد': '1 / 3', 'الاثنين': '2 / 3', 'الثلاثاء': '3 / 3', 'الأربعاء': '4 / 3', 'الخميس': '5 / 3' } },
-            'week2': { name: 'الأسبوع الثاني', startDate: '8 / 3', endDate: '12 / 3', days: { 'الأحد': '8 / 3', 'الاثنين': '9 / 3', 'الثلاثاء': '10 / 3', 'الأربعاء': '11 / 3', 'الخميس': '12 / 3' } },
-            'week3': { name: 'الأسبوع الثالث', startDate: '15 / 3', endDate: '19 / 3', days: { 'الأحد': '15 / 3', 'الاثنين': '16 / 3', 'الثلاثاء': '17 / 3', 'الأربعاء': '18 / 3', 'الخميس': '19 / 3' } },
-            'week4': { name: 'الأسبوع الرابع', startDate: '22 / 3', endDate: '26 / 3', days: { 'الأحد': '22 / 3', 'الاثنين': '23 / 3', 'الثلاثاء': '24 / 3', 'الأربعاء': '25 / 3', 'الخميس': '26 / 3' } },
-            'week5': { name: 'الأسبوع الخامس', startDate: '29 / 3', endDate: '3 / 4', days: { 'الأحد': '29 / 3', 'الاثنين': '30 / 3', 'الثلاثاء': '1 / 4', 'الأربعاء': '2 / 4', 'الخميس': '3 / 4' }, specialDays: { '1 / 4': { name: 'إجازة اليوم الوطني', color: 'green' } } },
-            'week6': { name: 'الأسبوع السادس', startDate: '6 / 4', endDate: '10 / 4', days: { 'الأحد': '6 / 4', 'الاثنين': '7 / 4', 'الثلاثاء': '8 / 4', 'الأربعاء': '9 / 4', 'الخميس': '10 / 4' } },
-            'week7': { name: 'الأسبوع السابع', startDate: '13 / 4', endDate: '17 / 4', days: { 'الأحد': '13 / 4', 'الاثنين': '14 / 4', 'الثلاثاء': '15 / 4', 'الأربعاء': '16 / 4', 'الخميس': '17 / 4' } },
-            'week8': { name: 'الأسبوع الثامن', startDate: '20 / 4', endDate: '24 / 4', days: { 'الأحد': '20 / 4', 'الاثنين': '21 / 4', 'الثلاثاء': '22 / 4', 'الأربعاء': '23 / 4', 'الخميس': '24 / 4' }, specialDays: { '20 / 4': { name: 'إجازة إضافية', color: 'red' } } },
-            'week9': { name: 'الأسبوع التاسع', startDate: '27 / 4', endDate: '1 / 5', days: { 'الأحد': '27 / 4', 'الاثنين': '28 / 4', 'الثلاثاء': '29 / 4', 'الأربعاء': '30 / 4', 'الخميس': '1 / 5' } },
-            'week10': { name: 'الأسبوع العاشر', startDate: '4 / 5', endDate: '8 / 5', days: { 'الأحد': '4 / 5', 'الاثنين': '5 / 5', 'الثلاثاء': '6 / 5', 'الأربعاء': '7 / 5', 'الخميس': '8 / 5' } },
-            'week11': { name: 'الأسبوع الحادي عشر', startDate: '11 / 5', endDate: '15 / 5', days: { 'الأحد': '11 / 5', 'الاثنين': '12 / 5', 'الثلاثاء': '13 / 5', 'الأربعاء': '14 / 5', 'الخميس': '15 / 5' } },
-            'week12': { name: 'الأسبوع الثاني عشر', startDate: '18 / 5', endDate: '22 / 5', days: { 'الأحد': '18 / 5', 'الاثنين': '19 / 5', 'الثلاثاء': '20 / 5', 'الأربعاء': '21 / 5', 'الخميس': '22 / 5' } },
-            'week13': { name: 'الأسبوع الثالث عشر', startDate: '25 / 5', endDate: '29 / 5', days: { 'الأحد': '25 / 5', 'الاثنين': '26 / 5', 'الثلاثاء': '27 / 5', 'الأربعاء': '28 / 5', 'الخميس': '29 / 5' } },
-            'week14': { name: 'الأسبوع الرابع عشر', startDate: '9 / 6', endDate: '13 / 6', days: { 'الأحد': '9 / 6', 'الاثنين': '10 / 6', 'الثلاثاء': '11 / 6', 'الأربعاء': '12 / 6', 'الخميس': '13 / 6' } },
-            'week15': { name: 'الأسبوع الخامس عشر', startDate: '16 / 6', endDate: '20 / 6', days: { 'الأحد': '16 / 6', 'الاثنين': '17 / 6', 'الثلاثاء': '18 / 6', 'الأربعاء': '19 / 6', 'الخميس': '20 / 6' }, specialDays: { '20 / 6': { name: 'إجازة إضافية', color: 'red' } } },
-            'week16': { name: 'الأسبوع السادس عشر', startDate: '23 / 6', endDate: '27 / 6', days: { 'الأحد': '23 / 6', 'الاثنين': '24 / 6', 'الثلاثاء': '25 / 6', 'الأربعاء': '26 / 6', 'الخميس': '27 / 6' }, specialDays: { '23 / 6': { name: 'إجازة إضافية', color: 'red' } } },
-            'week17': { name: 'الأسبوع السابع عشر', startDate: '1 / 7', endDate: '5 / 7', days: { 'الأحد': '1 / 7', 'الاثنين': '2 / 7', 'الثلاثاء': '3 / 7', 'الأربعاء': '4 / 7', 'الخميس': '5 / 7' } },
-            'week18': { name: 'الأسبوع الثامن عشر', startDate: '8 / 7', endDate: '12 / 7', days: { 'الأحد': '8 / 7', 'الاثنين': '9 / 7', 'الثلاثاء': '10 / 7', 'الأربعاء': '11 / 7', 'الخميس': '12 / 7' } },
+        // بيانات الفصلين (عادية)
+        const weeksS1_Default = { 
+            'week1': { name: 'الأسبوع الأول', semester: 1, startDate: '1 / 3', endDate: '5 / 3', days: { 'الأحد': '1 / 3', 'الاثنين': '2 / 3', 'الثلاثاء': '3 / 3', 'الأربعاء': '4 / 3', 'الخميس': '5 / 3' } }, 
+            'week2': { name: 'الأسبوع الثاني', semester: 1, startDate: '8 / 3', endDate: '12 / 3', days: { 'الأحد': '8 / 3', 'الاثنين': '9 / 3', 'الثلاثاء': '10 / 3', 'الأربعاء': '11 / 3', 'الخميس': '12 / 3' } }, 
+            'week3': { name: 'الأسبوع الثالث', semester: 1, startDate: '15 / 3', endDate: '19 / 3', days: { 'الأحد': '15 / 3', 'الاثنين': '16 / 3', 'الثلاثاء': '17 / 3', 'الأربعاء': '18 / 3', 'الخميس': '19 / 3' } }, 
+            'week4': { name: 'الأسبوع الرابع', semester: 1, startDate: '22 / 3', endDate: '26 / 3', days: { 'الأحد': '22 / 3', 'الاثنين': '23 / 3', 'الثلاثاء': '24 / 3', 'الأربعاء': '25 / 3', 'الخميس': '26 / 3' } }, 
+            'week5': { name: 'الأسبوع الخامس', semester: 1, startDate: '29 / 3', endDate: '3 / 4', days: { 'الأحد': '29 / 3', 'الاثنين': '30 / 3', 'الثلاثاء': '1 / 4', 'الأربعاء': '2 / 4', 'الخميس': '3 / 4' }, specialDays: { '1 / 4': { name: 'إجازة اليوم الوطني', color: 'green' } } }, 
+            'week6': { name: 'الأسبوع السادس', semester: 1, startDate: '6 / 4', endDate: '10 / 4', days: { 'الأحد': '6 / 4', 'الاثنين': '7 / 4', 'الثلاثاء': '8 / 4', 'الأربعاء': '9 / 4', 'الخميس': '10 / 4' } }, 
+            'week7': { name: 'الأسبوع السابع', semester: 1, startDate: '13 / 4', endDate: '17 / 4', days: { 'الأحد': '13 / 4', 'الاثنين': '14 / 4', 'الثلاثاء': '15 / 4', 'الأربعاء': '16 / 4', 'الخميس': '17 / 4' } }, 
+            'week8': { name: 'الأسبوع الثامن', semester: 1, startDate: '20 / 4', endDate: '24 / 4', days: { 'الأحد': '20 / 4', 'الاثنين': '21 / 4', 'الثلاثاء': '22 / 4', 'الأربعاء': '23 / 4', 'الخميس': '24 / 4' }, specialDays: { '20 / 4': { name: 'إجازة إضافية', color: 'red' } } }, 
+            'week9': { name: 'الأسبوع التاسع', semester: 1, startDate: '27 / 4', endDate: '1 / 5', days: { 'الأحد': '27 / 4', 'الاثنين': '28 / 4', 'الثلاثاء': '29 / 4', 'الأربعاء': '30 / 4', 'الخميس': '1 / 5' } }, 
+            'week10': { name: 'الأسبوع العاشر', semester: 1, startDate: '4 / 5', endDate: '8 / 5', days: { 'الأحد': '4 / 5', 'الاثنين': '5 / 5', 'الثلاثاء': '6 / 5', 'الأربعاء': '7 / 5', 'الخميس': '8 / 5' } }, 
+            'week11': { name: 'الأسبوع الحادي عشر', semester: 1, startDate: '11 / 5', endDate: '15 / 5', days: { 'الأحد': '11 / 5', 'الاثنين': '12 / 5', 'الثلاثاء': '13 / 5', 'الأربعاء': '14 / 5', 'الخميس': '15 / 5' } }, 
+            'week12': { name: 'الأسبوع الثاني عشر', semester: 1, startDate: '18 / 5', endDate: '22 / 5', days: { 'الأحد': '18 / 5', 'الاثنين': '19 / 5', 'الثلاثاء': '20 / 5', 'الأربعاء': '21 / 5', 'الخميس': '22 / 5' } }, 
+            'week13': { name: 'الأسبوع الثالث عشر', semester: 1, startDate: '25 / 5', endDate: '29 / 5', days: { 'الأحد': '25 / 5', 'الاثنين': '26 / 5', 'الثلاثاء': '27 / 5', 'الأربعاء': '28 / 5', 'الخميس': '29 / 5' } }, 
+            'week14': { name: 'الأسبوع الرابع عشر', semester: 1, startDate: '9 / 6', endDate: '13 / 6', days: { 'الأحد': '9 / 6', 'الاثنين': '10 / 6', 'الثلاثاء': '11 / 6', 'الأربعاء': '12 / 6', 'الخميس': '13 / 6' } }, 
+            'week15': { name: 'الأسبوع الخامس عشر', semester: 1, startDate: '16 / 6', endDate: '20 / 6', days: { 'الأحد': '16 / 6', 'الاثنين': '17 / 6', 'الثلاثاء': '18 / 6', 'الأربعاء': '19 / 6', 'الخميس': '20 / 6' }, specialDays: { '20 / 6': { name: 'إجازة إضافية', color: 'red' } } }, 
+            'week16': { name: 'الأسبوع السادس عشر', semester: 1, startDate: '23 / 6', endDate: '27 / 6', days: { 'الأحد': '23 / 6', 'الاثنين': '24 / 6', 'الثلاثاء': '25 / 6', 'الأربعاء': '26 / 6', 'الخميس': '27 / 6' }, specialDays: { '23 / 6': { name: 'إجازة إضافية', color: 'red' } } }, 
+            'week17': { name: 'الأسبوع السابع عشر', semester: 1, startDate: '1 / 7', endDate: '5 / 7', days: { 'الأحد': '1 / 7', 'الاثنين': '2 / 7', 'الثلاثاء': '3 / 7', 'الأربعاء': '4 / 7', 'الخميس': '5 / 7' } }, 
+            'week18': { name: 'الأسبوع الثامن عشر', semester: 1, startDate: '8 / 7', endDate: '12 / 7', days: { 'الأحد': '8 / 7', 'الاثنين': '9 / 7', 'الثلاثاء': '10 / 7', 'الأربعاء': '11 / 7', 'الخميس': '12 / 7' } }
+        };
+        const weeksS2_Default_Fixed = { 
+            's2_week1': { name: 'الأسبوع الأول', semester: 2, startDate: '29 / 07', endDate: '03 / 08', days: { 'الأحد': '29 / 07', 'الاثنين': '30 / 07', 'الثلاثاء': '01 / 08', 'الأربعاء': '02 / 08', 'الخميس': '03 / 08' } }, 
+            's2_week2': { name: 'الأسبوع الثاني', semester: 2, startDate: '06 / 08', endDate: '10 / 08', days: { 'الأحد': '06 / 08', 'الاثنين': '07 / 08', 'الثلاثاء': '08 / 08', 'الأربعاء': '09 / 08', 'الخميس': '10 / 08' } }, 
+            's2_week3': { name: 'الأسبوع الثالث', semester: 2, startDate: '13 / 08', endDate: '17 / 08', days: { 'الأحد': '13 / 08', 'الاثنين': '14 / 08', 'الثلاثاء': '15 / 08', 'الأربعاء': '16 / 08', 'الخميس': '17 / 08' } }, 
+            's2_week4': { name: 'الأسبوع الرابع', semester: 2, startDate: '20 / 08', endDate: '24 / 08', days: { 'الأحد': '20 / 08', 'الاثنين': '21 / 08', 'الثلاثاء': '22 / 08', 'الأربعاء': '23 / 08', 'الخميس': '24 / 08' } }, 
+            's2_week5': { name: 'الأسبوع الخامس', semester: 2, startDate: '27 / 08', endDate: '02 / 09', days: { 'الأحد': '27 / 08', 'الاثنين': '28 / 08', 'الثلاثاء': '29 / 08', 'الأربعاء': '01 / 09', 'الخميس': '02 / 09' }, specialDays: { '01 / 09': { name: 'غرة رمضان', color: 'green' } } }, 
+            's2_week6': { name: 'الأسبوع السادس', semester: 2, startDate: '05 / 09', endDate: '09 / 09', days: { 'الأحد': '05 / 09', 'الاثنين': '06 / 09', 'الثلاثاء': '07 / 09', 'الأربعاء': '08 / 09', 'الخميس': '09 / 09' }, specialDays: { '05 / 09': { name: 'إجازة يوم التأسيس', color: 'green' } } }, 
+            's2_week7': { name: 'الأسبوع السابع', semester: 2, startDate: '12 / 09', endDate: '16 / 09', days: { 'الأحد': '12 / 09', 'الاثنين': '13 / 09', 'الثلاثاء': '14 / 09', 'الأربعاء': '15 / 09', 'الخميس': '16 / 09' } }, 
+            's2_week8': { name: 'الأسبوع الثامن', semester: 2, startDate: '10 / 10', endDate: '14 / 10', days: { 'الأحد': '10 / 10', 'الاثنين': '11 / 10', 'الثلاثاء': '12 / 10', 'الأربعاء': '13 / 10', 'الخميس': '14 / 10' } }, 
+            's2_week9': { name: 'الأسبوع التاسع', semester: 2, startDate: '17 / 10', endDate: '21 / 10', days: { 'الأحد': '17 / 10', 'الاثنين': '18 / 10', 'الثلاثاء': '19 / 10', 'الأربعاء': '20 / 10', 'الخميس': '21 / 10' }, specialDays: { '19 / 10': { name: 'يوم الصحة العالمي', color: 'blue' } } }, 
+            's2_week10': { name: 'الأسبوع العاشر', semester: 2, startDate: '24 / 10', endDate: '28 / 10', days: { 'الأحد': '24 / 10', 'الاثنين': '25 / 10', 'الثلاثاء': '26 / 10', 'الأربعاء': '27 / 10', 'الخميس': '28 / 10' } }, 
+            's2_week11': { name: 'الأسبوع الحادي عشر', semester: 2, startDate: '02 / 11', endDate: '06 / 11', days: { 'الأحد': '02 / 11', 'الاثنين': '03 / 11', 'الثلاثاء': '04 / 11', 'الأربعاء': '05 / 11', 'الخميس': '06 / 11' } }, 
+            's2_week12': { name: 'الأسبوع الثاني عشر', semester: 2, startDate: '09 / 11', endDate: '13 / 11', days: { 'الأحد': '09 / 11', 'الاثنين': '10 / 11', 'الثلاثاء': '11 / 11', 'الأربعاء': '12 / 11', 'الخميس': '13 / 11' } }, 
+            's2_week13': { name: 'الأسبوع الثالث عشر', semester: 2, startDate: '16 / 11', endDate: '20 / 11', days: { 'الأحد': '16 / 11', 'الاثنين': '17 / 11', 'الثلاثاء': '18 / 11', 'الأربعاء': '19 / 11', 'الخميس': '20 / 11' } }, 
+            's2_week14': { name: 'الأسبوع الرابع عشر', semester: 2, startDate: '23 / 11', endDate: '27 / 11', days: { 'الأحد': '23 / 11', 'الاثنين': '24 / 11', 'الثلاثاء': '25 / 11', 'الأربعاء': '26 / 11', 'الخميس': '27 / 11' } }, 
+            's2_week15': { name: 'الأسبوع الخامس عشر', semester: 2, startDate: '30 / 11', endDate: '04 / 12', days: { 'الأحد': '30 / 11', 'الاثنين': '01 / 12', 'الثلاثاء': '02 / 12', 'الأربعاء': '03 / 12', 'الخميس': '04 / 12' } }, 
+            's2_week16': { name: 'الأسبوع السادس عشر', semester: 2, startDate: '16 / 12', endDate: '18 / 12', days: { 'الثلاثاء': '16 / 12', 'الأربعاء': '17 / 12', 'الخميس': '18 / 12' } }, 
+            's2_week17': { name: 'الأسبوع السابع عشر', semester: 2, startDate: '21 / 12', endDate: '25 / 12', days: { 'الأحد': '21 / 12', 'الاثنين': '22 / 12', 'الثلاثاء': '23 / 12', 'الأربعاء': '24 / 12', 'الخميس': '25 / 12' } }, 
+            's2_week18': { name: 'الأسبوع الثامن عشر', semester: 2, startDate: '28 / 12', endDate: '03 / 01', days: { 'الأحد': '28 / 12', 'الاثنين': '29 / 12', 'الثلاثاء': '01 / 01', 'الأربعاء': '02 / 01', 'الخميس': '03 / 01' }, specialDays: { '01 / 01': { name: 'سنة هجرية 1448', color: 'green' } } }, 
+            's2_week19': { name: 'الأسبوع التاسع عشر', semester: 2, startDate: '06 / 01', endDate: '10 / 01', days: { 'الأحد': '06 / 01', 'الاثنين': '07 / 01', 'الثلاثاء': '08 / 01', 'الأربعاء': '09 / 01', 'الخميس': '10 / 01' } } 
         };
 
-        const weeksDataWestern = {
-            'week1': { name: 'الأسبوع الأول', startDate: '8 / 3', endDate: '12 / 3', days: { 'الأحد': '8 / 3', 'الاثنين': '9 / 3', 'الثلاثاء': '10 / 3', 'الأربعاء': '11 / 3', 'الخميس': '12 / 3' } },
-            'week2': { name: 'الأسبوع الثاني', startDate: '15 / 3', endDate: '19 / 3', days: { 'الأحد': '15 / 3', 'الاثنين': '16 / 3', 'الثلاثاء': '17 / 3', 'الأربعاء': '18 / 3', 'الخميس': '19 / 3' } },
-            'week3': { name: 'الأسبوع الثالث', startDate: '22 / 3', endDate: '26 / 3', days: { 'الأحد': '22 / 3', 'الاثنين': '23 / 3', 'الثلاثاء': '24 / 3', 'الأربعاء': '25 / 3', 'الخميس': '26 / 3' } },
-            'week4': { name: 'الأسبوع الرابع', startDate: '29 / 3', endDate: '3 / 4', days: { 'الأحد': '29 / 3', 'الاثنين': '30 / 3', 'الثلاثاء': '1 / 4', 'الأربعاء': '2 / 4', 'الخميس': '3 / 4' }, specialDays: { '1 / 4': { name: 'إجازة اليوم الوطني', color: 'green' } } },
-            'week5': { name: 'الأسبوع الخامس', startDate: '6 / 4', endDate: '10 / 4', days: { 'الأحد': '6 / 4', 'الاثنين': '7 / 4', 'الثلاثاء': '8 / 4', 'الأربعاء': '9 / 4', 'الخميس': '10 / 4' } },
-            'week6': { name: 'الأسبوع السادس', startDate: '13 / 4', endDate: '17 / 4', days: { 'الأحد': '13 / 4', 'الاثنين': '14 / 4', 'الثلاثاء': '15 / 4', 'الأربعاء': '16 / 4', 'الخميس': '17 / 4' } },
-            'week7': { name: 'الأسبوع السابع', startDate: '20 / 4', endDate: '24 / 4', days: { 'الأحد': '20 / 4', 'الاثنين': '21 / 4', 'الثلاثاء': '22 / 4', 'الأربعاء': '23 / 4', 'الخميس': '24 / 4' }, specialDays: { '20 / 4': { name: 'إجازة إضافية', color: 'red' } } },
-            'week8': { name: 'الأسبوع الثامن', startDate: '27 / 4', endDate: '1 / 5', days: { 'الأحد': '27 / 4', 'الاثنين': '28 / 4', 'الثلاثاء': '29 / 4', 'الأربعاء': '30 / 4', 'الخميس': '1 / 5' } },
-            'week9': { name: 'الأسبوع التاسع', startDate: '4 / 5', endDate: '8 / 5', days: { 'الأحد': '4 / 5', 'الاثنين': '5 / 5', 'الثلاثاء': '6 / 5', 'الأربعاء': '7 / 5', 'الخميس': '8 / 5' } },
-            'week10': { name: 'الأسبوع العاشر', startDate: '11 / 5', endDate: '15 / 5', days: { 'الأحد': '11 / 5', 'الاثنين': '12 / 5', 'الثلاثاء': '13 / 5', 'الأربعاء': '14 / 5', 'الخميس': '15 / 5' } },
-            'week11': { name: 'الأسبوع الحادي عشر', startDate: '18 / 5', endDate: '22 / 5', days: { 'الأحد': '18 / 5', 'الاثنين': '19 / 5', 'الثلاثاء': '20 / 5', 'الأربعاء': '21 / 5', 'الخميس': '22 / 5' } },
-            'week12': { name: 'الأسبوع الثاني عشر', startDate: '25 / 5', endDate: '29 / 5', days: { 'الأحد': '25 / 5', 'الاثنين': '26 / 5', 'الثلاثاء': '27 / 5', 'الأربعاء': '28 / 5', 'الخميس': '29 / 5' } },
-            'week13': { name: 'الأسبوع الثالث عشر', startDate: '9 / 6', endDate: '13 / 6', days: { 'الأحد': '9 / 6', 'الاثنين': '10 / 6', 'الثلاثاء': '11 / 6', 'الأربعاء': '12 / 6', 'الخميس': '13 / 6' } },
-            'week14': { name: 'الأسبوع الرابع عشر', startDate: '16 / 6', endDate: '20 / 6', days: { 'الأحد': '16 / 6', 'الاثنين': '17 / 6', 'الثلاثاء': '18 / 6', 'الأربعاء': '19 / 6', 'الخميس': '20 / 6' }, specialDays: { '20 / 6': { name: 'إجازة إضافية', color: 'red' } } },
-            'week15': { name: 'الأسبوع الخامس عشر', startDate: '23 / 6', endDate: '27 / 6', days: { 'الأحد': '23 / 6', 'الاثنين': '24 / 6', 'الثلاثاء': '25 / 6', 'الأربعاء': '26 / 6', 'الخميس': '27 / 6' }, specialDays: { '23 / 6': { name: 'إجازة إضافية', color: 'red' } } },
-            'week16': { name: 'الأسبوع السادس عشر', startDate: '1 / 7', endDate: '5 / 7', days: { 'الأحد': '1 / 7', 'الاثنين': '2 / 7', 'الثلاثاء': '3 / 7', 'الأربعاء': '4 / 7', 'الخميس': '5 / 7' } },
-            'week17': { name: 'الأسبوع السابع عشر', startDate: '8 / 7', endDate: '12 / 7', days: { 'الأحد': '8 / 7', 'الاثنين': '9 / 7', 'الثلاثاء': '10 / 7', 'الأربعاء': '11 / 7', 'الخميس': '12 / 7' } },
+        // بيانات الفصلين (غربية)
+        const weeksS1_Western = { 
+            'week1': { name: 'الأسبوع الأول', semester: 1, startDate: '8 / 3', endDate: '12 / 3', days: { 'الأحد': '8 / 3', 'الاثنين': '9 / 3', 'الثلاثاء': '10 / 3', 'الأربعاء': '11 / 3', 'الخميس': '12 / 3' } }, 
+            'week2': { name: 'الأسبوع الثاني', semester: 1, startDate: '15 / 3', endDate: '19 / 3', days: { 'الأحد': '15 / 3', 'الاثنين': '16 / 3', 'الثلاثاء': '17 / 3', 'الأربعاء': '18 / 3', 'الخميس': '19 / 3' } }, 
+            'week3': { name: 'الأسبوع الثالث', semester: 1, startDate: '22 / 3', endDate: '26 / 3', days: { 'الأحد': '22 / 3', 'الاثنين': '23 / 3', 'الثلاثاء': '24 / 3', 'الأربعاء': '25 / 3', 'الخميس': '26 / 3' } }, 
+            'week4': { name: 'الأسبوع الرابع', semester: 1, startDate: '29 / 3', endDate: '3 / 4', days: { 'الأحد': '29 / 3', 'الاثنين': '30 / 3', 'الثلاثاء': '1 / 4', 'الأربعاء': '2 / 4', 'الخميس': '3 / 4' }, specialDays: { '1 / 4': { name: 'إجازة اليوم الوطني', color: 'green' } } }, 
+            'week5': { name: 'الأسبوع الخامس', semester: 1, startDate: '6 / 4', endDate: '10 / 4', days: { 'الأحد': '6 / 4', 'الاثنين': '7 / 4', 'الثلاثاء': '8 / 4', 'الأربعاء': '9 / 4', 'الخميس': '10 / 4' } }, 
+            'week6': { name: 'الأسبوع السادس', semester: 1, startDate: '13 / 4', endDate: '17 / 4', days: { 'الأحد': '13 / 4', 'الاثنين': '14 / 4', 'الثلاثاء': '15 / 4', 'الأربعاء': '16 / 4', 'الخميس': '17 / 4' } }, 
+            'week7': { name: 'الأسبوع السابع', semester: 1, startDate: '20 / 4', endDate: '24 / 4', days: { 'الأحد': '20 / 4', 'الاثنين': '21 / 4', 'الثلاثاء': '22 / 4', 'الأربعاء': '23 / 4', 'الخميس': '24 / 4' }, specialDays: { '20 / 4': { name: 'إجازة إضافية', color: 'red' } } }, 
+            'week8': { name: 'الأسبوع الثامن', semester: 1, startDate: '27 / 4', endDate: '1 / 5', days: { 'الأحد': '27 / 4', 'الاثنين': '28 / 4', 'الثلاثاء': '29 / 4', 'الأربعاء': '30 / 4', 'الخميس': '1 / 5' } }, 
+            'week9': { name: 'الأسبوع التاسع', semester: 1, startDate: '4 / 5', endDate: '8 / 5', days: { 'الأحد': '4 / 5', 'الاثنين': '5 / 5', 'الثلاثاء': '6 / 5', 'الأربعاء': '7 / 5', 'الخميس': '8 / 5' } }, 
+            'week10': { name: 'الأسبوع العاشر', semester: 1, startDate: '11 / 5', endDate: '15 / 5', days: { 'الأحد': '11 / 5', 'الاثنين': '12 / 5', 'الثلاثاء': '13 / 5', 'الأربعاء': '14 / 5', 'الخميس': '15 / 5' } }, 
+            'week11': { name: 'الأسبوع الحادي عشر', semester: 1, startDate: '18 / 5', endDate: '22 / 5', days: { 'الأحد': '18 / 5', 'الاثنين': '19 / 5', 'الثلاثاء': '20 / 5', 'الأربعاء': '21 / 5', 'الخميس': '22 / 5' } }, 
+            'week12': { name: 'الأسبوع الثاني عشر', semester: 1, startDate: '25 / 5', endDate: '29 / 5', days: { 'الأحد': '25 / 5', 'الاثنين': '26 / 5', 'الثلاثاء': '27 / 5', 'الأربعاء': '28 / 5', 'الخميس': '29 / 5' } }, 
+            'week13': { name: 'الأسبوع الثالث عشر', semester: 1, startDate: '9 / 6', endDate: '13 / 6', days: { 'الأحد': '9 / 6', 'الاثنين': '10 / 6', 'الثلاثاء': '11 / 6', 'الأربعاء': '12 / 6', 'الخميس': '13 / 6' } }, 
+            'week14': { name: 'الأسبوع الرابع عشر', semester: 1, startDate: '16 / 6', endDate: '20 / 6', days: { 'الأحد': '16 / 6', 'الاثنين': '17 / 6', 'الثلاثاء': '18 / 6', 'الأربعاء': '19 / 6', 'الخميس': '20 / 6' }, specialDays: { '20 / 6': { name: 'إجازة إضافية', color: 'red' } } }, 
+            'week15': { name: 'الأسبوع الخامس عشر', semester: 1, startDate: '23 / 6', endDate: '27 / 6', days: { 'الأحد': '23 / 6', 'الاثنين': '24 / 6', 'الثلاثاء': '25 / 6', 'الأربعاء': '26 / 6', 'الخميس': '27 / 6' }, specialDays: { '23 / 6': { name: 'إجازة إضافية', color: 'red' } } }, 
+            'week16': { name: 'الأسبوع السادس عشر', semester: 1, startDate: '1 / 7', endDate: '5 / 7', days: { 'الأحد': '1 / 7', 'الاثنين': '2 / 7', 'الثلاثاء': '3 / 7', 'الأربعاء': '4 / 7', 'الخميس': '5 / 7' } }, 
+            'week17': { name: 'الأسبوع السابع عشر', semester: 1, startDate: '8 / 7', endDate: '12 / 7', days: { 'الأحد': '8 / 7', 'الاثنين': '9 / 7', 'الثلاثاء': '10 / 7', 'الأربعاء': '11 / 7', 'الخميس': '12 / 7' } }
         };
-        
-        let weeksData = weeksDataDefault;
+        const weeksS2_Western_Fixed = { 
+            's2_week1': { name: 'الأسبوع الأول', semester: 2, startDate: '29 / 07', endDate: '03 / 08', days: { 'الأحد': '29 / 07', 'الاثنين': '30 / 07', 'الثلاثاء': '01 / 08', 'الأربعاء': '02 / 08', 'الخميس': '03 / 08' } }, 
+            's2_week2': { name: 'الأسبوع الثاني', semester: 2, startDate: '06 / 08', endDate: '10 / 08', days: { 'الأحد': '06 / 08', 'الاثنين': '07 / 08', 'الثلاثاء': '08 / 08', 'الأربعاء': '09 / 08', 'الخميس': '10 / 08' } }, 
+            's2_week3': { name: 'الأسبوع الثالث', semester: 2, startDate: '13 / 08', endDate: '17 / 08', days: { 'الأحد': '13 / 08', 'الاثنين': '14 / 08', 'الثلاثاء': '15 / 08', 'الأربعاء': '16 / 08', 'الخميس': '17 / 08' } }, 
+            's2_week4': { name: 'الأسبوع الرابع', semester: 2, startDate: '20 / 08', endDate: '24 / 08', days: { 'الأحد': '20 / 08', 'الاثنين': '21 / 08', 'الثلاثاء': '22 / 08', 'الأربعاء': '23 / 08', 'الخميس': '24 / 08' } }, 
+            's2_week5': { name: 'الأسبوع الخامس', semester: 2, startDate: '27 / 08', endDate: '02 / 09', days: { 'الأحد': '27 / 08', 'الاثنين': '28 / 08', 'الثلاثاء': '29 / 08', 'الأربعاء': '01 / 09', 'الخميس': '02 / 09' }, specialDays: { '01 / 09': { name: 'غرة رمضان', color: 'green' } } }, 
+            's2_week6': { name: 'الأسبوع السادس', semester: 2, startDate: '05 / 09', endDate: '09 / 09', days: { 'الأحد': '05 / 09', 'الاثنين': '06 / 09', 'الثلاثاء': '07 / 09', 'الأربعاء': '08 / 09', 'الخميس': '09 / 09' }, specialDays: { '05 / 09': { name: 'إجازة يوم التأسيس', color: 'green' } } }, 
+            's2_week7': { name: 'الأسبوع السابع', semester: 2, startDate: '12 / 09', endDate: '16 / 09', days: { 'الأحد': '12 / 09', 'الاثنين': '13 / 09', 'الثلاثاء': '14 / 09', 'الأربعاء': '15 / 09', 'الخميس': '16 / 09' } }, 
+            's2_week8': { name: 'الأسبوع الثامن', semester: 2, startDate: '10 / 10', endDate: '14 / 10', days: { 'الأحد': '10 / 10', 'الاثنين': '11 / 10', 'الثلاثاء': '12 / 10', 'الأربعاء': '13 / 10', 'الخميس': '14 / 10' } }, 
+            's2_week9': { name: 'الأسبوع التاسع', semester: 2, startDate: '17 / 10', endDate: '21 / 10', days: { 'الأحد': '17 / 10', 'الاثنين': '18 / 10', 'الثلاثاء': '19 / 10', 'الأربعاء': '20 / 10', 'الخميس': '21 / 10' }, specialDays: { '19 / 10': { name: 'يوم الصحة العالمي', color: 'blue' } } }, 
+            's2_week10': { name: 'الأسبوع العاشر', semester: 2, startDate: '24 / 10', endDate: '28 / 10', days: { 'الأحد': '24 / 10', 'الاثنين': '25 / 10', 'الثلاثاء': '26 / 10', 'الأربعاء': '27 / 10', 'الخميس': '28 / 10' } }, 
+            's2_week11': { name: 'الأسبوع الحادي عشر', semester: 2, startDate: '02 / 11', endDate: '06 / 11', days: { 'الأحد': '02 / 11', 'الاثنين': '03 / 11', 'الثلاثاء': '04 / 11', 'الأربعاء': '05 / 11', 'الخميس': '06 / 11' } }, 
+            's2_week12': { name: 'الأسبوع الثاني عشر', semester: 2, startDate: '09 / 11', endDate: '13 / 11', days: { 'الأحد': '09 / 11', 'الاثنين': '10 / 11', 'الثلاثاء': '11 / 11', 'الأربعاء': '12 / 11', 'الخميس': '13 / 11' } }, 
+            's2_week13': { name: 'الأسبوع الثالث عشر', semester: 2, startDate: '16 / 11', endDate: '20 / 11', days: { 'الأحد': '16 / 11', 'الاثنين': '17 / 11', 'الثلاثاء': '18 / 11', 'الأربعاء': '19 / 11', 'الخميس': '20 / 11' } }, 
+            's2_week14': { name: 'الأسبوع الرابع عشر', semester: 2, startDate: '23 / 11', endDate: '27 / 11', days: { 'الأحد': '23 / 11', 'الاثنين': '24 / 11', 'الثلاثاء': '25 / 11', 'الأربعاء': '26 / 11', 'الخميس': '27 / 11' } }, 
+            's2_week15': { name: 'الأسبوع الخامس عشر', semester: 2, startDate: '16 / 12', endDate: '18 / 12', days: { 'الثلاثاء': '16 / 12', 'الأربعاء': '17 / 12', 'الخميس': '18 / 12' } }, 
+            's2_week16': { name: 'الأسبوع السادس عشر', semester: 2, startDate: '21 / 12', endDate: '25 / 12', days: { 'الأحد': '21 / 12', 'الاثنين': '22 / 12', 'الثلاثاء': '23 / 12', 'الأربعاء': '24 / 12', 'الخميس': '25 / 12' } }, 
+            's2_week17': { name: 'الأسبوع السابع عشر', semester: 2, startDate: '28 / 12', endDate: '03 / 01', days: { 'الأحد': '28 / 12', 'الاثنين': '29 / 12', 'الثلاثاء': '01 / 01', 'الأربعاء': '02 / 01', 'الخميس': '03 / 01' }, specialDays: { '01 / 01': { name: 'سنة هجرية 1448', color: 'green' } } }, 
+            's2_week18': { name: 'الأسبوع الثامن عشر', semester: 2, startDate: '06 / 01', endDate: '10 / 01', days: { 'الأحد': '06 / 01', 'الاثنين': '07 / 01', 'الثلاثاء': '08 / 01', 'الأربعاء': '09 / 01', 'الخميس': '10 / 01' } },
+            's2_week19': { name: 'الأسبوع التاسع عشر', semester: 2, startDate: '13 / 01', endDate: '17 / 01', days: { 'الأحد': '13 / 01', 'الاثنين': '14 / 01', 'الثلاثاء': '15 / 01', 'الأربعاء': '16 / 01', 'الخميس': '17 / 01' } } 
+        };
 
-        const activitiesData = [
-            { id: 'citizenship', title: 'المواطنة والحياة', color: '#981E47', icon: 'https://k.top4top.io/p_3472ccl2l0.gif', programs: [
+        let weeksData = { ...weeksS1_Default, ...weeksS2_Default_Fixed };
+
+        const activitiesData =[
+            { id: 'citizenship', title: 'المواطنة والحياة', color: '#981E47', icon: 'https://k.top4top.io/p_3472ccl2l0.gif', programs:[
                 { name: 'التطوع الطلابي', sessions: { p1:4, p2:4, p3:4, p4:6, p5:6, p6:6, m1:5, m2:5, m3:5, h2:5, h3:5 } },
                 { name: 'مهارات طموحة', sessions: { p1:6, p2:6, p3:6, p4:4, p5:4, p6:4, m1:3, m2:3, m3:3, h2:2, h3:2 } },
                 { name: 'قيمنا حياة', sessions: { p4:12, p5:12, p6:12, m1:12, m2:12, m3:12, h2:12, h3:12 } },
             ]},
-            { id: 'culture', title: 'الثقافة والفنون', color: '#FF7145', icon: 'https://a.top4top.io/p_3472miame2.gif', programs: [
+            { id: 'culture', title: 'الثقافة والفنون', color: '#FF7145', icon: 'https://a.top4top.io/p_3472miame2.gif', programs:[
                  { name: 'الفن السابع (السينما)', sessions: { p1:8, p2:8, p3:8, p4:8, p5:8, p6:8, m1:8, m2:8, m3:8, h2:8, h3:8 } },
                  { name: 'حدائق الفن', sessions: { p1:6, p2:6, p3:6, p4:6, p5:6, p6:6, m1:6, m2:6, m3:6, h2:6, h3:6 } },
                  { name: 'الأزياء السعودية', sessions: { p1:4, p2:4, p3:4, p4:4, p5:4, p6:4, m1:6, m2:6, m3:6, h2:6, h3:6 } },
@@ -344,7 +368,7 @@
                  { name: 'البرنامج الموسيقي (الأناشيد الوطنية)', sessions: { p1:8, p2:8, p3:8, p4:8, p5:8, p6:8, m1:8, m2:8, m3:8, h2:8, h3:8 } },
                  { name: 'حكايات مرئية', sessions: { p1:6, p2:6, p3:6, p4:6, p5:6, p6:6, m1:11, m2:11, m3:11, h2:11, h3:11 } },
             ]},
-            { id: 'sports', title: 'الرياضة والصحة', color: '#2FB7BD', icon: 'https://c.top4top.io/p_3472urwbn4.gif', programs: [
+            { id: 'sports', title: 'الرياضة والصحة', color: '#2FB7BD', icon: 'https://c.top4top.io/p_3472urwbn4.gif', programs:[
                 { name: 'مهارات الرياضات الجماعية', sessions: { p1:6, p2:6, p3:6, p4:8, p5:8, p6:8, m1:8, m2:8, m3:8, h2:8, h3:8 } },
                 { name: 'مهارات الرياضات الفردية', sessions: { p1:8, p2:8, p3:8, p4:8, p5:8, p6:8, m1:8, m2:8, m3:8, h2:6, h3:6 } },
                 { name: 'مهارات رياضات الدفاع عن النفس', sessions: { p1:8, p2:8, p3:8, p4:8, p5:8, p6:8, m1:8, m2:8, m3:8, h2:6, h3:6 } },
@@ -352,7 +376,7 @@
                 { name: 'مهارات الرياضات الذهنية', sessions: { p1:6, p2:6, p3:6, p4:8, p5:8, p6:8, m1:8, m2:8, m3:8, h2:8, h3:8 } },
                 { name: 'مهارات الأولمبياد الرياضي', sessions: { p1:6, p2:6, p3:6, p4:8, p5:8, p6:8, m1:8, m2:8, m3:8, h2:8, h3:8 } },
             ]},
-            { id: 'science', title: 'العلوم والتقنية', color: '#24344D', icon: 'https://l.top4top.io/p_3472daolv1.gif', programs: [
+            { id: 'science', title: 'العلوم والتقنية', color: '#24344D', icon: 'https://l.top4top.io/p_3472daolv1.gif', programs:[
                 { name: 'برنامج تطبيقات STEM', sessions: { p1:3, p2:3, p3:3, p4:5, p5:5, p6:5, m1:7, m2:7, m3:7, h2:7, h3:7 } },
                 { name: 'برنامج التصاميم العلمية التقنية', sessions: { p1:2, p2:2, p3:2, p4:5, p5:5, p6:5, m1:7, m2:7, m3:7, h2:7, h3:7 } },
                 { name: 'برنامج رواد فضاء المستقبل', sessions: { p1:3, p2:3, p3:3, p4:5, p5:5, p6:5, m1:7, m2:7, m3:7, h2:9, h3:9 } },
@@ -360,7 +384,7 @@
                 { name: 'برنامج الذكاء الاصطناعي', sessions: { p1:10, p2:10, p3:10, p4:10, p5:10, p6:10, m1:10, m2:10, m3:10, h2:10, h3:10 } },
                 { name: 'برنامج تحدي إنترنت الأشياء', sessions: { p1:3, p2:3, p3:3, p4:4, p5:4, p6:4, m1:7, m2:7, m3:7, h2:9, h3:9 } },
             ]},
-            { id: 'events', title: 'الأيام والمناسبات', color: '#583C71', icon: 'https://e.top4top.io/p_34729xucx5.gif', programs: [
+            { id: 'events', title: 'الأيام والمناسبات', color: '#583C71', icon: 'https://e.top4top.io/p_34729xucx5.gif', programs:[
                 { name: 'اليوم الوطني', date: 'يوافق ١ / ٤ / ١٤٤٧ هـ', sessions: { p1:4, p2:4, p3:4, p4:4, p5:4, p6:4, m1:4, m2:4, m3:4, h2:4, h3:4 } },
                 { name: 'يوم التسامح العالمي', date: 'يوافق ٢٥ / ٥ / ١٤٤٧ هـ', sessions: { p1:2, p2:2, p3:2, p4:2, p5:2, p6:2, m1:1, m2:1, m3:1, h2:1, h3:1 } },
                 { name: 'اليوم العالمي للطفل', date: 'يوافق ٢٩ / ٥ / ١٤٤٧ هـ', sessions: { p1:2, p2:2, p3:2, p4:2, p5:2, p6:2 } },
@@ -372,7 +396,7 @@
                 { name: 'يوم السعودية الخضراء', date: 'يوافق ٨ / ١٠ / ١٤٤٧ هـ', sessions: { p1:3, p2:3, p3:3, p4:3, p5:3, p6:3, m1:2, m2:2, m3:2, h2:2, h3:2 } },
                 { name: 'يوم الصحة العالمي', date: 'يوافق ١٩ / ١٠ / ١٤٤٧ هـ', sessions: { p1:2, p2:2, p3:2, p4:2, p5:2, p6:2, m1:2, m2:2, m3:2, h2:2, h3:2 } },
             ]},
-            { id: 'scouting', title: 'النشاط الكشفي', color: '#018083', icon: 'https://b.top4top.io/p_3472h0ngk3.gif', programs: [
+            { id: 'scouting', title: 'النشاط الكشفي', color: '#018083', icon: 'https://b.top4top.io/p_3472h0ngk3.gif', programs:[
                 { name: 'خيمتي الجميلة', sessions: { p1:3, p2:3, p3:3 } },
                 { name: 'خشبة وحبل', sessions: { p4:12, p5:12, p6:12 } },
                 { name: 'الملاحة على اليابس', sessions: { m1:3, m2:3, m3:3 } },
@@ -410,7 +434,8 @@
             const dateParts = datePart.split('/');
             if (dateParts.length < 2) return 9999;
             const day = parseInt(dateParts[0], 10);
-            const month = parseInt(dateParts[1], 10);
+            let month = parseInt(dateParts[1], 10);
+            if (month < 3) month += 12; // لضمان الترتيب الصحيح عبر السنة الهجرية
             return month * 100 + day;
         }
 
@@ -440,14 +465,11 @@
 
             let textContent = '';
 
-            if (firstWeekInfo && lastWeekInfo && firstWeekInfo.name === lastWeekInfo.name) {
-                // All dates fall within the same week
+            if (firstWeekInfo && lastWeekInfo && firstWeekInfo.name === lastWeekInfo.name && firstWeekInfo.semester === lastWeekInfo.semester) {
                 textContent = `${firstWeekInfo.name}: ${sortedDates.join(' | ')}`;
             } else if (sortedDates.length > 1 && firstWeekInfo && lastWeekInfo) {
-                // Dates span multiple weeks
                 textContent = `من ${firstWeekInfo.name} (${firstDateStr}) إلى ${lastWeekInfo.name} (${lastDateStr})`;
             } else {
-                // Fallback (e.g., single date)
                 textContent = sortedDates.join(' | ');
             }
 
@@ -457,21 +479,20 @@
             };
         }
 
-
         function createGradeSelectionUI() {
             const container = document.getElementById('grade-selection-container');
             container.innerHTML = `
                 <button onclick="handleGradeSelection('all')" id="btn-all" class="w-full max-w-sm flex items-center justify-center gap-2 px-4 py-2 rounded-full font-medium transition-all duration-300">🏫 الكل</button>
             `;
 
-            const stages = [
-                { title: 'الابتدائية', groups: [
+            const stages =[
+                { title: 'الابتدائية', groups:[
                     { label: 'الكل', key: 'primary_all' }, 
                     { label: 'الأولية', key: 'primary_lower' },
                     { label: 'العليا', key: 'primary_upper' }
-                ], individuals: ['p1', 'p2', 'p3', 'p4', 'p5', 'p6'] },
+                ], individuals:['p1', 'p2', 'p3', 'p4', 'p5', 'p6'] },
                 { title: 'المتوسطة', groups: [{ label: 'الكل', key: 'middle_all' }], individuals: ['m1', 'm2', 'm3'] },
-                { title: 'الثانوية', groups: [{ label: 'الكل', key: 'high_all' }], individuals: ['h2', 'h3'] }
+                { title: 'الثانوية', groups: [{ label: 'الكل', key: 'high_all' }], individuals:['h2', 'h3'] }
             ];
 
             stages.forEach(stage => {
@@ -584,8 +605,7 @@
             const effectiveGrades = getEffectiveIndividualGrades().filter(grade => sessions[grade] > 0);
 
             let newHTML = '';
-            
-            let teacherGroupsToDisplay = [];
+            let teacherGroupsToDisplay =[];
             const isAllSelected = selectedGrades.includes('all');
             
             if (isAllSelected) {
@@ -625,12 +645,12 @@
             container.innerHTML = '';
 
             const itemsToDisplay = selectedGrades.includes('all') 
-                ? ['primary_lower', 'primary_upper', 'middle_all', 'high_all'] 
+                ?['primary_lower', 'primary_upper', 'middle_all', 'high_all'] 
                 : selectedGrades;
 
             let newHTML = '';
             itemsToDisplay.forEach(key => {
-                const individualGradeKeys = gradeGroups[key] || [key];
+                const individualGradeKeys = gradeGroups[key] ||[key];
                 let sessionCount = 0;
                 let label = gradeNames[key];
 
@@ -667,7 +687,7 @@
             if (selectedGrades.includes('all')) {
                 return [...allGradeKeys];
             }
-            let individuals = [];
+            let individuals =[];
             selectedGrades.forEach(item => {
                 individuals.push(...(gradeGroups[item] || [item]));
             });
@@ -679,11 +699,10 @@
                 selectedGrades = ['all'];
             } else {
                 let newSelection = selectedGrades.includes('all') ? [] : [...selectedGrades];
-                
                 const isAdding = !newSelection.includes(key);
 
                 if (isAdding) {
-                    let conflicts = [];
+                    let conflicts =[];
                     if (gradeGroups[key]) {
                         conflicts.push(...gradeGroups[key]);
                     }
@@ -706,7 +725,6 @@
             updateAllDateSelectors();
             saveState();
         }
-
 
         function updateButtonStyles() {
             const effectiveSelection = getEffectiveIndividualGrades();
@@ -751,10 +769,11 @@
             }
         }
 
-
         function selectRegion(region) {
             currentRegion = region;
-            weeksData = region === 'western' ? weeksDataWestern : weeksDataDefault;
+            const s1 = region === 'western' ? weeksS1_Western : weeksS1_Default;
+            const s2 = region === 'western' ? weeksS2_Western_Fixed : weeksS2_Default_Fixed;
+            weeksData = { ...s1, ...s2 };
 
             const btnWestern = document.getElementById('btn-western-region');
             const btnOther = document.getElementById('btn-other-region');
@@ -792,9 +811,9 @@
                 return;
             }
             
-            const titles = [];
-            
+            const titles =[];
             let primTitleDone = false;
+            
             if (selectedGrades.includes('primary_all')) { titles.push('للمرحلة الابتدائية'); primTitleDone = true; }
             else if (selectedGrades.includes('primary_lower') && selectedGrades.includes('primary_upper')) { titles.push('للمرحلة الابتدائية'); primTitleDone = true; }
             
@@ -835,7 +854,7 @@
         }
         
         function clearAllFilters() {
-            selectedGrades = [];
+            selectedGrades =[];
             updateButtonStyles();
             updateTitle();
             updateAllDateSelectors();
@@ -854,17 +873,16 @@
             }
         }
 
+        // --- المودال الخاص باختيار التواريخ مع التبويبات ---
         function openDatePicker(programId, key) {
             activeSelection = { programId, key };
             const row = document.querySelector(`tr[data-program-id="${programId}"]`);
             const programName = row.dataset.programName;
             const sessions = JSON.parse(row.dataset.sessions);
-            
-            const individualGradeKeys = gradeGroups[key] || [key];
+            const individualGradeKeys = gradeGroups[key] ||[key];
             
             let totalRequiredSessions = 0;
             let label = gradeNames[key];
-            
             totalRequiredSessions = Math.max(0, ...individualGradeKeys.map(g => sessions[g] || 0));
             
             if (key === 'primary_all') label = 'المرحلة الابتدائية';
@@ -876,17 +894,38 @@
             document.getElementById('modal-title').textContent = `${programName} - ${label}`;
             
             const displayDiv = row.querySelector(`.grade-date-selector[data-grade-key="${key}"] .dates-display`);
-            tempSelectedDates = displayDiv.dataset.dates ? JSON.parse(displayDiv.dataset.dates) : [];
+            tempSelectedDates = displayDiv.dataset.dates ? JSON.parse(displayDiv.dataset.dates) :[];
 
             updateDatePickerCounter(totalRequiredSessions);
+            currentModalSemester = 1;
+            renderSemesterTab(1, totalRequiredSessions);
 
+            document.getElementById('date-picker-modal').style.display = 'flex';
+        }
+
+        function switchSemesterTab(semesterNum) {
+            if (!activeSelection) return;
+            const { programId, key } = activeSelection;
+            const row = document.querySelector(`tr[data-program-id="${programId}"]`);
+            const sessions = JSON.parse(row.dataset.sessions);
+            const individualGradeKeys = gradeGroups[key] || [key];
+            const maxSessions = Math.max(0, ...individualGradeKeys.map(g => sessions[g] || 0));
+            
+            currentModalSemester = semesterNum;
+            renderSemesterTab(semesterNum, maxSessions);
+        }
+
+        function renderSemesterTab(semesterNum, maxSessions) {
+            document.getElementById('tab-sem-1').classList.toggle('active', semesterNum === 1);
+            document.getElementById('tab-sem-2').classList.toggle('active', semesterNum === 2);
+            
             const container = document.getElementById('modal-weeks-container');
             container.innerHTML = '';
 
-            Object.entries(weeksData).forEach(([weekKey, weekData]) => {
+            Object.entries(weeksData).filter(([k, data]) => data.semester === semesterNum).forEach(([weekKey, weekData]) => {
                 const weekDiv = document.createElement('div');
                 weekDiv.className = 'p-2 border rounded-md';
-                weekDiv.innerHTML = `<p class="font-semibold text-center mb-2">${weekData.name} (${weekData.startDate} - ${weekData.endDate})</p>`;
+                weekDiv.innerHTML = `<p class="font-semibold text-center mb-2 bg-gray-100 p-1 rounded text-sm">${weekData.name} (${weekData.startDate} - ${weekData.endDate})</p>`;
                 
                 const weekGrid = document.createElement('div');
                 weekGrid.className = 'week-grid grid grid-cols-5 gap-2';
@@ -894,16 +933,16 @@
                 Object.entries(weekData.days).forEach(([dayName, dayDate]) => {
                     const dayButton = document.createElement('button');
                     const fullDate = `${dayName} ${dayDate}`;
-                    dayButton.className = 'day p-2 border rounded-md text-sm';
+                    dayButton.className = 'day p-2 border rounded-md text-sm flex flex-col items-center justify-center gap-1';
                     dayButton.dataset.date = fullDate;
                     
-                    let buttonText = `${dayName}<br>${dayDate}`;
+                    let buttonText = `<span>${dayName}</span><span class="font-bold">${dayDate}</span>`;
                     if (weekData.specialDays && weekData.specialDays[dayDate]) {
                         dayButton.classList.add('disabled');
                         dayButton.disabled = true;
-                        buttonText += `<br><span class="text-xs">${weekData.specialDays[dayDate].name}</span>`;
+                        buttonText += `<span class="text-[10px] text-${weekData.specialDays[dayDate].color || 'red'}-600 leading-tight font-bold">${weekData.specialDays[dayDate].name}</span>`;
                     } else {
-                        dayButton.onclick = () => toggleDateSelection(dayButton, totalRequiredSessions);
+                        dayButton.onclick = () => toggleDateSelection(dayButton, maxSessions);
                     }
                     
                     if (tempSelectedDates.includes(fullDate)) {
@@ -916,8 +955,6 @@
                 weekDiv.appendChild(weekGrid);
                 container.appendChild(weekDiv);
             });
-
-            document.getElementById('date-picker-modal').style.display = 'flex';
         }
 
         function toggleDateSelection(button, totalMaxDates) {
@@ -948,7 +985,7 @@
         function closeDatePicker() {
             document.getElementById('date-picker-modal').style.display = 'none';
             activeSelection = null;
-            tempSelectedDates = [];
+            tempSelectedDates =[];
         }
 
         function saveDates() {
@@ -965,6 +1002,7 @@
             closeDatePicker();
         }
         
+        // --- دالة الطباعة (المحدثة لمنع الصفحات الفارغة) ---
         function printSchedule() {
             if (isPrinting) {
                 alert('عملية طباعة جارية بالفعل. يرجى الانتظار.');
@@ -1018,7 +1056,7 @@
             const programsByField = {};
             plannedPrograms.forEach(p => {
                 if (!programsByField[p.field]) {
-                    programsByField[p.field] = [];
+                    programsByField[p.field] =[];
                 }
                 programsByField[p.field].push(p);
             });
@@ -1034,11 +1072,11 @@
 
                 programsByField[fieldName].forEach(p => {
                     const teacherEntries = [];
-                    const dateEntries = [];
+                    const dateEntries =[];
                     const sessionDetailsParts = [];
 
                     const displayKeys = selectedGrades.includes('all') 
-                        ? ['primary_lower', 'primary_upper', 'middle_all', 'high_all'] 
+                        ?['primary_lower', 'primary_upper', 'middle_all', 'high_all'] 
                         : [...selectedGrades];
 
                     displayKeys.forEach(key => {
@@ -1139,12 +1177,12 @@
                     <title>خطة النشاط الطلابي لـ ${schoolName}</title>
                     <style>
                         @import url('https://fonts.googleapis.com/css2?family=Cairo:wght@400;700&display=swap');
-                        * { -webkit-print-color-adjust: exact !important; print-color-adjust: exact !important; }
-                        @page { size: A4 landscape; margin: 10mm 5mm; }
-                        html, body { margin: 0; padding: 0; }
+                        * { -webkit-print-color-adjust: exact !important; print-color-adjust: exact !important; box-sizing: border-box; }
+                        @page { size: A4 landscape; margin: 8mm; }
+                        html, body { margin: 0; padding: 0; width: 100%; height: auto !important; background: white; }
                         body { font-family: 'Cairo', sans-serif; font-size: ${printFontSize}; }
                         
-                        .page-container { display: flex; flex-direction: column; min-height: 98vh; }
+                        .page-container { display: flex; flex-direction: column; width: 100%; }
                         .print-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px; flex-shrink: 0; }
                         .print-header .right-side { display: flex; align-items: center; gap: 8px; }
                         .print-header img { height: 40px; }
@@ -1153,8 +1191,11 @@
                         .print-header h1 { color: #00A383; margin: 0; font-size: 1.8em; }
                         .print-header h2 { font-size: 1.6em; font-weight: bold; color: #0093B5; margin: 1px 0; }
                         .print-header p.subtitle { color: #555; margin-top: 2px; font-size: 1.1em; }
-                        .print-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; flex-grow: 1; align-content: start; }
-                        .print-column { page-break-inside: avoid; break-inside: avoid; }
+                        
+                        /* التعديل الجذري لحل الهوامش والصفحات الفارغة */
+                        .print-grid { display: flex; flex-wrap: wrap; justify-content: space-between; gap: 8px 0; width: 100%; align-content: flex-start; }
+                        .print-column { width: 49%; page-break-inside: avoid; break-inside: avoid; margin-bottom: 10px; border: 1px solid transparent; }
+                        
                         .print-column h3 { font-size: 1.2em; padding: 3px 5px; border-radius: 4px 4px 0 0; margin: 0; color: white; }
                         table { width: 100%; border-collapse: collapse; font-size: 1em; table-layout: fixed; }
                         th, td { border: 1px solid #ccc; padding: 3px; text-align: right; vertical-align: top; word-wrap: break-word; font-weight: normal; }
@@ -1167,7 +1208,8 @@
                         table th:nth-child(4), table td:nth-child(4),
                         table th:nth-child(5), table td:nth-child(5),
                         table th:nth-child(6), table td:nth-child(6) { width: 6%; text-align: center; }
-                        .print-signatures { display: flex; justify-content: space-around; margin-top: auto; padding-top: 15px; font-size: 1.1em; font-weight: bold; flex-shrink: 0; page-break-inside: avoid;}
+                        
+                        .print-signatures { display: flex; justify-content: space-around; width: 100%; margin-top: 20px; padding-top: 15px; font-size: 1.1em; font-weight: bold; page-break-inside: avoid;}
                         .signature-box { text-align: center; }
                     </style>
                 </head>
@@ -1343,7 +1385,7 @@
 
             selectRegion(state.currentRegion || 'other');
             
-            selectedGrades = state.selectedGrades || [];
+            selectedGrades = state.selectedGrades ||[];
             
             updateButtonStyles();
             updateTitle();
@@ -1362,7 +1404,7 @@
                             });
                         }
                         
-                        if (data.datesByGrade) {
+                    if (data.datesByGrade) {
                             row.querySelectorAll('.grade-date-selector').forEach(selector => {
                                 const key = selector.dataset.gradeKey;
                                 let datesToShow = data.datesByGrade[key] || data.datesByGrade[(gradeGroups[key] || [key])[0]] || [];
