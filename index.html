@@ -21,23 +21,51 @@
             color: transparent;
             padding-bottom: 5px;
         }
+        .plan-card {
+            transition: all 0.5s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+        .plan-card:hover {
+            transform: translateY(-8px);
+            box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.25);
+        }
+        /* Container for images to ensure full visibility */
+        .image-preview-container {
+            width: 100%;
+            height: 380px;
+            background-color: #f8fafc;
+            border-radius: 0.75rem;
+            overflow: hidden;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border: 1px solid #e2e8f0;
+        }
+        .image-preview-container img {
+            max-width: 100%;
+            max-height: 100%;
+            object-fit: contain;
+            transition: transform 0.7s ease;
+        }
+        .plan-card:hover .image-preview-container img {
+            transform: scale(1.05);
+        }
     </style>
 </head>
 <body class="flex flex-col min-h-screen">
 
     <!-- Modal: Pledge -->
-    <div id="pledge-modal" class="hidden fixed inset-0 bg-gray-900 bg-opacity-75 flex items-center justify-center z-50 transition-opacity duration-300">
+    <div id="pledge-modal" class="hidden fixed inset-0 bg-gray-900 bg-opacity-80 flex items-center justify-center z-50 p-4 transition-opacity duration-300">
         <div id="pledge-content" class="bg-white rounded-2xl shadow-2xl p-8 max-w-md w-full text-center transform scale-95 opacity-0 transition-all duration-300">
-            <div class="flex justify-center items-center mb-4">
+            <div class="flex justify-center items-center mb-6">
                 <h2 class="text-3xl font-bold text-gray-800 ml-4">تعهد</h2>
                 <img src="https://k.top4top.io/p_35163lq2x1.gif" alt="تعهد" class="w-16 h-16 rounded-full object-cover">
             </div>
-            <p class="text-gray-600 mb-6">أقر وأتعهد أمام الله أنني سأستخدم هذا الموقع للأغراض الشخصية فقط، ولن أستخدمه لأي غرض تجاري أو ربحي. كما أتعهد بعدم مشاركة رابط الموقع مع أي شخص آخر.</p>
-            <p class="text-gray-800 font-semibold mb-4">يرجى الضغط على "أوافق" للمتابعة</p>
-            <button id="agree-btn" class="w-full bg-gradient-to-r from-green-500 to-blue-500 hover:from-green-600 hover:to-blue-600 text-white font-bold py-3 px-4 rounded-lg text-xl transition-all duration-300 mb-6">أوافق</button>
-            <div class="border-t pt-4">
-                <p class="text-sm text-gray-700 mb-2">لطلباتكم يشرفنا تواصلكم على قناة رسم للتصميم والخدمات التعليمية اضغط على الشعار للانضمام</p>
-                <a href="https://t.me/+SJnY9vPy7yo5YmI1" target="_blank" rel="noopener noreferrer" class="inline-block">
+            <p class="text-gray-600 mb-6 font-medium leading-relaxed">أقر وأتعهد أمام الله أنني سأستخدم هذا الموقع للأغراض الشخصية فقط، ولن أستخدمه لأي غرض تجاري أو ربحي. كما أتعهد بعدم مشاركة رابط الموقع مع أي شخص آخر.</p>
+            <p class="text-gray-800 font-bold mb-4">يرجى الضغط على "أوافق" للمتابعة</p>
+            <button id="agree-btn" class="w-full bg-gradient-to-r from-green-500 to-blue-500 hover:from-green-600 hover:to-blue-600 text-white font-bold py-4 px-4 rounded-xl text-xl transition-all duration-300 mb-6 shadow-lg shadow-blue-500/20">أوافق</button>
+            <div class="border-t pt-6">
+                <p class="text-sm text-gray-700 mb-3">لطلباتكم يشرفنا تواصلكم على قناة رسم للتصميم والخدمات التعليمية اضغط على الشعار للانضمام</p>
+                <a href="https://t.me/+SJnY9vPy7yo5YmI1" target="_blank" rel="noopener noreferrer" class="inline-block hover:scale-110 transition-transform">
                     <img src="https://e.top4top.io/p_3463x5tj40.png" alt="شعار قناة رسم" class="h-16 w-auto mx-auto">
                 </a>
             </div>
@@ -45,96 +73,104 @@
     </div>
 
     <!-- Modal: Intro -->
-    <div id="intro-modal" class="hidden fixed inset-0 bg-black bg-opacity-60 flex items-center justify-center p-4 z-50 transition-opacity duration-300 opacity-0">
+    <div id="intro-modal" class="hidden fixed inset-0 bg-black bg-opacity-70 flex items-center justify-center p-4 z-50 transition-opacity duration-300">
         <div class="bg-white rounded-2xl shadow-2xl p-8 max-w-2xl w-full text-center transform transition-all duration-300 scale-95">
             <h2 class="text-2xl font-bold text-gray-800 mb-4">🎯 تبحث عن طريقة سهلة لتخطيط الأنشطة الطلابية؟</h2>
-            <p class="text-gray-600 mb-6">
+            <p class="text-gray-600 mb-6 leading-relaxed">
                 قدّمنا لك أداة تحليل قدرة المدرسة على تنفيذ برامج الأنشطة الطلابية وفق دليل الإصدار الخامس.
             </p>
             <div class="text-right mb-6 space-y-3">
-                <p class="font-semibold text-lg" style="color: #0093B5;">🛠️ تساعدك الأداة في:</p>
-                <ul class="list-disc list-inside text-gray-700 space-y-1 pr-4">
+                <p class="font-bold text-lg" style="color: #0093B5;">🛠️ تساعدك الأداة في:</p>
+                <ul class="list-disc list-inside text-gray-700 space-y-1 pr-4 font-medium">
                     <li>التخطيط الفعّال</li>
                     <li>اتخاذ القرار المناسب</li>
                     <li>بناء خطة مبنية على معايير واضحة</li>
                 </ul>
             </div>
             <div class="text-right mb-6 space-y-3">
-                <p class="font-semibold text-lg" style="color: #00A383;">📌 فقط اتبع الخطوات التالية:</p>
-                <ol class="list-decimal list-inside text-gray-700 space-y-1 pr-4">
+                <p class="font-bold text-lg" style="color: #00A383;">📌 فقط اتبع الخطوات التالية:</p>
+                <ol class="list-decimal list-inside text-gray-700 space-y-1 pr-4 font-medium">
                     <li>اختر المرحلة الدراسية</li>
                     <li>أدخل عدد الفصول</li>
                     <li>احصل على خطتك مباشرة!</li>
                 </ol>
             </div>
-            <p class="text-sm text-gray-500 mb-8">
+            <p class="text-sm text-gray-500 mb-8 border-t pt-4">
                 🖋️ الأداة من تطوير رسم للتصميم — لمساعدتك على تجاوز التحديات وبناء خطة ناجحة.
             </p>
             <div class="flex flex-col sm:flex-row justify-center items-center gap-4 mt-8">
-                <a href="nashattahlel47.html" onclick="visitTool(event)" class="w-full sm:w-auto bg-teal-500 text-white font-bold py-3 px-8 rounded-lg hover:bg-teal-600 transition-colors duration-300 shadow-lg">زيارة الأداة</a>
-                <button onclick="closeIntroModal()" class="w-full sm:w-auto bg-gray-200 text-gray-700 font-bold py-3 px-8 rounded-lg hover:bg-gray-300 transition-colors duration-300">موافق</button>
+                <a href="nashattahlel47.html" onclick="visitTool(event)" class="w-full sm:w-auto bg-teal-500 text-white font-bold py-3 px-10 rounded-xl hover:bg-teal-600 transition-colors duration-300 shadow-lg shadow-teal-500/20">زيارة الأداة</a>
+                <button onclick="closeIntroModal()" class="w-full sm:w-auto bg-gray-100 text-gray-700 font-bold py-3 px-10 rounded-xl hover:bg-gray-200 transition-colors duration-300">موافق</button>
             </div>
         </div>
     </div>
 
 
     <!-- Main View -->
-    <div id="main-view" class="flex flex-col min-h-screen opacity-0 transition-opacity duration-500">
-        <main class="flex-grow flex items-center justify-center p-4">
+    <div id="main-view" class="flex flex-col min-h-screen opacity-0 transition-opacity duration-700">
+        <main class="flex-grow flex items-center justify-center p-6">
             <div class="w-full max-w-4xl">
-                <div class="flex justify-center mb-8">
-                    <div class="bg-white p-4 rounded-xl shadow-lg">
-                        <img src="https://rasmcom.github.io/plan/img/logo.png" alt="شعار الوزارة" class="mx-auto w-32 md:w-40 h-auto">
+                <div class="flex justify-center mb-10">
+                    <div class="bg-white p-5 rounded-2xl shadow-xl border-4 border-white/50">
+                        <img src="https://rasmcom.github.io/plan/img/logo.png" alt="شعار الوزارة" class="mx-auto w-32 md:w-44 h-auto">
                     </div>
                 </div>
 
-                <div class="bg-white/90 backdrop-blur-sm p-8 rounded-xl shadow-2xl text-center">
-                    <h1 class="text-3xl font-bold mb-6 gradient-text">قم ببناء خطتك بكل يسر وسهولة </h1>
+                <div class="bg-white/95 backdrop-blur-md p-6 md:p-10 rounded-3xl shadow-2xl text-center border border-white/20">
+                    <h1 class="text-3xl md:text-4xl font-bold mb-10 gradient-text">قم ببناء خطتك بكل يسر وسهولة</h1>
                     
-                    <!-- Grid Container: Only The New Model Remains -->
-                    <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
-                        <a href="nashatEND26.html" class="plan-link md:col-span-2 block p-6 bg-gray-50 rounded-lg border border-gray-200 hover:shadow-lg hover:border-blue-400 transition-all duration-300 transform hover:-translate-y-1">
-                            <h2 class="text-xl font-semibold mb-2" style="color: #0070c0;">خطة بتصميم مميز نموذج جديد</h2>
-                            <p class="text-sm text-gray-600 mb-4 text-right">هذا النموذج يقدم تصورًا دقيقًا ومفصلًا للخطة، جميع الأسابيع في صفحة واحدة مع ذكر ملخص للبرامج وتواريخ تنفيذها.</p>
-                            <div class="overflow-hidden rounded-md h-48">
-                                <img src="https://j.top4top.io/p_35490g83c1.png" alt="صورة مصغرة لنموذج الخطة الجديد" class="w-full h-full object-cover transform hover:scale-110 transition-transform duration-500" onerror="this.onerror=null;this.src='https://placehold.co/600x400/eeeeee/cccccc?text=Image+Not+Found';">
+                    <div class="space-y-10">
+                        <!-- Plan 1 -->
+                        <a href="nashatEND26.html" class="plan-link plan-card block p-6 bg-white rounded-2xl border border-slate-200 text-right w-full">
+                            <h2 class="text-2xl font-bold mb-3 text-[#0070c0]">خطة بتصميم مميز نموذج جديد</h2>
+                            <p class="text-base text-gray-600 mb-6 leading-relaxed">هذا النموذج يقدم تصورًا دقيقًا ومفصلًا للخطة، جميع الأسابيع في صفحة واحدة مع ذكر ملخص للبرامج وتواريخ تنفيذها.</p>
+                            <div class="image-preview-container">
+                                <img src="https://j.top4top.io/p_35490g83c1.png" alt="صورة مصغرة لنموذج الخطة الجديد" onerror="this.onerror=null;this.src='https://placehold.co/800x600/f8fafc/64748b?text=Preview+Image';">
                             </div>
                         </a>
-                    </div>
 
-                    <!-- Analysis Tool Section -->
-                    <div class="mt-8 border-t-2 border-gray-200 pt-6">
-                        <a href="nashattahlel47.html" class="plan-link block p-6 bg-gray-50 rounded-lg border border-gray-200 hover:shadow-lg hover:border-teal-400 transition-all duration-300 transform hover:-translate-y-1 text-right">
-                            <div class="flex items-center">
-                                <div class="pl-4">
-                                     <svg class="w-16 h-16 text-teal-500" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor">
-                                       <path stroke-linecap="round" stroke-linejoin="round" d="M3 13.125C3 12.504 3.504 12 4.125 12h2.25c.621 0 1.125.504 1.125 1.125v6.75C7.5 20.496 6.996 21 6.375 21h-2.25A1.125 1.125 0 013 19.875v-6.75zM9.75 8.625c0-.621.504-1.125 1.125-1.125h2.25c.621 0 1.125.504 1.125 1.125v11.25c0 .621-.504 1.125-1.125 1.125h-2.25a1.125 1.125 0 01-1.125-1.125V8.625zM16.5 4.125c0-.621.504-1.125 1.125-1.125h2.25C20.496 3 21 3.504 21 4.125v15.75c0 .621-.504 1.125-1.125 1.125h-2.25a1.125 1.125 0 01-1.125-1.125V4.125z"></path>
-                                     </svg>
-                                </div>
-                                <div>
-                                    <h2 class="text-xl font-semibold mb-2 text-gray-700">أداة تحليل خطة النشاط</h2>
-                                    <p class="text-sm text-gray-600">لتحليل قدرة المدرسة على تنفيذ برامج الأنشطة الطلابية وفق الدليل المعتمد.</p>
-                                </div>
+                        <!-- Plan 2 -->
+                        <a href="nashatweekend9-2.html" class="plan-link plan-card block p-6 bg-white rounded-2xl border border-slate-200 text-right w-full">
+                            <h2 class="text-2xl font-bold mb-3 text-[#0070c0]">خطة بتصميم مميز نموذج المجالات</h2>
+                            <p class="text-base text-gray-600 mb-6 leading-relaxed">هذا النموذج يقدم تصورًا دقيقًا ومفصلاً وفق المجالات.</p>
+                            <div class="image-preview-container">
+                                <img src="https://rasmcom.github.io/plan/img/week47.png" alt="صورة مصغرة لنموذج المجالات" onerror="this.onerror=null;this.src='https://placehold.co/800x600/f8fafc/64748b?text=Preview+Image';">
                             </div>
                         </a>
-                    </div>
 
+                        <!-- Analysis Tool -->
+                        <div class="mt-4 border-t border-slate-100 pt-10">
+                            <a href="nashattahlel47.html" class="plan-link plan-card block p-8 bg-teal-50/50 rounded-2xl border border-teal-100 text-right">
+                                <div class="flex items-center gap-6">
+                                    <div class="bg-white p-5 rounded-2xl shadow-sm border border-teal-100">
+                                         <svg class="w-12 h-12 text-teal-500" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor">
+                                           <path stroke-linecap="round" stroke-linejoin="round" d="M3 13.125C3 12.504 3.504 12 4.125 12h2.25c.621 0 1.125.504 1.125 1.125v6.75C7.5 20.496 6.996 21 6.375 21h-2.25A1.125 1.125 0 013 19.875v-6.75zM9.75 8.625c0-.621.504-1.125 1.125-1.125h2.25c.621 0 1.125.504 1.125 1.125v11.25c0 .621-.504 1.125-1.125 1.125h-2.25a1.125 1.125 0 01-1.125-1.125V8.625zM16.5 4.125c0-.621.504-1.125 1.125-1.125h2.25C20.496 3 21 3.504 21 4.125v15.75c0 .621-.504 1.125-1.125 1.125h-2.25a1.125 1.125 0 01-1.125-1.125V4.125z"></path>
+                                         </svg>
+                                    </div>
+                                    <div>
+                                        <h2 class="text-2xl font-bold mb-1 text-teal-800">أداة تحليل خطة النشاط</h2>
+                                        <p class="text-base text-teal-600/80 font-medium leading-relaxed">لتحليل قدرة المدرسة على تنفيذ برامج الأنشطة الطلابية وفق الدليل المعتمد.</p>
+                                    </div>
+                                </div>
+                            </a>
+                        </div>
+                    </div>
                 </div>
             </div>
         </main>
 
-        <footer class="relative w-full text-white text-center text-sm pt-20 pb-4">
-            <div class="absolute bottom-0 left-0 w-full h-32 overflow-hidden" style="z-index: -1;">
-                 <svg viewBox="0 0 500 150" preserveAspectRatio="none" style="height: 100%; width: 100%;">
-                    <path d="M-3.65,79.23 C158.97,184.78 339.95,-34.75 500.00,49.98 L500.00,150.00 L0.00,150.00 Z" style="stroke: none; fill: rgba(255,255,255,0.1);"></path>
-                    <path d="M-5.33,103.73 C149.99,11.21 349.20,150.00 501.41,98.21 L500.00,150.00 L0.00,150.00 Z" style="stroke: none; fill: rgba(255,255,255,0.15);"></path>
+        <footer class="relative w-full text-white text-center text-sm pt-28 pb-10 mt-auto overflow-hidden">
+            <div class="absolute inset-0 -z-10 bg-gradient-to-t from-black/10 to-transparent">
+                 <svg viewBox="0 0 500 150" preserveAspectRatio="none" style="height: 100%; width: 100%; opacity: 0.15;">
+                    <path d="M-3.65,79.23 C158.97,184.78 339.95,-34.75 500.00,49.98 L500.00,150.00 L0.00,150.00 Z" style="stroke: none; fill: white;"></path>
+                    <path d="M-5.33,103.73 C149.99,11.21 349.20,150.00 501.41,98.21 L500.00,150.00 L0.00,150.00 Z" style="stroke: none; fill: white;"></path>
                 </svg>
             </div>
-            <div class="max-w-4xl mx-auto flex justify-center items-center px-4">
-                 <a href="https://t.me/+SJnY9vPy7yo5YmI1" target="_blank" rel="noopener noreferrer" class="ml-4">
-                    <img src="https://h.top4top.io/p_352355x7b1.png" alt="شعار رسم" class="h-16 w-auto">
+            <div class="max-w-4xl mx-auto flex flex-col md:flex-row justify-center items-center px-6 gap-8">
+                 <a href="https://t.me/+SJnY9vPy7yo5YmI1" target="_blank" rel="noopener noreferrer" class="transition-transform hover:scale-110">
+                    <img src="https://h.top4top.io/p_352355x7b1.png" alt="شعار رسم" class="h-24 w-auto">
                 </a>
-                <p class="text-base">جميع الحقوق محفوظة لقناة رسم للتصميم والخدمات التعليمية 2025</p>
+                <p class="text-xl font-bold">جميع الحقوق محفوظة لقناة رسم للتصميم والخدمات التعليمية 2025</p>
             </div>
         </footer>
     </div>
@@ -143,41 +179,39 @@
         <iframe id="plan-iframe" class="w-full h-full border-none"></iframe>
     </div>
 
-    <button id="back-to-main-btn" class="hidden fixed top-4 right-4 z-50 flex items-center bg-white/90 backdrop-blur-sm rounded-full shadow-lg hover:shadow-xl transition-all duration-300 pl-5 pr-2 py-2">
-        <span class="font-semibold text-gray-800 text-lg ml-3">الرئيسية</span>
-        <img src="https://b.top4top.io/p_3523lx4qa1.gif" alt="الرئيسية" class="w-10 h-10 rounded-full object-cover">
+    <button id="back-to-main-btn" class="hidden fixed top-6 right-6 z-50 flex items-center bg-white/95 backdrop-blur-md rounded-full shadow-2xl hover:shadow-blue-500/30 transition-all duration-300 pl-6 pr-3 py-2.5 border border-slate-200 group">
+        <span class="font-bold text-slate-800 text-lg ml-4 group-hover:text-blue-600 transition-colors">الرئيسية</span>
+        <div class="w-12 h-12 rounded-full bg-blue-50 flex items-center justify-center overflow-hidden border-2 border-white shadow-inner transition-transform group-hover:rotate-12">
+            <img id="back-icon" src="https://b.top4top.io/p_3523lx4qa1.gif" alt="الرئيسية" class="w-full h-full object-cover">
+        </div>
     </button>
 
     <script>
-        // Function to show the intro modal with animation
         function openIntroModal() {
             const introModal = document.getElementById('intro-modal');
             const introContent = introModal.querySelector('div');
             introModal.classList.remove('hidden');
             setTimeout(() => {
-                introModal.classList.remove('opacity-0');
+                introModal.classList.add('opacity-100');
                 introContent.classList.remove('scale-95');
                 introContent.classList.add('scale-100');
             }, 50);
         }
 
-        // Function to close the intro modal and show the main content
         function closeIntroModal() {
             const introModal = document.getElementById('intro-modal');
             const mainView = document.getElementById('main-view');
 
             localStorage.setItem('introModalClosedTimestamp', new Date().getTime());
 
-            introModal.classList.add('opacity-0', 'scale-95');
-            introModal.classList.remove('opacity-100', 'scale-100');
+            introModal.classList.add('opacity-0');
             
             setTimeout(() => {
                 introModal.classList.add('hidden');
-                mainView.classList.remove('opacity-0');
+                mainView.classList.replace('opacity-0', 'opacity-100');
             }, 300);
         }
 
-        // Function to handle the "Visit Tool" button click
         function visitTool(event) {
             event.preventDefault(); 
             const introModal = document.getElementById('intro-modal');
@@ -201,22 +235,18 @@
         }
 
         document.addEventListener('DOMContentLoaded', () => {
-            // Modal elements
             const pledgeModal = document.getElementById('pledge-modal');
             const pledgeContent = document.getElementById('pledge-content');
             const agreeBtn = document.getElementById('agree-btn');
             
-            // App elements
             const mainView = document.getElementById('main-view');
             const planView = document.getElementById('plan-view');
             const planIframe = document.getElementById('plan-iframe');
             const backButton = document.getElementById('back-to-main-btn');
-            // Select all plan links, INCLUDING the one for the tool
             const planLinks = document.querySelectorAll('a.plan-link');
 
-            // --- STARTUP LOGIC ---
-            const PLEDGE_EXPIRATION_TIME = 60 * 60 * 1000; // 1 hour
-            const INTRO_MODAL_EXPIRATION_TIME = 60 * 60 * 1000; // 1 hour
+            const PLEDGE_EXPIRATION_TIME = 60 * 60 * 1000;
+            const INTRO_MODAL_EXPIRATION_TIME = 60 * 60 * 1000;
 
             const lastAgreedTimestamp = localStorage.getItem('pledgeAgreedTimestamp');
             const lastIntroClosedTimestamp = localStorage.getItem('introModalClosedTimestamp');
@@ -234,17 +264,12 @@
             } else if (needsIntro) {
                 openIntroModal();
             } else {
-                mainView.classList.remove('opacity-0');
+                mainView.classList.replace('opacity-0', 'opacity-100');
             }
 
-            // --- EVENT LISTENERS ---
             agreeBtn.addEventListener('click', () => {
                 localStorage.setItem('pledgeAgreedTimestamp', new Date().getTime());
-                
                 pledgeContent.classList.add('scale-95', 'opacity-0');
-                pledgeContent.classList.remove('scale-100', 'opacity-100');
-                pledgeModal.classList.add('opacity-0');
-
                 setTimeout(() => {
                     pledgeModal.classList.add('hidden');
                     openIntroModal();
@@ -255,9 +280,7 @@
                 link.addEventListener('click', (event) => {
                     event.preventDefault();
                     const planUrl = link.getAttribute('href');
-                    
                     planIframe.src = planUrl;
-                    
                     mainView.classList.add('hidden');
                     planView.classList.remove('hidden');
                     backButton.classList.remove('hidden');
@@ -269,9 +292,9 @@
                 mainView.classList.remove('hidden');
                 planView.classList.add('hidden');
                 backButton.classList.add('hidden');
+                window.scrollTo({top: 0, behavior: 'smooth'});
             });
         });
     </script>
-
 </body>
 </html>
