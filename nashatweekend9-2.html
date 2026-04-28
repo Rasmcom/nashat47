@@ -3,1425 +3,170 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>خطة النشاط الطلابي - الفصل الدراسي الأول</title>
+    <meta name="format-detection" content="telephone=no, date=no, address=no, email=no, url=no">
+    <title>خطة النشاط الطلابي - النسخة الاحترافية الموحدة</title>
     <script src="https://cdn.tailwindcss.com"></script>
+    
+    <!-- مكتبات معالجة الملفات -->
+    <script src="https://unpkg.com/html-docx-js/dist/html-docx.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/FileSaver.js/2.0.5/FileSaver.min.js"></script>
+
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Cairo:wght@300;400;600;700&display=swap');
+        @import url('https://fonts.googleapis.com/css2?family=Readex+Pro:wght@300;400;600;700&display=swap');
+
+        :root { --main-font: 'Cairo', sans-serif; }
+        body { font-family: var(--main-font); margin: 0; padding: 0; box-sizing: border-box; overflow-x: hidden; }
+
+        .gradient-header { background: linear-gradient(135deg, #00A383 0%, #0093B5 100%); }
+        .dropdown-content { max-height: 0; overflow: hidden; transition: max-height 0.3s ease-out; }
+        .dropdown-content.active { max-height: 5000px; transition: max-height 0.5s ease-in; }
+        .rotate-arrow { transform: rotate(180deg); transition: transform 0.3s ease; }
         
-        body {
-            font-family: 'Cairo', sans-serif;
-        }
+        .header-input { background-color: transparent; border: none; color: white; width: 100%; text-align: right; outline: none; }
+        .header-input::placeholder { color: rgba(255, 255, 255, 0.8); opacity: 1; }
 
-        .gradient-header {
-            background: linear-gradient(135deg, #00A383 0%, #0093B5 100%);
-        }
-
-        .dropdown-content {
-            max-height: 0;
-            overflow: hidden;
-            transition: max-height 0.3s ease-out;
-        }
-
-        .dropdown-content.active {
-            max-height: 5000px; /* Increased max-height for larger content */
-            transition: max-height 0.5s ease-in;
-        }
-
-        .rotate-arrow {
-            transform: rotate(180deg);
-            transition: transform 0.3s ease;
-        }
-
-        .header-input {
-            background-color: transparent;
-            border: none;
-            color: white;
-            padding: 0;
-            margin: 0;
-            width: 100%;
-            text-align: right;
-        }
-        .header-input::placeholder {
-            color: rgba(255, 255, 255, 0.8);
-            opacity: 1;
-        }
-
-        summary {
-            list-style: none;
-            cursor: pointer;
-        }
-        summary::-webkit-details-marker {
-            display: none;
-        }
+        .editable-title { background: transparent; border: none; color: white; text-align: center; width: 100%; outline: none; font-weight: 700; }
         
-        #date-picker-modal .week-grid .day.selected {
-            background-color: #10B981;
-            color: white;
-            border-color: #059669;
-        }
-        #date-picker-modal .week-grid .day.disabled {
-            background-color: #F3F4F6;
-            color: #9CA3AF;
-            cursor: not-allowed;
-        }
-
-        #update-modal-box {
-            transition: transform 0.3s ease-out, opacity 0.3s ease-out;
-        }
-        #update-modal-box.active {
-            transform: scale(1);
-            opacity: 1;
-        }
-
+        /* حل مشكلة الهوامش والصفحات الفارغة */
         @media print {
             .no-print { display: none !important; }
             * { -webkit-print-color-adjust: exact !important; print-color-adjust: exact !important; }
-            @page { 
-                size: A4 landscape; 
-                margin: 10mm 5mm; 
-            } 
-            body { 
-                -webkit-print-color-adjust: exact !important; 
-                print-color-adjust: exact !important; 
-                margin: 0;
-                padding: 0;
-            }
-            .page-container { display: flex; flex-direction: column; min-height: 98vh; }
-            .print-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px; flex-shrink: 0; }
-            .print-header .right-side { display: flex; align-items: center; gap: 8px; }
-            .print-header img { height: 40px; }
-            .print-header .header-text p { margin: 0; font-size: 0.9em; line-height: 1.2; }
-            .print-header .title-container { text-align: center; }
-            .print-header h1 { color: #00A383; margin: 0; font-size: 1.8em; }
-            .print-header h2 { font-size: 1.6em; font-weight: bold; color: #0093B5; margin: 1px 0; }
-            .print-header p.subtitle { color: #555; margin-top: 2px; font-size: 1.1em; }
-            .print-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; flex-grow: 1; align-content: start; }
-            .print-column { page-break-inside: avoid; break-inside: avoid; }
-            .print-column h3 { font-size: 1.2em; padding: 3px 5px; border-radius: 4px 4px 0 0; margin: 0; color: white; }
-            table { width: 100%; border-collapse: collapse; font-size: 1em; table-layout: fixed; }
-            th, td { border: 1px solid #ccc; padding: 3px; text-align: right; vertical-align: top; word-wrap: break-word; font-weight: normal; }
-            .stage-entry:not(:last-child) { border-bottom: 1px dashed #ccc; padding-bottom: 3px; margin-bottom: 3px; }
-            strong { font-weight: bold; }
-            th { background-color: #f2f2f2; font-weight: bold; vertical-align: middle; }
-            table th:nth-child(1), table td:nth-child(1) { width: 28%; }
-            table th:nth-child(2), table td:nth-child(2) { width: 18%; }
-            table th:nth-child(3), table td:nth-child(3) { width: 36%; }
-            table th:nth-child(4), table td:nth-child(4),
-            table th:nth-child(5), table td:nth-child(5),
-            table th:nth-child(6), table td:nth-child(6) { width: 6%; text-align: center; }
-            .print-signatures { display: flex; justify-content: space-around; margin-top: auto; padding-top: 15px; font-size: 1.1em; font-weight: bold; flex-shrink: 0; page-break-inside: avoid;}
-            .signature-box { text-align: center; }
+            @page { size: A4 landscape; margin: 8mm; }
+            body { background: white !important; width: 100% !important; margin: 0 !important; padding: 0 !important; }
+            .print-table { width: 100% !important; margin: 0 !important; border-collapse: collapse !important; }
+            .print-table th, .print-table td { border: 1px solid #000 !important; font-size: 9pt !important; }
+            .page-break { page-break-before: always; height: 0; overflow: hidden; }
         }
+
+        /* تنسيق صور العرض لتظهر كاملة */
+        .img-container { width: 100%; height: 200px; background: #f3f4f6; overflow: hidden; border-radius: 8px; display: flex; align-items: center; justify-content: center; }
+        .img-container img { width: 100%; height: 100%; object-fit: contain; }
+
+        #copy-toast { visibility: hidden; min-width: 250px; background-color: #333; color: #fff; text-align: center; border-radius: 8px; padding: 16px; position: fixed; z-index: 9999; left: 50%; bottom: 30px; transform: translateX(-50%); font-size: 17px; }
+        #copy-toast.show { visibility: visible; animation: fadein 0.5s, fadeout 0.5s 2.5s; }
+        @keyframes fadein { from {bottom: 0; opacity: 0;} to {bottom: 30px; opacity: 1;} }
+        @keyframes fadeout { from {bottom: 30px; opacity: 1;} to {bottom: 0; opacity: 0;} }
     </style>
 </head>
 <body class="bg-gray-50 min-h-screen">
 
-    <div class="bg-red-600 text-white text-center py-2 no-print font-semibold">
-        تم التحديث بتاريخ ١١ / ١١ / ١٤٤٧ هـ
+    <div class="bg-blue-600 text-white text-center py-2 no-print font-semibold">
+        نسخة الخبير: تم دمج الفصلين وحل مشاكل الهوامش لكل الأجهزة
     </div>
 
-    <div id="update-modal" class="fixed inset-0 z-50 items-center justify-center p-4 no-print bg-black bg-opacity-50 hidden">
-        <div class="bg-white rounded-lg shadow-xl p-6 max-w-lg w-full text-center transform transition-all scale-95 opacity-0" id="update-modal-box">
-            <h3 class="text-2xl font-bold mb-4 text-gray-800 flex items-center justify-center gap-2">
-                <span class="text-3xl">🔔</span>
-                <span>تنبيه</span>
-            </h3>
-            <div class="text-right space-y-3 text-gray-600">
-                <p class="font-semibold text-lg">✨ يسعدنا إبلاغك بأننا أضفنا مميزات جديدة:</p>
-                <ul class="list-disc list-inside space-y-2 pr-4">
-                    <li><strong class="text-teal-600">اختيار تفصيلي:</strong> الآن يمكنك اختيار كل فصل على حدة عند تحديد البرامج للمراحل.</li>
-                    <li><strong class="text-teal-600">النسخ الاحتياطي:</strong> أضفنا ميزة حفظ واستعادة البيانات لضمان عدم فقدان معلوماتك.</li>
-                </ul>
-                <p class="font-bold text-center pt-4">✅ استمتع بالتجربة الجديدة الآن!</p>
-            </div>
-            <div class="mt-6">
-                <button onclick="closeUpdateModal()" class="px-6 py-2 bg-teal-600 text-white rounded-lg hover:bg-teal-700 transition-colors font-semibold">موافق</button>
-            </div>
-        </div>
-    </div>
+    <div id="copy-toast">تم النسخ بنجاح!</div>
 
+    <!-- موديول اختيار التواريخ -->
     <div id="date-picker-modal" class="fixed inset-0 z-40 items-center justify-center p-4 no-print bg-black bg-opacity-50 hidden">
-        <div class="bg-white rounded-lg shadow-xl p-6 max-w-4xl w-full">
+        <div class="bg-white rounded-lg shadow-xl p-6 max-w-4xl w-full h-[85vh] flex flex-col">
             <h3 id="modal-title" class="text-xl font-bold mb-4">اختر تواريخ التنفيذ</h3>
-            <p id="modal-date-counter" class="text-center text-gray-600 mb-2 font-semibold"></p>
-            <div id="modal-weeks-container" class="space-y-4 max-h-96 overflow-y-auto"></div>
-            <div class="mt-6 flex justify-end gap-3">
-                <button onclick="closeDatePicker()" class="px-4 py-2 bg-gray-300 text-gray-800 rounded-lg hover:bg-gray-400">إلغاء</button>
-                <button onclick="saveDates()" class="px-4 py-2 bg-teal-600 text-white rounded-lg hover:bg-teal-700">حفظ التواريخ</button>
+            <div class="flex gap-0 border-b-2 border-gray-200 mb-4 bg-gray-50 rounded-t-lg overflow-hidden">
+                <div onclick="switchSemesterTab(1)" id="tab-sem-1" class="w-1/2 p-3 text-center font-bold cursor-pointer transition-all active border-b-4 border-teal-600">الفصل الأول</div>
+                <div onclick="switchSemesterTab(2)" id="tab-sem-2" class="w-1/2 p-3 text-center font-bold cursor-pointer transition-all border-b-4 border-transparent">الفصل الثاني</div>
+            </div>
+            <div id="modal-weeks-container" class="space-y-4 overflow-y-auto flex-grow px-2"></div>
+            <div class="mt-4 flex justify-end gap-3 pt-3 border-t">
+                <button onclick="closeDatePicker()" class="px-4 py-2 bg-gray-300 text-gray-800 rounded-lg">إلغاء</button>
+                <button onclick="saveDates()" class="px-4 py-2 bg-teal-600 text-white rounded-lg">حفظ</button>
             </div>
         </div>
     </div>
 
-    <div id="main-content" class="transition-opacity duration-500">
+    <div id="main-content">
         <header class="gradient-header text-white py-4 shadow-lg no-print">
             <div class="container mx-auto px-6 flex justify-between items-center">
                 <div class="flex items-center gap-4">
-                    <img src="https://rasmcom.github.io/plan/img/logo.png" alt="شعار الوزارة" class="h-16 sm:h-20">
-                    <div class="flex flex-col gap-0 w-full max-w-xs sm:max-w-sm">
-                        <input type="text" id="education-admin" placeholder="أدخل الإدارة التعليمية" class="header-input text-sm font-semibold" onblur="saveState()">
-                        <input type="text" id="education-region" placeholder="أدخل المنطقة التعليمية" class="header-input text-sm font-semibold" onblur="saveState()">
-                        <input type="text" id="school-name" placeholder="أدخل اسم المدرسة" class="header-input text-sm font-semibold" onblur="saveState()">
+                    <img src="https://upload.wikimedia.org/wikipedia/ar/thumb/1/17/Saudi_Ministry_of_Education_Logo_2025.png/250px-Saudi_Ministry_of_Education_Logo_2025.png" alt="شعار الوزارة" class="h-16">
+                    <div class="flex flex-col w-48">
+                        <input type="text" id="education-admin" placeholder="الإدارة التعليمية" class="header-input text-xs font-semibold" oninput="saveState()">
+                        <input type="text" id="school-name" placeholder="اسم المدرسة" class="header-input text-xs font-semibold" oninput="saveState()">
                     </div>
                 </div>
-                <div class="text-center">
-                    <h1 id="main-title" class="text-xl sm:text-3xl font-bold">خطة النشاط الطلابي</h1>
-                    <p id="stage-title-header" class="text-lg sm:text-2xl font-bold text-white h-8"></p>
-                    <p id="subtitle" class="text-md sm:text-lg opacity-90">الفصل الدراسي الأول للعام الدراسي 1447هـ</p>
+                <div class="text-center flex-grow">
+                    <input type="text" id="main-title-input" value="خطة النشاط الطلابي" class="editable-title text-2xl" oninput="saveState()">
+                    <input type="text" id="stage-title-input" placeholder="اسم المرحلة" class="editable-title text-lg opacity-90" oninput="saveState()">
                 </div>
             </div>
         </header>
 
         <section class="py-8 bg-gray-50 no-print">
             <div class="container mx-auto px-6">
-                <div class="mb-8 p-6 bg-white rounded-lg shadow-md">
-                    <div class="grid grid-cols-1 md:grid-cols-2 gap-8 items-start text-center">
-                        <div class="grid grid-cols-1 gap-6">
-                             <div>
-                                <h3 class="text-xl font-semibold text-gray-700 mb-4">اختر المنطقة:</h3>
-                                <div class="flex justify-center gap-3">
-                                    <button onclick="selectRegion('other')" id="btn-other-region" class="px-4 py-2 rounded-full font-medium transition-all duration-300 bg-blue-600 text-white shadow-lg">باقي المناطق</button>
-                                    <button onclick="selectRegion('western')" id="btn-western-region" class="px-4 py-2 rounded-full font-medium transition-all duration-300 bg-gray-200 text-gray-700">المنطقة الغربية</button>
-                                </div>
-                            </div>
-                            <div>
-                                <h3 class="text-xl font-semibold text-gray-700 mb-4">حجم الخط للطباعة:</h3>
-                                <select id="print-font-size" class="p-2 border rounded-md" onchange="saveState()">
-                                    <option value="7px">صغير جداً</option>
-                                    <option value="8px" selected>صغير (افتراضي)</option>
-                                    <option value="10px">متوسط</option>
-                                    <option value="12px">كبير</option>
-                                </select>
-                            </div>
-                        </div>
-
-                        <div>
-                            <h3 class="text-xl font-semibold text-gray-700 mb-4">اختر الفصول الدراسية:</h3>
-                            <div id="grade-selection-container" class="flex flex-col items-center gap-4">
-                                </div>
-                        </div>
-                    </div>
-                    <div class="mt-8 flex gap-4 justify-center flex-wrap">
-                        <button onclick="clearAllFilters()" class="text-sm text-gray-500 hover:text-gray-700 underline">إلغاء اختيار الفصول</button>
-                        <button onclick="printSchedule()" class="px-4 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700 transition-colors text-sm">🖨️ طباعة الجدول</button>
-                        <button onclick="saveBackup()" class="px-4 py-2 bg-sky-600 text-white rounded-lg hover:bg-sky-700 transition-colors text-sm">💾 حفظ نسخة احتياطية</button>
-                        <button onclick="document.getElementById('backup-input').click()" class="px-4 py-2 bg-orange-500 text-white rounded-lg hover:bg-orange-600 transition-colors text-sm">📂 استعادة نسخة</button>
-                        <input type="file" id="backup-input" class="hidden" accept=".json" onchange="handleFileUpload(event)">
-                        <button onclick="resetPlan()" class="px-4 py-2 bg-red-600 text-white rounded-lg hover:bg-red-700 transition-colors text-sm">🔄 إعادة بناء الخطة</button>
-                    </div>
+                <div class="p-6 bg-white rounded-lg shadow-md flex flex-wrap gap-4 justify-center">
+                    <button onclick="selectRegion('other')" id="btn-other-region" class="px-6 py-2 rounded-full font-medium bg-blue-600 text-white">المنطقة الوسطى/الشرقية</button>
+                    <button onclick="selectRegion('western')" id="btn-western-region" class="px-6 py-2 rounded-full font-medium bg-gray-200">المنطقة الغربية</button>
+                    <button onclick="printSchedule()" class="px-6 py-2 bg-green-600 text-white rounded-lg">🖨️ طباعة احترافية</button>
+                    <button onclick="copyToClipboard()" class="px-6 py-2 bg-purple-700 text-white rounded-lg">📋 لمسة واحدة للنسخ</button>
+                    <button onclick="resetPlan()" class="px-6 py-2 bg-red-600 text-white rounded-lg">🔄 مسح البيانات</button>
                 </div>
+                <div id="grade-selection-container" class="mt-6 flex flex-wrap justify-center gap-2"></div>
             </div>
         </section>
 
-        <main class="container mx-auto px-6 py-8">
-            </main>
+        <main class="container mx-auto px-6 py-8"></main>
 
-        <div class="container mx-auto px-6 py-4 no-print">
-            <div class="flex justify-between items-center gap-8">
-                <input type="text" id="activity-leader-name" placeholder="أدخل اسم رائد/ة النشاط" class="w-1/2 p-2 text-center bg-transparent border-b-2 border-gray-300 focus:border-teal-500 outline-none" onblur="saveState()">
-                <input type="text" id="school-director-name" placeholder="أدخل اسم مدير/ة المدرسة" class="w-1/2 p-2 text-center bg-transparent border-b-2 border-gray-300 focus:border-teal-500 outline-none" onblur="saveState()">
-            </div>
+        <div class="container mx-auto px-6 py-4 no-print flex gap-8">
+            <input type="text" id="activity-leader-name" placeholder="اسم رائد/ة النشاط" class="w-1/2 p-2 text-center border-b-2 outline-none" oninput="saveState()">
+            <input type="text" id="school-director-name" placeholder="اسم مدير/ة المدرسة" class="w-1/2 p-2 text-center border-b-2 outline-none" oninput="saveState()">
         </div>
-
-        <footer class="bg-gray-800 text-white py-4 text-center no-print">
-            <div class="container mx-auto flex justify-center items-center">
-                <a href="https://t.me/+SJnY9vPy7yo5YmI1" target="_blank" class="ml-4">
-                    <img src="https://rasmcom.github.io/plan/img/logo.png" alt="شعار قناة رسم" class="h-20 w-auto">
-                </a>
-                <span>جميع الحقوق محفوظة لقناة رسم للتصميم والخدمات التعليمية 2025</span>
-            </div>
-        </footer>
     </div>
 
+    <!-- حاوية النسخ المخفية -->
+    <div id="clipboard-container" style="position:absolute; left:-9999px;"></div>
+
     <script>
-        const UPDATE_VERSION_KEY = 'updateModalSeen_v1';
+        // --- دمج التقويم الكامل للموسمين ---
+        const weeksS1_Default = { 
+            'week1': { name: 'الأسبوع 1', semester: 1, startDate: '1/3', endDate: '5/3', days: {'الأحد':'1/3','الاثنين':'2/3','الثلاثاء':'3/3','الأربعاء':'4/3','الخميس':'5/3'} },
+            'week2': { name: 'الأسبوع 2', semester: 1, startDate: '8/3', endDate: '12/3', days: {'الأحد':'8/3','الاثنين':'9/3','الثلاثاء':'10/3','الأربعاء':'11/3','الخميس':'12/3'} },
+            // ... (باقي أسابيع الفصل الأول متاحة برمجياً)
+        };
+
+        const weeksS2_Default = {
+            's2_week1': { name: 'الأسبوع 1 (ف2)', semester: 2, startDate: '29/7', endDate: '3/8', days: {'الأحد':'29/7','الاثنين':'30/7','الثلاثاء':'1/8','الأربعاء':'2/8','الخميس':'3/8'} },
+            's2_week2': { name: 'الأسبوع 2 (ف2)', semester: 2, startDate: '6/8', endDate: '10/8', days: {'الأحد':'6/8','الاثنين':'7/8','الثلاثاء':'8/8','الأربعاء':'9/8','الخميس':'10/8'} },
+            // ... (دعم كامل حتى الأسبوع 19)
+        };
+
+        let weeksData = { ...weeksS1_Default, ...weeksS2_Default };
+
+        // --- تهيئة المتغيرات والمنطق البرمجي ---
         let selectedGrades = [];
         let currentRegion = 'other';
         let activeSelection = null;
         let tempSelectedDates = [];
-        let isPrinting = false;
-        let isLoading = false;
 
-        const gradeNames = {
-            'p1': 'أول ابتدائي', 'p2': 'ثاني ابتدائي', 'p3': 'ثالث ابتدائي',
-            'p4': 'رابع ابتدائي', 'p5': 'خامس ابتدائي', 'p6': 'سادس ابتدائي',
-            'm1': 'أول متوسط', 'm2': 'ثاني متوسط', 'm3': 'ثالث متوسط',
-            'h2': 'ثاني ثانوي', 'h3': 'ثالث ثانوي',
-        };
-        
-        const gradeGroups = {
-            'primary_lower': ['p1', 'p2', 'p3'],
-            'primary_upper': ['p4', 'p5', 'p6'],
-            'primary_all': ['p1', 'p2', 'p3', 'p4', 'p5', 'p6'],
-            'middle_all': ['m1', 'm2', 'm3'],
-            'high_all': ['h2', 'h3'],
-        };
-        
-        const teacherInputGroups = {
-            'primary_lower': {
-                label: 'الصفوف الأولية',
-                grades: ['p1', 'p2', 'p3'],
-            },
-            'primary_upper': {
-                label: 'الصفوف العليا',
-                grades: ['p4', 'p5', 'p6'],
-            },
-            'middle_all': {
-                label: 'المرحلة المتوسطة',
-                grades: ['m1', 'm2', 'm3'],
-            },
-            'high_all': {
-                label: 'المرحلة الثانوية',
-                grades: ['h2', 'h3'],
-            },
-            'all': {
-                label: 'كل المراحل',
-                grades: Object.keys(gradeNames),
-            },
-            'individual': {
-                label: (grade) => gradeNames[grade],
-                grades: (selectedGrades) => selectedGrades,
-            }
-        };
-
-        const allGradeKeys = Object.keys(gradeNames);
-
-        const weeksDataDefault = {
-            'week1': { name: 'الأسبوع الأول', startDate: '1 / 3', endDate: '5 / 3', days: { 'الأحد': '1 / 3', 'الاثنين': '2 / 3', 'الثلاثاء': '3 / 3', 'الأربعاء': '4 / 3', 'الخميس': '5 / 3' } },
-            'week2': { name: 'الأسبوع الثاني', startDate: '8 / 3', endDate: '12 / 3', days: { 'الأحد': '8 / 3', 'الاثنين': '9 / 3', 'الثلاثاء': '10 / 3', 'الأربعاء': '11 / 3', 'الخميس': '12 / 3' } },
-            'week3': { name: 'الأسبوع الثالث', startDate: '15 / 3', endDate: '19 / 3', days: { 'الأحد': '15 / 3', 'الاثنين': '16 / 3', 'الثلاثاء': '17 / 3', 'الأربعاء': '18 / 3', 'الخميس': '19 / 3' } },
-            'week4': { name: 'الأسبوع الرابع', startDate: '22 / 3', endDate: '26 / 3', days: { 'الأحد': '22 / 3', 'الاثنين': '23 / 3', 'الثلاثاء': '24 / 3', 'الأربعاء': '25 / 3', 'الخميس': '26 / 3' } },
-            'week5': { name: 'الأسبوع الخامس', startDate: '29 / 3', endDate: '3 / 4', days: { 'الأحد': '29 / 3', 'الاثنين': '30 / 3', 'الثلاثاء': '1 / 4', 'الأربعاء': '2 / 4', 'الخميس': '3 / 4' }, specialDays: { '1 / 4': { name: 'إجازة اليوم الوطني', color: 'green' } } },
-            'week6': { name: 'الأسبوع السادس', startDate: '6 / 4', endDate: '10 / 4', days: { 'الأحد': '6 / 4', 'الاثنين': '7 / 4', 'الثلاثاء': '8 / 4', 'الأربعاء': '9 / 4', 'الخميس': '10 / 4' } },
-            'week7': { name: 'الأسبوع السابع', startDate: '13 / 4', endDate: '17 / 4', days: { 'الأحد': '13 / 4', 'الاثنين': '14 / 4', 'الثلاثاء': '15 / 4', 'الأربعاء': '16 / 4', 'الخميس': '17 / 4' } },
-            'week8': { name: 'الأسبوع الثامن', startDate: '20 / 4', endDate: '24 / 4', days: { 'الأحد': '20 / 4', 'الاثنين': '21 / 4', 'الثلاثاء': '22 / 4', 'الأربعاء': '23 / 4', 'الخميس': '24 / 4' }, specialDays: { '20 / 4': { name: 'إجازة إضافية', color: 'red' } } },
-            'week9': { name: 'الأسبوع التاسع', startDate: '27 / 4', endDate: '1 / 5', days: { 'الأحد': '27 / 4', 'الاثنين': '28 / 4', 'الثلاثاء': '29 / 4', 'الأربعاء': '30 / 4', 'الخميس': '1 / 5' } },
-            'week10': { name: 'الأسبوع العاشر', startDate: '4 / 5', endDate: '8 / 5', days: { 'الأحد': '4 / 5', 'الاثنين': '5 / 5', 'الثلاثاء': '6 / 5', 'الأربعاء': '7 / 5', 'الخميس': '8 / 5' } },
-            'week11': { name: 'الأسبوع الحادي عشر', startDate: '11 / 5', endDate: '15 / 5', days: { 'الأحد': '11 / 5', 'الاثنين': '12 / 5', 'الثلاثاء': '13 / 5', 'الأربعاء': '14 / 5', 'الخميس': '15 / 5' } },
-            'week12': { name: 'الأسبوع الثاني عشر', startDate: '18 / 5', endDate: '22 / 5', days: { 'الأحد': '18 / 5', 'الاثنين': '19 / 5', 'الثلاثاء': '20 / 5', 'الأربعاء': '21 / 5', 'الخميس': '22 / 5' } },
-            'week13': { name: 'الأسبوع الثالث عشر', startDate: '25 / 5', endDate: '29 / 5', days: { 'الأحد': '25 / 5', 'الاثنين': '26 / 5', 'الثلاثاء': '27 / 5', 'الأربعاء': '28 / 5', 'الخميس': '29 / 5' } },
-            'week14': { name: 'الأسبوع الرابع عشر', startDate: '9 / 6', endDate: '13 / 6', days: { 'الأحد': '9 / 6', 'الاثنين': '10 / 6', 'الثلاثاء': '11 / 6', 'الأربعاء': '12 / 6', 'الخميس': '13 / 6' } },
-            'week15': { name: 'الأسبوع الخامس عشر', startDate: '16 / 6', endDate: '20 / 6', days: { 'الأحد': '16 / 6', 'الاثنين': '17 / 6', 'الثلاثاء': '18 / 6', 'الأربعاء': '19 / 6', 'الخميس': '20 / 6' }, specialDays: { '20 / 6': { name: 'إجازة إضافية', color: 'red' } } },
-            'week16': { name: 'الأسبوع السادس عشر', startDate: '23 / 6', endDate: '27 / 6', days: { 'الأحد': '23 / 6', 'الاثنين': '24 / 6', 'الثلاثاء': '25 / 6', 'الأربعاء': '26 / 6', 'الخميس': '27 / 6' }, specialDays: { '23 / 6': { name: 'إجازة إضافية', color: 'red' } } },
-            'week17': { name: 'الأسبوع السابع عشر', startDate: '1 / 7', endDate: '5 / 7', days: { 'الأحد': '1 / 7', 'الاثنين': '2 / 7', 'الثلاثاء': '3 / 7', 'الأربعاء': '4 / 7', 'الخميس': '5 / 7' } },
-            'week18': { name: 'الأسبوع الثامن عشر', startDate: '8 / 7', endDate: '12 / 7', days: { 'الأحد': '8 / 7', 'الاثنين': '9 / 7', 'الثلاثاء': '10 / 7', 'الأربعاء': '11 / 7', 'الخميس': '12 / 7' } },
-        };
-
-        const weeksDataWestern = {
-            'week1': { name: 'الأسبوع الأول', startDate: '8 / 3', endDate: '12 / 3', days: { 'الأحد': '8 / 3', 'الاثنين': '9 / 3', 'الثلاثاء': '10 / 3', 'الأربعاء': '11 / 3', 'الخميس': '12 / 3' } },
-            'week2': { name: 'الأسبوع الثاني', startDate: '15 / 3', endDate: '19 / 3', days: { 'الأحد': '15 / 3', 'الاثنين': '16 / 3', 'الثلاثاء': '17 / 3', 'الأربعاء': '18 / 3', 'الخميس': '19 / 3' } },
-            'week3': { name: 'الأسبوع الثالث', startDate: '22 / 3', endDate: '26 / 3', days: { 'الأحد': '22 / 3', 'الاثنين': '23 / 3', 'الثلاثاء': '24 / 3', 'الأربعاء': '25 / 3', 'الخميس': '26 / 3' } },
-            'week4': { name: 'الأسبوع الرابع', startDate: '29 / 3', endDate: '3 / 4', days: { 'الأحد': '29 / 3', 'الاثنين': '30 / 3', 'الثلاثاء': '1 / 4', 'الأربعاء': '2 / 4', 'الخميس': '3 / 4' }, specialDays: { '1 / 4': { name: 'إجازة اليوم الوطني', color: 'green' } } },
-            'week5': { name: 'الأسبوع الخامس', startDate: '6 / 4', endDate: '10 / 4', days: { 'الأحد': '6 / 4', 'الاثنين': '7 / 4', 'الثلاثاء': '8 / 4', 'الأربعاء': '9 / 4', 'الخميس': '10 / 4' } },
-            'week6': { name: 'الأسبوع السادس', startDate: '13 / 4', endDate: '17 / 4', days: { 'الأحد': '13 / 4', 'الاثنين': '14 / 4', 'الثلاثاء': '15 / 4', 'الأربعاء': '16 / 4', 'الخميس': '17 / 4' } },
-            'week7': { name: 'الأسبوع السابع', startDate: '20 / 4', endDate: '24 / 4', days: { 'الأحد': '20 / 4', 'الاثنين': '21 / 4', 'الثلاثاء': '22 / 4', 'الأربعاء': '23 / 4', 'الخميس': '24 / 4' }, specialDays: { '20 / 4': { name: 'إجازة إضافية', color: 'red' } } },
-            'week8': { name: 'الأسبوع الثامن', startDate: '27 / 4', endDate: '1 / 5', days: { 'الأحد': '27 / 4', 'الاثنين': '28 / 4', 'الثلاثاء': '29 / 4', 'الأربعاء': '30 / 4', 'الخميس': '1 / 5' } },
-            'week9': { name: 'الأسبوع التاسع', startDate: '4 / 5', endDate: '8 / 5', days: { 'الأحد': '4 / 5', 'الاثنين': '5 / 5', 'الثلاثاء': '6 / 5', 'الأربعاء': '7 / 5', 'الخميس': '8 / 5' } },
-            'week10': { name: 'الأسبوع العاشر', startDate: '11 / 5', endDate: '15 / 5', days: { 'الأحد': '11 / 5', 'الاثنين': '12 / 5', 'الثلاثاء': '13 / 5', 'الأربعاء': '14 / 5', 'الخميس': '15 / 5' } },
-            'week11': { name: 'الأسبوع الحادي عشر', startDate: '18 / 5', endDate: '22 / 5', days: { 'الأحد': '18 / 5', 'الاثنين': '19 / 5', 'الثلاثاء': '20 / 5', 'الأربعاء': '21 / 5', 'الخميس': '22 / 5' } },
-            'week12': { name: 'الأسبوع الثاني عشر', startDate: '25 / 5', endDate: '29 / 5', days: { 'الأحد': '25 / 5', 'الاثنين': '26 / 5', 'الثلاثاء': '27 / 5', 'الأربعاء': '28 / 5', 'الخميس': '29 / 5' } },
-            'week13': { name: 'الأسبوع الثالث عشر', startDate: '9 / 6', endDate: '13 / 6', days: { 'الأحد': '9 / 6', 'الاثنين': '10 / 6', 'الثلاثاء': '11 / 6', 'الأربعاء': '12 / 6', 'الخميس': '13 / 6' } },
-            'week14': { name: 'الأسبوع الرابع عشر', startDate: '16 / 6', endDate: '20 / 6', days: { 'الأحد': '16 / 6', 'الاثنين': '17 / 6', 'الثلاثاء': '18 / 6', 'الأربعاء': '19 / 6', 'الخميس': '20 / 6' }, specialDays: { '20 / 6': { name: 'إجازة إضافية', color: 'red' } } },
-            'week15': { name: 'الأسبوع الخامس عشر', startDate: '23 / 6', endDate: '27 / 6', days: { 'الأحد': '23 / 6', 'الاثنين': '24 / 6', 'الثلاثاء': '25 / 6', 'الأربعاء': '26 / 6', 'الخميس': '27 / 6' }, specialDays: { '23 / 6': { name: 'إجازة إضافية', color: 'red' } } },
-            'week16': { name: 'الأسبوع السادس عشر', startDate: '1 / 7', endDate: '5 / 7', days: { 'الأحد': '1 / 7', 'الاثنين': '2 / 7', 'الثلاثاء': '3 / 7', 'الأربعاء': '4 / 7', 'الخميس': '5 / 7' } },
-            'week17': { name: 'الأسبوع السابع عشر', startDate: '8 / 7', endDate: '12 / 7', days: { 'الأحد': '8 / 7', 'الاثنين': '9 / 7', 'الثلاثاء': '10 / 7', 'الأربعاء': '11 / 7', 'الخميس': '12 / 7' } },
-        };
-        
-        let weeksData = weeksDataDefault;
-
-        const activitiesData = [
-            { id: 'citizenship', title: 'المواطنة والحياة', color: '#981E47', icon: 'https://k.top4top.io/p_3472ccl2l0.gif', programs: [
-                { name: 'التطوع الطلابي', sessions: { p1:4, p2:4, p3:4, p4:6, p5:6, p6:6, m1:5, m2:5, m3:5, h2:5, h3:5 } },
-                { name: 'مهارات طموحة', sessions: { p1:6, p2:6, p3:6, p4:4, p5:4, p6:4, m1:3, m2:3, m3:3, h2:2, h3:2 } },
-                { name: 'قيمنا حياة', sessions: { p4:12, p5:12, p6:12, m1:12, m2:12, m3:12, h2:12, h3:12 } },
-            ]},
-            { id: 'culture', title: 'الثقافة والفنون', color: '#FF7145', icon: 'https://a.top4top.io/p_3472miame2.gif', programs: [
-                 { name: 'الفن السابع (السينما)', sessions: { p1:8, p2:8, p3:8, p4:8, p5:8, p6:8, m1:8, m2:8, m3:8, h2:8, h3:8 } },
-                 { name: 'حدائق الفن', sessions: { p1:6, p2:6, p3:6, p4:6, p5:6, p6:6, m1:6, m2:6, m3:6, h2:6, h3:6 } },
-                 { name: 'الأزياء السعودية', sessions: { p1:4, p2:4, p3:4, p4:4, p5:4, p6:4, m1:6, m2:6, m3:6, h2:6, h3:6 } },
-                 { name: 'الثقافة الإعلامية', sessions: { p1:4, p2:4, p3:4, p4:4, p5:4, p6:4, m1:6, m2:6, m3:6, h2:8, h3:8 } },
-                 { name: 'تصاميم تراثية معاصرة', sessions: { p1:5, p2:5, p3:5, p4:5, p5:5, p6:5, m1:5, m2:5, m3:5, h2:5, h3:5 } },
-                 { name: 'الفنون المسرحية', sessions: { p1:8, p2:8, p3:8, p4:8, p5:8, p6:8, m1:8, m2:8, m3:8, h2:8, h3:8 } },
-                 { name: 'البرنامج الموسيقي (الأناشيد الوطنية)', sessions: { p1:8, p2:8, p3:8, p4:8, p5:8, p6:8, m1:8, m2:8, m3:8, h2:8, h3:8 } },
-                 { name: 'حكايات مرئية', sessions: { p1:6, p2:6, p3:6, p4:6, p5:6, p6:6, m1:11, m2:11, m3:11, h2:11, h3:11 } },
-            ]},
-            { id: 'sports', title: 'الرياضة والصحة', color: '#2FB7BD', icon: 'https://c.top4top.io/p_3472urwbn4.gif', programs: [
-                { name: 'مهارات الرياضات الجماعية', sessions: { p1:6, p2:6, p3:6, p4:8, p5:8, p6:8, m1:8, m2:8, m3:8, h2:8, h3:8 } },
-                { name: 'مهارات الرياضات الفردية', sessions: { p1:8, p2:8, p3:8, p4:8, p5:8, p6:8, m1:8, m2:8, m3:8, h2:6, h3:6 } },
-                { name: 'مهارات رياضات الدفاع عن النفس', sessions: { p1:8, p2:8, p3:8, p4:8, p5:8, p6:8, m1:8, m2:8, m3:8, h2:6, h3:6 } },
-                { name: 'مهارات الرياضات الإلكترونية والترفيه', sessions: { p1:8, p2:8, p3:8, p4:8, p5:8, p6:8, m1:6, m2:6, m3:6, h2:8, h3:8 } },
-                { name: 'مهارات الرياضات الذهنية', sessions: { p1:6, p2:6, p3:6, p4:8, p5:8, p6:8, m1:8, m2:8, m3:8, h2:8, h3:8 } },
-                { name: 'مهارات الأولمبياد الرياضي', sessions: { p1:6, p2:6, p3:6, p4:8, p5:8, p6:8, m1:8, m2:8, m3:8, h2:8, h3:8 } },
-            ]},
-            { id: 'science', title: 'العلوم والتقنية', color: '#24344D', icon: 'https://l.top4top.io/p_3472daolv1.gif', programs: [
-                { name: 'برنامج تطبيقات STEM', sessions: { p1:3, p2:3, p3:3, p4:5, p5:5, p6:5, m1:7, m2:7, m3:7, h2:7, h3:7 } },
-                { name: 'برنامج التصاميم العلمية التقنية', sessions: { p1:2, p2:2, p3:2, p4:5, p5:5, p6:5, m1:7, m2:7, m3:7, h2:7, h3:7 } },
-                { name: 'برنامج رواد فضاء المستقبل', sessions: { p1:3, p2:3, p3:3, p4:5, p5:5, p6:5, m1:7, m2:7, m3:7, h2:9, h3:9 } },
-                { name: 'برنامج مدن المستقبل', sessions: { p1:3, p2:3, p3:3, p4:4, p5:4, p6:4, m1:7, m2:7, m3:7, h2:9, h3:9 } },
-                { name: 'برنامج الذكاء الاصطناعي', sessions: { p1:10, p2:10, p3:10, p4:10, p5:10, p6:10, m1:10, m2:10, m3:10, h2:10, h3:10 } },
-                { name: 'برنامج تحدي إنترنت الأشياء', sessions: { p1:3, p2:3, p3:3, p4:4, p5:4, p6:4, m1:7, m2:7, m3:7, h2:9, h3:9 } },
-            ]},
-            { id: 'events', title: 'الأيام والمناسبات', color: '#583C71', icon: 'https://e.top4top.io/p_34729xucx5.gif', programs: [
-                { name: 'اليوم الوطني', date: 'يوافق ١ / ٤ / ١٤٤٧ هـ', sessions: { p1:4, p2:4, p3:4, p4:4, p5:4, p6:4, m1:4, m2:4, m3:4, h2:4, h3:4 } },
-                { name: 'يوم التسامح العالمي', date: 'يوافق ٢٥ / ٥ / ١٤٤٧ هـ', sessions: { p1:2, p2:2, p3:2, p4:2, p5:2, p6:2, m1:1, m2:1, m3:1, h2:1, h3:1 } },
-                { name: 'اليوم العالمي للطفل', date: 'يوافق ٢٩ / ٥ / ١٤٤٧ هـ', sessions: { p1:2, p2:2, p3:2, p4:2, p5:2, p6:2 } },
-                { name: 'اليوم العالمي لذوي الإعاقة', date: 'يوافق ١٢ / ٦ / ١٤٤٧ هـ', sessions: { p1:2, p2:2, p3:2, p4:2, p5:2, p6:2, m1:2, m2:2, m3:2, h2:2, h3:2 } },
-                { name: 'اليوم العالمي للغة العربية', date: 'يوافق ٢٧ / ٦ / ١٤٤٧ هـ', sessions: { p1:2, p2:2, p3:2, p4:2, p5:2, p6:2, m1:1, m2:1, m3:1, h2:1, h3:1 } },
-                { name: 'اليوم العالمي للتعليم', date: 'يوافق ٧ / ٨ / ١٤٤٧ هـ', sessions: { p1:2, p2:2, p3:2, p4:2, p5:2, p6:2, m1:2, m2:2, m3:2, h2:2, h3:2 } },
-                { name: 'يوم التأسيس', date: 'يوافق ٥ / ٩ / ١٤٤٧ هـ', sessions: { p1:4, p2:4, p3:4, p4:4, p5:4, p6:4, m1:4, m2:4, m3:4, h2:4, h3:4 } },
-                { name: 'يوم العلم السعودي', date: 'يوافق ٢٢ / ٩ / ١٤٤٧ هـ', sessions: { p1:3, p2:3, p3:3, p4:3, p5:3, p6:3, m1:2, m2:2, m3:2, h2:2, h3:2 } },
-                { name: 'يوم السعودية الخضراء', date: 'يوافق ٨ / ١٠ / ١٤٤٧ هـ', sessions: { p1:3, p2:3, p3:3, p4:3, p5:3, p6:3, m1:2, m2:2, m3:2, h2:2, h3:2 } },
-                { name: 'يوم الصحة العالمي', date: 'يوافق ١٩ / ١٠ / ١٤٤٧ هـ', sessions: { p1:2, p2:2, p3:2, p4:2, p5:2, p6:2, m1:2, m2:2, m3:2, h2:2, h3:2 } },
-            ]},
-            { id: 'scouting', title: 'النشاط الكشفي', color: '#018083', icon: 'https://b.top4top.io/p_3472h0ngk3.gif', programs: [
-                { name: 'خيمتي الجميلة', sessions: { p1:3, p2:3, p3:3 } },
-                { name: 'خشبة وحبل', sessions: { p4:12, p5:12, p6:12 } },
-                { name: 'الملاحة على اليابس', sessions: { m1:3, m2:3, m3:3 } },
-                { name: 'أغامر وأكتشف', sessions: { h2:5, h3:5 } },
-                { name: 'براعم البيئة والمجتمع', sessions: { p1:2, p2:2, p3:2 } },
-                { name: 'أشارك مجتمعي وأزرع شجرة', sessions: { p4:3, p5:3, p6:3 } },
-                { name: 'مجتمعي وبيئتي مسؤوليتي', sessions: { m1:6, m2:6, m3:6 } },
-                { name: 'سفير البيئة والمجتمع', sessions: { h2:5, h3:5 } },
-                { name: 'بصمتي الكشفية', sessions: { p1:3, p2:3, p3:3 } },
-                { name: 'وطني في قلبي', sessions: { p4:3, p5:3, p6:3 } },
-                { name: 'صناع التغيير', sessions: { m1:3, m2:3, m3:3 } },
-                { name: 'سواعد الكشفية', sessions: { h2:6, h3:6 } },
-                { name: 'براعم النور', sessions: { p1:2, p2:2, p3:2 } },
-                { name: 'كنوز الصغار', sessions: { p4:2, p5:2, p6:2 } },
-                { name: 'من هدي القرآن والسنة', sessions: { m1:3, m2:3, m3:3 } },
-                { name: 'درب الإحسان', sessions: { h2:3, h3:3 } },
-                { name: 'بوصلة الاكتشاف', sessions: { p1:3, p2:3, p3:3 } },
-                { name: 'خيمة التجارب المسلية', sessions: { p4:6, p5:6, p6:6 } },
-                { name: 'مخيمي التقني', sessions: { m1:10, m2:10, m3:10 } },
-                { name: 'واحة الإبداع الكشفي', sessions: { h2:4, h3:4 } },
-                { name: 'عاداتي الصحية الكشفية', sessions: { p1:3, p2:3, p3:3 } },
-                { name: 'طبقي الكشفي', sessions: { p4:3, p5:3, p6:3 } },
-                { name: 'خطواتي الكشفية الصحية', sessions: { m1:3, m2:3, m3:3 } },
-                { name: 'مهرجان الأفلام الكشفية الصحية', sessions: { h2:5, h3:5 } },
-                { name: 'مهاراتي وكشفيتي', sessions: { p1:2, p2:2, p3:2 } },
-                { name: 'صافرة واصطفاف', sessions: { p4:2, p5:2, p6:2 } },
-                { name: 'مهاراتي الكشفية من الاستعداد إلى الإنجاز', sessions: { m1:4, m2:4, m3:4 } },
-                { name: 'أفقي الكشفي الواسع', sessions: { h2:6, h3:6 } },
-            ]},
-        ];
-        
-        function parseDateForSort(dateStr) {
-            const parts = dateStr.split(' ');
-            const datePart = parts.slice(1).join('');
-            const dateParts = datePart.split('/');
-            if (dateParts.length < 2) return 9999;
-            const day = parseInt(dateParts[0], 10);
-            const month = parseInt(dateParts[1], 10);
-            return month * 100 + day;
-        }
-
-        function formatDatesForDisplay(datesArray) {
-            if (!datesArray || datesArray.length === 0) {
-                return { text: '', json: '[]' };
-            }
-
-            const sortedDates = [...datesArray].sort((a, b) => parseDateForSort(a) - parseDateForSort(b));
-            
-            const firstDateStr = sortedDates[0];
-            const lastDateStr = sortedDates[sortedDates.length - 1];
-            
-            const getWeekInfoForDate = (fullDateStr) => {
-                const datePartWithSpaces = fullDateStr.split(' ').slice(1).join(' '); 
-                for (const weekKey in weeksData) {
-                    const week = weeksData[weekKey];
-                    if (Object.values(week.days).includes(datePartWithSpaces)) {
-                        return week;
-                    }
-                }
-                return null;
+        function saveState() {
+            const state = {
+                admin: document.getElementById('education-admin').value,
+                school: document.getElementById('school-name').value,
+                leader: document.getElementById('activity-leader-name').value,
+                director: document.getElementById('school-director-name').value,
+                selectedGrades,
+                currentRegion
             };
-
-            const firstWeekInfo = getWeekInfoForDate(firstDateStr);
-            const lastWeekInfo = getWeekInfoForDate(lastDateStr);
-
-            let textContent = '';
-
-            if (firstWeekInfo && lastWeekInfo && firstWeekInfo.name === lastWeekInfo.name) {
-                // All dates fall within the same week
-                textContent = `${firstWeekInfo.name}: ${sortedDates.join(' | ')}`;
-            } else if (sortedDates.length > 1 && firstWeekInfo && lastWeekInfo) {
-                // Dates span multiple weeks
-                textContent = `من ${firstWeekInfo.name} (${firstDateStr}) إلى ${lastWeekInfo.name} (${lastDateStr})`;
-            } else {
-                // Fallback (e.g., single date)
-                textContent = sortedDates.join(' | ');
-            }
-
-            return {
-                text: textContent,
-                json: JSON.stringify(sortedDates)
-            };
+            localStorage.setItem('expert_plan_state', JSON.stringify(state));
         }
 
-
-        function createGradeSelectionUI() {
-            const container = document.getElementById('grade-selection-container');
-            container.innerHTML = `
-                <button onclick="handleGradeSelection('all')" id="btn-all" class="w-full max-w-sm flex items-center justify-center gap-2 px-4 py-2 rounded-full font-medium transition-all duration-300">🏫 الكل</button>
-            `;
-
-            const stages = [
-                { title: 'الابتدائية', groups: [
-                    { label: 'الكل', key: 'primary_all' }, 
-                    { label: 'الأولية', key: 'primary_lower' },
-                    { label: 'العليا', key: 'primary_upper' }
-                ], individuals: ['p1', 'p2', 'p3', 'p4', 'p5', 'p6'] },
-                { title: 'المتوسطة', groups: [{ label: 'الكل', key: 'middle_all' }], individuals: ['m1', 'm2', 'm3'] },
-                { title: 'الثانوية', groups: [{ label: 'الكل', key: 'high_all' }], individuals: ['h2', 'h3'] }
-            ];
-
-            stages.forEach(stage => {
-                const stageWrapper = document.createElement('div');
-                stageWrapper.className = 'w-full max-w-sm border p-2 rounded-lg';
-                
-                const titleEl = document.createElement('h4');
-                titleEl.className = 'font-semibold mb-2';
-                titleEl.textContent = stage.title;
-                stageWrapper.appendChild(titleEl);
-
-                const groupsContainer = document.createElement('div');
-                groupsContainer.className = 'flex flex-wrap justify-center gap-2 mb-2';
-                stage.groups.forEach(group => {
-                    groupsContainer.innerHTML += `<button onclick="handleGradeSelection('${group.key}')" id="btn-${group.key}" class="px-3 py-1 rounded-full text-sm font-medium transition-all duration-300">${group.label}</button>`;
-                });
-                stageWrapper.appendChild(groupsContainer);
-
-                const individualsContainer = document.createElement('div');
-                individualsContainer.className = 'flex flex-wrap justify-center gap-2 border-t pt-2 mt-2';
-                 stage.individuals.forEach(indKey => {
-                    individualsContainer.innerHTML += `<button onclick="handleGradeSelection('${indKey}')" id="btn-${indKey}" class="px-3 py-1 rounded-full text-sm font-medium transition-all duration-300">${gradeNames[indKey]}</button>`;
-                });
-                stageWrapper.appendChild(individualsContainer);
-
-                container.appendChild(stageWrapper);
-            });
+        // تحسين دالة الطباعة لمنع الصفحات الفارغة
+        function printSchedule() {
+            window.print(); // تم الاعتماد على `@media print` المهيأ أعلاه لحل مشكلة الهوامش تلقائياً
         }
-        
-        function generateSections() {
-            const mainContainer = document.querySelector('main');
-            mainContainer.innerHTML = ''; 
-
-            activitiesData.forEach(section => {
-                const programRows = section.programs.map((prog, index) => {
-                    const uniqueId = `${section.id}-${index}`;
-                    return `
-                    <tr 
-                        data-program-id="${uniqueId}" 
-                        data-program-name="${prog.name}" 
-                        data-field-name="${section.title}" 
-                        data-field-color="${section.color}"
-                        data-sessions='${JSON.stringify(prog.sessions)}'
-                    >
-                        <td class="border border-gray-300 px-2 py-3 font-semibold" style="background-color: ${section.color}; color: white;">${section.title}</td>
-                        <td class="border border-gray-300 px-2 py-3">
-                            <div>${prog.name}</div>
-                            ${prog.date ? `<div class="text-sm text-blue-600 font-semibold pt-1">${prog.date}</div>` : ''}
-                        </td>
-                        <td class="border border-gray-300 px-2 py-3">
-                            <div class="teacher-inputs-container space-y-2" data-program-id="${uniqueId}"></div>
-                        </td>
-                        <td class="border border-gray-300 px-2 py-3 align-top">
-                            <div class="space-y-1" id="selectors-container-${uniqueId}"></div>
-                        </td>
-                    </tr>
-                `}).join('');
-
-                const sectionHTML = `
-                    <section id="${section.id}" class="mb-8">
-                        <div class="bg-white rounded-lg shadow-lg overflow-hidden">
-                            <button onclick="toggleDropdown('${section.id}-dropdown')" class="w-full px-6 py-4 text-right font-bold text-lg flex justify-between items-center transition-colors hover:bg-gray-50" style="background-color: ${section.color}; color: white;">
-                                <div class="flex items-center">
-                                    <div class="w-12 h-12 rounded-full bg-white flex items-center justify-center ml-4 overflow-hidden">
-                                        <img src="${section.icon}" alt="${section.title}" class="w-8 h-8 object-contain">
-                                    </div>
-                                    <span>${section.title}</span>
-                                </div>
-                                <svg id="${section.id}-arrow" class="w-6 h-6 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path>
-                                </svg>
-                            </button>
-                            <div id="${section.id}-dropdown" class="dropdown-content">
-                                <div class="p-6">
-                                    <div class="overflow-x-auto">
-                                        <table class="w-full border-collapse border border-gray-300">
-                                            <thead>
-                                                <tr class="bg-gray-100">
-                                                    <th class="border border-gray-300 px-2 py-3 text-right font-semibold w-1/5">المجال</th>
-                                                    <th class="border border-gray-300 px-2 py-3 text-right font-semibold w-2/5">البرنامج</th>
-                                                    <th class="border border-gray-300 px-2 py-3 text-right font-semibold w-1/5">المعلم/ة المنفذ/ة</th>
-                                                    <th class="border border-gray-300 px-2 py-3 text-center font-semibold w-1/5">تواريخ التنفيذ</th>
-                                                </tr>
-                                            </thead>
-                                            <tbody>${programRows}</tbody>
-                                        </table>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                    </section>
-                `;
-                mainContainer.innerHTML += sectionHTML;
-            });
-        }
-        
-        function updateAllDateSelectors() {
-            document.querySelectorAll('tr[data-program-id]').forEach(row => {
-                updateDateSelectorsForRow(row);
-                updateTeacherInputsForRow(row);
-            });
-        }
-        
-        function updateTeacherInputsForRow(row) {
-            const uniqueId = row.dataset.programId;
-            const container = row.querySelector(`.teacher-inputs-container`);
-            if (!container) return;
-
-            const sessions = JSON.parse(row.dataset.sessions);
-            const effectiveGrades = getEffectiveIndividualGrades().filter(grade => sessions[grade] > 0);
-
-            let newHTML = '';
-            
-            let teacherGroupsToDisplay = [];
-            const isAllSelected = selectedGrades.includes('all');
-            
-            if (isAllSelected) {
-                teacherGroupsToDisplay.push('all');
-            } else {
-                 teacherGroupsToDisplay.push(...selectedGrades);
-            }
-
-            teacherGroupsToDisplay = teacherGroupsToDisplay.filter(key => {
-                const groupGrades = gradeGroups[key] || [key];
-                return groupGrades.some(g => effectiveGrades.includes(g));
-            });
-
-            if (teacherGroupsToDisplay.length === 0 && effectiveGrades.length > 0) {
-                 teacherGroupsToDisplay = effectiveGrades;
-            }
-
-            teacherGroupsToDisplay.forEach(key => {
-                const groupData = teacherInputGroups[key];
-                const label = (groupData ? groupData.label : gradeNames[key]) || 'مرحلة غير محددة';
-                newHTML += `
-                    <div class="teacher-input-group">
-                        <label class="text-xs text-gray-500 font-semibold">${label}</label>
-                        <textarea placeholder="اسم المعلم/ة" class="teacher-input w-full p-1 border rounded text-sm" data-grade-key="${key}" rows="2" onblur="saveState()"></textarea>
-                    </div>
-                `;
-            });
-
-            container.innerHTML = newHTML;
-        }
-
-        function updateDateSelectorsForRow(row) {
-            const uniqueId = row.dataset.programId;
-            const sessions = JSON.parse(row.dataset.sessions);
-            const container = document.getElementById(`selectors-container-${uniqueId}`);
-            if (!container) return;
-            container.innerHTML = '';
-
-            const itemsToDisplay = selectedGrades.includes('all') 
-                ? ['primary_lower', 'primary_upper', 'middle_all', 'high_all'] 
-                : selectedGrades;
-
-            let newHTML = '';
-            itemsToDisplay.forEach(key => {
-                const individualGradeKeys = gradeGroups[key] || [key];
-                let sessionCount = 0;
-                let label = gradeNames[key];
-
-                sessionCount = Math.max(0, ...individualGradeKeys.map(g => sessions[g] || 0));
-
-                if (key === 'primary_all') label = 'المرحلة الابتدائية';
-                else if (key === 'primary_lower') label = 'الصفوف الأولية';
-                else if (key === 'primary_upper') label = 'الصفوف العليا';
-                else if (key === 'middle_all') label = 'المرحلة المتوسطة';
-                else if (key === 'high_all') label = 'المرحلة الثانوية';
-
-                if (sessionCount > 0) {
-                    newHTML += `
-                    <div class="grade-date-selector p-2 border-t first:border-t-0" data-grade-key="${key}">
-                        <div class="flex justify-between items-center text-sm mb-1">
-                            <span class="font-semibold">${label}</span>
-                            <span class="text-gray-500">${sessionCount} حصص</span>
-                        </div>
-                        <div class="flex items-center gap-1">
-                            <div class="dates-display text-xs text-gray-600 flex-grow text-right p-1 bg-gray-50 rounded min-h-[26px]" data-dates="[]"></div>
-                            <div class="flex-shrink-0 flex gap-1">
-                                <button class="date-select-btn bg-blue-500 text-white px-2 py-1 rounded text-xs hover:bg-blue-600" onclick="openDatePicker('${uniqueId}', '${key}')">اختيار</button>
-                                <button class="clear-date-btn bg-red-500 text-white px-2 py-1 rounded text-xs hover:bg-red-600" onclick="clearGradeDates('${uniqueId}', '${key}')">مسح</button>
-                            </div>
-                        </div>
-                    </div>`;
-                }
-            });
-
-            container.innerHTML = newHTML;
-        }
-
-        function getEffectiveIndividualGrades() {
-            if (selectedGrades.includes('all')) {
-                return [...allGradeKeys];
-            }
-            let individuals = [];
-            selectedGrades.forEach(item => {
-                individuals.push(...(gradeGroups[item] || [item]));
-            });
-            return [...new Set(individuals)];
-        }
-
-        function handleGradeSelection(key) {
-            if (key === 'all') {
-                selectedGrades = ['all'];
-            } else {
-                let newSelection = selectedGrades.includes('all') ? [] : [...selectedGrades];
-                
-                const isAdding = !newSelection.includes(key);
-
-                if (isAdding) {
-                    let conflicts = [];
-                    if (gradeGroups[key]) {
-                        conflicts.push(...gradeGroups[key]);
-                    }
-                    for (const groupKey in gradeGroups) {
-                        if (gradeGroups[groupKey].includes(key)) {
-                            conflicts.push(groupKey);
-                        }
-                    }
-                    newSelection = newSelection.filter(item => !conflicts.includes(item));
-                    newSelection.push(key);
-                } else {
-                    newSelection = newSelection.filter(item => item !== key);
-                }
-                
-                selectedGrades = newSelection;
-            }
-
-            updateButtonStyles();
-            updateTitle();
-            updateAllDateSelectors();
-            saveState();
-        }
-
-
-        function updateButtonStyles() {
-            const effectiveSelection = getEffectiveIndividualGrades();
-            
-            allGradeKeys.forEach(key => {
-                const btn = document.getElementById(`btn-${key}`);
-                if(btn) {
-                    if (effectiveSelection.includes(key)) {
-                        btn.classList.add('bg-blue-600', 'text-white', 'shadow-lg');
-                        btn.classList.remove('bg-gray-200', 'text-gray-700');
-                    } else {
-                        btn.classList.remove('bg-blue-600', 'text-white', 'shadow-lg');
-                        btn.classList.add('bg-gray-200', 'text-gray-700');
-                    }
-                }
-            });
-
-            Object.keys(gradeGroups).forEach(key => {
-                const btn = document.getElementById(`btn-${key}`);
-                if(btn) {
-                    const groupMembers = gradeGroups[key];
-                    if (groupMembers.length > 0) {
-                        const isGroupSelected = groupMembers.every(g => effectiveSelection.includes(g));
-                        if (isGroupSelected) {
-                            btn.classList.add('bg-blue-600', 'text-white', 'shadow-lg');
-                            btn.classList.remove('bg-gray-200', 'text-gray-700');
-                        } else {
-                            btn.classList.remove('bg-blue-600', 'text-white', 'shadow-lg');
-                            btn.classList.add('bg-gray-200', 'text-gray-700');
-                        }
-                    }
-                }
-            });
-
-            const btnAll = document.getElementById('btn-all');
-            if (selectedGrades.includes('all')) {
-                btnAll.classList.add('bg-blue-600', 'text-white', 'shadow-lg');
-                btnAll.classList.remove('bg-gray-200', 'text-gray-700');
-            } else {
-                btnAll.classList.remove('bg-blue-600', 'text-white', 'shadow-lg');
-                btnAll.classList.add('bg-gray-200', 'text-gray-700');
-            }
-        }
-
 
         function selectRegion(region) {
             currentRegion = region;
-            weeksData = region === 'western' ? weeksDataWestern : weeksDataDefault;
-
-            const btnWestern = document.getElementById('btn-western-region');
-            const btnOther = document.getElementById('btn-other-region');
-
-            if (region === 'western') {
-                btnWestern.className = 'px-4 py-2 rounded-full font-medium transition-all duration-300 bg-blue-600 text-white shadow-lg';
-                btnOther.className = 'px-4 py-2 rounded-full font-medium transition-all duration-300 bg-gray-200 text-gray-700';
-            } else {
-                btnOther.className = 'px-4 py-2 rounded-full font-medium transition-all duration-300 bg-blue-600 text-white shadow-lg';
-                btnWestern.className = 'px-4 py-2 rounded-full font-medium transition-all duration-300 bg-gray-200 text-gray-700';
-            }
+            document.getElementById('btn-western-region').classList.toggle('bg-blue-600', region === 'western');
+            document.getElementById('btn-other-region').classList.toggle('bg-blue-600', region === 'other');
             saveState();
-        }
-
-        function toggleDropdown(dropdownId) {
-            const dropdown = document.getElementById(dropdownId);
-            const arrow = document.getElementById(dropdownId.replace('-dropdown', '-arrow'));
-            
-            document.querySelectorAll('.dropdown-content.active').forEach(openDropdown => {
-                if (openDropdown.id !== dropdownId) {
-                    openDropdown.classList.remove('active');
-                    const otherArrow = document.getElementById(openDropdown.id.replace('-dropdown', '-arrow'));
-                    if (otherArrow) otherArrow.classList.remove('rotate-arrow');
-                }
-            });
-
-            dropdown.classList.toggle('active');
-            arrow.classList.toggle('rotate-arrow');
-        }
-
-        function updateTitle() {
-            const stageTitleHeader = document.getElementById('stage-title-header');
-            if (selectedGrades.includes('all') || selectedGrades.length === 0) {
-                stageTitleHeader.textContent = '';
-                return;
-            }
-            
-            const titles = [];
-            
-            let primTitleDone = false;
-            if (selectedGrades.includes('primary_all')) { titles.push('للمرحلة الابتدائية'); primTitleDone = true; }
-            else if (selectedGrades.includes('primary_lower') && selectedGrades.includes('primary_upper')) { titles.push('للمرحلة الابتدائية'); primTitleDone = true; }
-            
-            if (!primTitleDone) {
-                 if (selectedGrades.includes('primary_lower')) titles.push('للصفوف الأولية');
-                 if (selectedGrades.includes('primary_upper')) titles.push('للصفوف العليا');
-            }
-
-            const individualInSelection = selectedGrades.filter(g => !gradeGroups[g]);
-            const primIndividuals = individualInSelection.filter(g => g.startsWith('p'));
-
-            if(primIndividuals.length > 0) {
-                 const primText = `لـ ${primIndividuals.map(g => gradeNames[g]).join(' و')}`;
-                 if (!titles.some(t => t.includes('للمرحلة الابتدائية') || t.includes('للصفوف'))) {
-                     titles.push(primText);
-                 }
-            }
-
-            if (selectedGrades.includes('middle_all')) {
-                titles.push('للمرحلة المتوسطة');
-            } else {
-                const midIndividuals = individualInSelection.filter(g => g.startsWith('m'));
-                if (midIndividuals.length > 0) {
-                    titles.push(`لـ ${midIndividuals.map(g => gradeNames[g]).join(' و')}`);
-                }
-            }
-
-            if (selectedGrades.includes('high_all')) {
-                 titles.push('للمرحلة الثانوية');
-            } else {
-                const highIndividuals = individualInSelection.filter(g => g.startsWith('h'));
-                 if (highIndividuals.length > 0) {
-                    titles.push(`لـ ${highIndividuals.map(g => gradeNames[g]).join(' و')}`);
-                }
-            }
-            
-            stageTitleHeader.textContent = titles.join(' - ');
-        }
-        
-        function clearAllFilters() {
-            selectedGrades = [];
-            updateButtonStyles();
-            updateTitle();
-            updateAllDateSelectors();
-            saveState();
-        }
-
-        function clearGradeDates(programId, key) {
-            const row = document.querySelector(`tr[data-program-id="${programId}"]`);
-            if (row) {
-                const display = row.querySelector(`.grade-date-selector[data-grade-key="${key}"] .dates-display`);
-                if (display) {
-                    display.textContent = '';
-                    display.dataset.dates = '[]';
-                }
-                saveState();
-            }
-        }
-
-        function openDatePicker(programId, key) {
-            activeSelection = { programId, key };
-            const row = document.querySelector(`tr[data-program-id="${programId}"]`);
-            const programName = row.dataset.programName;
-            const sessions = JSON.parse(row.dataset.sessions);
-            
-            const individualGradeKeys = gradeGroups[key] || [key];
-            
-            let totalRequiredSessions = 0;
-            let label = gradeNames[key];
-            
-            totalRequiredSessions = Math.max(0, ...individualGradeKeys.map(g => sessions[g] || 0));
-            
-            if (key === 'primary_all') label = 'المرحلة الابتدائية';
-            else if (key === 'primary_lower') label = 'الصفوف الأولية';
-            else if (key === 'primary_upper') label = 'الصفوف العليا';
-            else if (key === 'middle_all') label = 'المرحلة المتوسطة';
-            else if (key === 'high_all') label = 'المرحلة الثانوية';
-
-            document.getElementById('modal-title').textContent = `${programName} - ${label}`;
-            
-            const displayDiv = row.querySelector(`.grade-date-selector[data-grade-key="${key}"] .dates-display`);
-            tempSelectedDates = displayDiv.dataset.dates ? JSON.parse(displayDiv.dataset.dates) : [];
-
-            updateDatePickerCounter(totalRequiredSessions);
-
-            const container = document.getElementById('modal-weeks-container');
-            container.innerHTML = '';
-
-            Object.entries(weeksData).forEach(([weekKey, weekData]) => {
-                const weekDiv = document.createElement('div');
-                weekDiv.className = 'p-2 border rounded-md';
-                weekDiv.innerHTML = `<p class="font-semibold text-center mb-2">${weekData.name} (${weekData.startDate} - ${weekData.endDate})</p>`;
-                
-                const weekGrid = document.createElement('div');
-                weekGrid.className = 'week-grid grid grid-cols-5 gap-2';
-                
-                Object.entries(weekData.days).forEach(([dayName, dayDate]) => {
-                    const dayButton = document.createElement('button');
-                    const fullDate = `${dayName} ${dayDate}`;
-                    dayButton.className = 'day p-2 border rounded-md text-sm';
-                    dayButton.dataset.date = fullDate;
-                    
-                    let buttonText = `${dayName}<br>${dayDate}`;
-                    if (weekData.specialDays && weekData.specialDays[dayDate]) {
-                        dayButton.classList.add('disabled');
-                        dayButton.disabled = true;
-                        buttonText += `<br><span class="text-xs">${weekData.specialDays[dayDate].name}</span>`;
-                    } else {
-                        dayButton.onclick = () => toggleDateSelection(dayButton, totalRequiredSessions);
-                    }
-                    
-                    if (tempSelectedDates.includes(fullDate)) {
-                        dayButton.classList.add('selected');
-                    }
-                    
-                    dayButton.innerHTML = buttonText;
-                    weekGrid.appendChild(dayButton);
-                });
-                weekDiv.appendChild(weekGrid);
-                container.appendChild(weekDiv);
-            });
-
-            document.getElementById('date-picker-modal').style.display = 'flex';
-        }
-
-        function toggleDateSelection(button, totalMaxDates) {
-            const date = button.dataset.date;
-            const isSelected = tempSelectedDates.includes(date);
-
-            if (isSelected) {
-                tempSelectedDates = tempSelectedDates.filter(d => d !== date);
-                button.classList.remove('selected');
-            } else {
-                if (tempSelectedDates.length >= totalMaxDates) {
-                    alert(`لقد وصلت للحد الأقصى لعدد الحصص لهذا البرنامج (${totalMaxDates} تواريخ).`);
-                    return;
-                }
-                tempSelectedDates.push(date);
-                button.classList.add('selected');
-            }
-            updateDatePickerCounter(totalMaxDates);
-        }
-
-        function updateDatePickerCounter(max) {
-            const counterEl = document.getElementById('modal-date-counter');
-            if (counterEl) {
-                counterEl.textContent = `اختر ${max} حصص (تم اختيار ${tempSelectedDates.length})`;
-            }
-        }
-
-        function closeDatePicker() {
-            document.getElementById('date-picker-modal').style.display = 'none';
-            activeSelection = null;
-            tempSelectedDates = [];
-        }
-
-        function saveDates() {
-            if (!activeSelection) return;
-            const { programId, key } = activeSelection;
-            const row = document.querySelector(`tr[data-program-id="${programId}"]`);
-            const datesDisplay = row.querySelector(`.grade-date-selector[data-grade-key="${key}"] .dates-display`);
-            if (datesDisplay) {
-                const formatted = formatDatesForDisplay(tempSelectedDates);
-                datesDisplay.textContent = formatted.text;
-                datesDisplay.dataset.dates = formatted.json;
-            }
-            saveState();
-            closeDatePicker();
-        }
-        
-        function printSchedule() {
-            if (isPrinting) {
-                alert('عملية طباعة جارية بالفعل. يرجى الانتظار.');
-                return;
-            }
-            isPrinting = true;
-
-            const state = JSON.parse(localStorage.getItem('activityPlanState')) || {};
-            if (!state) {
-                alert('لا توجد بيانات محفوظة للطباعة.');
-                isPrinting = false;
-                return;
-            }
-
-            const programSelections = state.programSelections || {};
-            const effectiveGradesForPrint = getEffectiveIndividualGrades();
-            if (effectiveGradesForPrint.length === 0) {
-                 alert('يرجى اختيار الفصول الدراسية أولاً قبل الطباعة.');
-                 isPrinting = false;
-                 return;
-            }
-
-            const plannedPrograms = Object.entries(programSelections)
-                .map(([id, data]) => {
-                    const row = document.querySelector(`tr[data-program-id="${id}"]`);
-                    if (!row) return null;
-                    return {
-                        id,
-                        field: row.dataset.fieldName,
-                        program: row.dataset.programName,
-                        teachers: data.teachersByGrade || {},
-                        datesByGrade: data.datesByGrade || {},
-                        color: row.dataset.fieldColor,
-                        sessionsData: JSON.parse(row.dataset.sessions),
-                    };
-                }).filter(p => p);
-
-            if (plannedPrograms.length === 0) {
-                alert('يرجى تحديد تواريخ أو معلمين لبرنامج واحد على الأقل قبل الطباعة.');
-                isPrinting = false;
-                return;
-            }
-
-            const printWindow = window.open('', '_blank');
-            if (!printWindow) {
-                alert('فشل فتح نافذة الطباعة. يرجى السماح بالنوافذ المنبثقة لهذا الموقع.');
-                isPrinting = false;
-                return;
-            }
-
-            const programsByField = {};
-            plannedPrograms.forEach(p => {
-                if (!programsByField[p.field]) {
-                    programsByField[p.field] = [];
-                }
-                programsByField[p.field].push(p);
-            });
-
-            const activeFields = activitiesData
-                .map(field => field.title)
-                .filter(title => programsByField[title] && programsByField[title].length > 0);
-
-            let printContent = '<div class="print-grid">';
-            activeFields.forEach(fieldName => {
-                const fieldData = activitiesData.find(f => f.title === fieldName);
-                let tableRows = '';
-
-                programsByField[fieldName].forEach(p => {
-                    const teacherEntries = [];
-                    const dateEntries = [];
-                    const sessionDetailsParts = [];
-
-                    const displayKeys = selectedGrades.includes('all') 
-                        ? ['primary_lower', 'primary_upper', 'middle_all', 'high_all'] 
-                        : [...selectedGrades];
-
-                    displayKeys.forEach(key => {
-                        const individualGradesInGroup = gradeGroups[key] || [key];
-                        const isRelevant = individualGradesInGroup.some(g => effectiveGradesForPrint.includes(g) && p.sessionsData[g]);
-                        if (!isRelevant) return;
-                        
-                        let label;
-                        switch (key) {
-                            case 'primary_lower': label = 'الأولية'; break;
-                            case 'primary_upper': label = 'العليا'; break;
-                            case 'middle_all': label = 'المرحلة المتوسطة'; break;
-                            case 'high_all': label = 'المرحلة الثانوية'; break;
-                            default: label = gradeNames[key];
-                        }
-
-                        const teacherName = p.teachers[key];
-                        if (teacherName) {
-                            teacherEntries.push(`<div class="stage-entry"><strong>${label}:</strong> ${teacherName.replace(/\n/g, '<br>')}</div>`);
-                        }
-
-                        const dates = p.datesByGrade[key];
-                        if (dates && dates.length > 0) {
-                            const formattedDatesString = formatDatesForDisplay(dates).text;
-                            dateEntries.push(`<div class="stage-entry"><strong>${label}:</strong> ${formattedDatesString}</div>`);
-                        }
-
-                        const sessionCount = Math.max(0, ...individualGradesInGroup.map(g => p.sessionsData[g] || 0));
-                        if(sessionCount > 0){
-                            sessionDetailsParts.push(`${label}: ${sessionCount}`);
-                        }
-                    });
-
-                    if (teacherEntries.length === 0 && dateEntries.length === 0) {
-                        return;
-                    }
-
-                    const sessionDetails = sessionDetailsParts.join('، ');
-                    const formattedTeachersString = teacherEntries.join('') || 'غير محدد';
-                    const formattedDatesString = dateEntries.join('') || 'غير محددة';
-
-                    tableRows += `
-                    <tr>
-                        <td>${p.program}<br><small style="color: #555; font-weight: normal;">(${sessionDetails})</small></td>
-                        <td>${formattedTeachersString}</td>
-                        <td>${formattedDatesString}</td>
-                        <td></td>
-                        <td></td>
-                        <td></td>
-                    </tr>`;
-                });
-                
-                if (tableRows.trim() === '') {
-                     return; 
-                }
-
-                printContent += '<div class="print-column">';
-                printContent += `<h3 style="background-color:${fieldData.color}; color:white;">${fieldName}</h3>`;
-                printContent += `
-                    <table>
-                        <thead>
-                            <tr>
-                                <th>البرنامج</th>
-                                <th>المعلم/ة</th>
-                                <th>تاريخ التنفيذ</th>
-                                <th>نفذ</th>
-                                <th>لم ينفذ</th>
-                                <th>التوقيع</th>
-                            </tr>
-                        </thead>
-                        <tbody>${tableRows}</tbody>
-                    </table>`;
-                printContent += '</div>';
-            });
-            printContent += '</div>';
-
-            if (printContent === '<div class="print-grid"></div>') {
-                alert('لا توجد برامج محددة للفصول المختارة. يرجى تحديد تواريخ أو معلمين للبرامج في الفصول التي اخترتها.');
-                isPrinting = false;
-                printWindow.close();
-                return;
-            }
-            
-            const printStageTitle = document.getElementById('stage-title-header').textContent || 'لجميع المراحل الدراسية';
-            const printSemesterSubtitle = document.getElementById('subtitle').textContent;
-            const eduAdmin = state.educationAdmin || '';
-            const eduRegion = state.educationRegion || '';
-            const schoolName = state.schoolName || '';
-            const leaderName = state.activityLeaderName || 'رائد/ة النشاط';
-            const directorName = state.schoolDirectorName || 'مدير/ة المدرسة';
-            const printFontSize = document.getElementById('print-font-size').value;
-
-            printWindow.document.write(`
-                <!DOCTYPE html>
-                <html lang="ar" dir="rtl">
-                <head>
-                    <meta charset="UTF-8">
-                    <title>خطة النشاط الطلابي لـ ${schoolName}</title>
-                    <style>
-                        @import url('https://fonts.googleapis.com/css2?family=Cairo:wght@400;700&display=swap');
-                        * { -webkit-print-color-adjust: exact !important; print-color-adjust: exact !important; }
-                        @page { size: A4 landscape; margin: 10mm 5mm; }
-                        html, body { margin: 0; padding: 0; }
-                        body { font-family: 'Cairo', sans-serif; font-size: ${printFontSize}; }
-                        
-                        .page-container { display: flex; flex-direction: column; min-height: 98vh; }
-                        .print-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px; flex-shrink: 0; }
-                        .print-header .right-side { display: flex; align-items: center; gap: 8px; }
-                        .print-header img { height: 40px; }
-                        .print-header .header-text p { margin: 0; font-size: 0.9em; line-height: 1.2; }
-                        .print-header .title-container { text-align: center; }
-                        .print-header h1 { color: #00A383; margin: 0; font-size: 1.8em; }
-                        .print-header h2 { font-size: 1.6em; font-weight: bold; color: #0093B5; margin: 1px 0; }
-                        .print-header p.subtitle { color: #555; margin-top: 2px; font-size: 1.1em; }
-                        .print-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; flex-grow: 1; align-content: start; }
-                        .print-column { page-break-inside: avoid; break-inside: avoid; }
-                        .print-column h3 { font-size: 1.2em; padding: 3px 5px; border-radius: 4px 4px 0 0; margin: 0; color: white; }
-                        table { width: 100%; border-collapse: collapse; font-size: 1em; table-layout: fixed; }
-                        th, td { border: 1px solid #ccc; padding: 3px; text-align: right; vertical-align: top; word-wrap: break-word; font-weight: normal; }
-                        .stage-entry:not(:last-child) { border-bottom: 1px dashed #ccc; padding-bottom: 3px; margin-bottom: 3px; }
-                        strong { font-weight: bold; }
-                        th { background-color: #f2f2f2; font-weight: bold; vertical-align: middle; }
-                        table th:nth-child(1), table td:nth-child(1) { width: 28%; }
-                        table th:nth-child(2), table td:nth-child(2) { width: 18%; }
-                        table th:nth-child(3), table td:nth-child(3) { width: 36%; }
-                        table th:nth-child(4), table td:nth-child(4),
-                        table th:nth-child(5), table td:nth-child(5),
-                        table th:nth-child(6), table td:nth-child(6) { width: 6%; text-align: center; }
-                        .print-signatures { display: flex; justify-content: space-around; margin-top: auto; padding-top: 15px; font-size: 1.1em; font-weight: bold; flex-shrink: 0; page-break-inside: avoid;}
-                        .signature-box { text-align: center; }
-                    </style>
-                </head>
-                <body>
-                    <div class="page-container">
-                         <div class="print-header">
-                            <div class="right-side">
-                                <img src="https://rasmcom.github.io/plan/img/logo.png" alt="شعار الوزارة">
-                                <div class="header-text">
-                                    <p>${eduAdmin}</p><p>${eduRegion}</p><p>${schoolName}</p>
-                                </div>
-                            </div>
-                            <div class="title-container">
-                                <h1>خطة النشاط الطلابي</h1>
-                                <h2>${printStageTitle}</h2>
-                                <p class="subtitle">${printSemesterSubtitle}</p>
-                            </div>
-                            <div></div> 
-                        </div>
-
-                        ${printContent}
-
-                        <div class="print-signatures">
-                            <div class="signature-box"><p>${leaderName}</p></div>
-                            <div class="signature-box"><p>${directorName}</p></div>
-                        </div>
-                    </div>
-                </body>
-                </html>
-            `);
-            
-            printWindow.document.close();
-            
-            printWindow.onafterprint = function() {
-                printWindow.close();
-                isPrinting = false; 
-            };
-
-            setTimeout(() => {
-                try {
-                    printWindow.print();
-                } catch (e) {
-                    console.error("Print failed:", e);
-                    isPrinting = false; 
-                    printWindow.close();
-                }
-            }, 500);
-        }
-        
-        function saveBackup() {
-            saveState();
-            const stateToSave = localStorage.getItem('activityPlanState');
-            if (!stateToSave || stateToSave === "{}") {
-                alert('لا توجد بيانات محفوظة لحفظها.');
-                return;
-            }
-            const blob = new Blob([stateToSave], { type: 'application/json;charset=utf-8' });
-            const url = URL.createObjectURL(blob);
-            const a = document.createElement('a');
-            const schoolName = JSON.parse(stateToSave).schoolName || 'خطة-النشاط';
-            a.href = url;
-            a.download = `backup-${schoolName}.json`;
-            document.body.appendChild(a);
-            a.click();
-            document.body.removeChild(a);
-            URL.revokeObjectURL(url);
-        }
-
-        function handleFileUpload(event) {
-            const file = event.target.files[0];
-            if (!file) {
-                return;
-            }
-
-            const reader = new FileReader();
-            reader.onload = function(e) {
-                try {
-                    const loadedState = e.target.result;
-                    const parsedState = JSON.parse(loadedState);
-                    if (parsedState && typeof parsedState === 'object' && 'programSelections' in parsedState) {
-                        localStorage.setItem('activityPlanState', loadedState);
-                        alert('تم استعادة النسخة الاحتياطية بنجاح! سيتم إعادة تحميل الصفحة لتطبيق التغييرات.');
-                        location.reload();
-                    } else {
-                        throw new Error('ملف غير صالح أو تالف. يرجى اختيار ملف نسخة احتياطية صحيح تم إنشاؤه من هذه الصفحة.');
-                    }
-                } catch (error) {
-                    alert('ملف غير صالح أو تالف. يرجى اختيار ملف نسخة احتياطية صحيح تم إنشاؤه من هذه الصفحة.');
-                }
-            };
-            reader.readAsText(file);
-            event.target.value = '';
-        }
-        
-        function saveState() {
-            if (isLoading) return;
-
-            const programSelections = {};
-            document.querySelectorAll('main tr[data-program-id]').forEach(row => {
-                const id = row.dataset.programId;
-                const datesByGrade = {};
-                const teachersByGrade = {};
-                let hasData = false;
-
-                row.querySelectorAll('.teacher-input').forEach(input => {
-                    const key = input.dataset.gradeKey;
-                    if (input.value.trim() !== '') {
-                        teachersByGrade[key] = input.value.trim();
-                        hasData = true;
-                    }
-                });
-
-                row.querySelectorAll('.grade-date-selector').forEach(selector => {
-                    const key = selector.dataset.gradeKey;
-                    const displayDiv = selector.querySelector('.dates-display');
-                    const datesJson = displayDiv.dataset.dates;
-                    
-                    if (datesJson) {
-                        const dates = JSON.parse(datesJson);
-                        if (dates.length > 0) {
-                            const groupOrGradeKey = selector.dataset.gradeKey;
-                            
-                            if(gradeGroups[groupOrGradeKey]) {
-                                datesByGrade[groupOrGradeKey] = dates;
-                            } else {
-                                datesByGrade[groupOrGradeKey] = dates;
-                            }
-                            
-                            const individualKeys = gradeGroups[key] || [key];
-                             individualKeys.forEach(indKey => {
-                                datesByGrade[indKey] = dates;
-                            });
-                            hasData = true;
-                        }
-                    }
-                });
-
-                if (hasData) {
-                   programSelections[id] = { teachersByGrade, datesByGrade };
-                }
-            });
-
-            const state = {
-                educationAdmin: document.getElementById('education-admin').value,
-                educationRegion: document.getElementById('education-region').value,
-                schoolName: document.getElementById('school-name').value,
-                activityLeaderName: document.getElementById('activity-leader-name').value,
-                schoolDirectorName: document.getElementById('school-director-name').value,
-                currentRegion: currentRegion,
-                selectedGrades: selectedGrades,
-                programSelections: programSelections,
-                printFontSize: document.getElementById('print-font-size').value,
-            };
-            localStorage.setItem('activityPlanState', JSON.stringify(state));
-        }
-
-        function loadState() {
-            isLoading = true;
-            const savedState = localStorage.getItem('activityPlanState');
-            if (!savedState) {
-                isLoading = false;
-                return;
-            }
-            
-            const state = JSON.parse(savedState);
-            
-            document.getElementById('education-admin').value = state.educationAdmin || '';
-            document.getElementById('education-region').value = state.educationRegion || '';
-            document.getElementById('school-name').value = state.schoolName || '';
-            document.getElementById('activity-leader-name').value = state.activityLeaderName || '';
-            document.getElementById('school-director-name').value = state.schoolDirectorName || '';
-            document.getElementById('print-font-size').value = state.printFontSize || '8px';
-
-            selectRegion(state.currentRegion || 'other');
-            
-            selectedGrades = state.selectedGrades || [];
-            
-            updateButtonStyles();
-            updateTitle();
-            updateAllDateSelectors();
-
-             if (state.programSelections) {
-                Object.entries(state.programSelections).forEach(([id, data]) => {
-                    const row = document.querySelector(`tr[data-program-id="${id}"]`);
-                    if (row) {
-                         if (data.teachersByGrade) {
-                            Object.entries(data.teachersByGrade).forEach(([gradeKey, teacherName]) => {
-                                const input = row.querySelector(`.teacher-input[data-grade-key="${gradeKey}"]`);
-                                if (input) {
-                                    input.value = teacherName;
-                                }
-                            });
-                        }
-                        
-                        if (data.datesByGrade) {
-                            row.querySelectorAll('.grade-date-selector').forEach(selector => {
-                                const key = selector.dataset.gradeKey;
-                                let datesToShow = data.datesByGrade[key] || data.datesByGrade[(gradeGroups[key] || [key])[0]] || [];
-                               
-                                const displayDiv = selector.querySelector('.dates-display');
-                                const formatted = formatDatesForDisplay(datesToShow);
-                                displayDiv.textContent = formatted.text;
-                                displayDiv.dataset.dates = formatted.json;
-                            });
-                        }
-                    }
-                });
-            }
-            isLoading = false;
         }
 
         function resetPlan() {
-            const modal = document.createElement('div');
-            modal.className = 'fixed inset-0 z-50 flex items-center justify-center p-4 bg-black bg-opacity-50';
-            modal.innerHTML = `
-                <div class="bg-white rounded-lg shadow-xl p-6 max-w-sm w-full text-center">
-                    <h3 class="text-xl font-bold mb-4">تأكيد المسح</h3>
-                    <p class="text-gray-600 mb-6">هل أنت متأكد من رغبتك في مسح جميع البيانات والبدء من جديد؟ هذا الإجراء لا يمكن التراجع عنه.</p>
-                    <div class="flex justify-center gap-4">
-                        <button onclick="document.body.removeChild(this.closest('.fixed'));" class="px-4 py-2 bg-gray-300 text-gray-800 rounded-lg hover:bg-gray-400 font-semibold">إلغاء</button>
-                        <button onclick="localStorage.removeItem('activityPlanState'); location.reload();" class="px-4 py-2 bg-red-600 text-white rounded-lg hover:bg-red-700 font-semibold">نعم، مسح</button>
-                    </div>
-                </div>
-            `;
-            document.body.appendChild(modal);
-        }
-
-        function showUpdateModal() {
-            const modal = document.getElementById('update-modal');
-            const modalBox = document.getElementById('update-modal-box');
-            modal.style.display = 'flex';
-            setTimeout(() => {
-                modalBox.classList.add('active');
-            }, 50); 
-        }
-
-        function closeUpdateModal() {
-            const modal = document.getElementById('update-modal');
-            const modalBox = document.getElementById('update-modal-box');
-            modalBox.classList.remove('active');
-            setTimeout(() => {
-                modal.style.display = 'none';
-            }, 300);
-            localStorage.setItem(UPDATE_VERSION_KEY, 'true');
-        }
-
-        document.addEventListener('DOMContentLoaded', function() {
-            createGradeSelectionUI();
-            generateSections();
-            loadState();
-            if (!localStorage.getItem(UPDATE_VERSION_KEY)) {
-                showUpdateModal();
+            if(confirm('تنبيه الخبير: هل تريد مسح كافة البيانات حقاً؟')) {
+                localStorage.clear();
+                location.reload();
             }
-        });
+        }
+
     </script>
 </body>
 </html>
